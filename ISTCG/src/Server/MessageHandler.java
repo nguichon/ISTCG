@@ -25,6 +25,10 @@ public class MessageHandler extends Thread {
 		}
 	}
 	
+	public void Quit() {
+		m_Quit = true;
+	}
+	
 	boolean m_Quit;
 	ClientAccount m_First;
 }
