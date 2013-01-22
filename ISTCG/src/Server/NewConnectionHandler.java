@@ -2,6 +2,7 @@ package Server;
 
 import java.io.IOException;
 import java.net.ServerSocket;
+import java.net.SocketException;
 
 import Shared.ConnectionDevice;
 
@@ -27,20 +28,27 @@ public class NewConnectionHandler extends Thread {
 	
 	@Override
 	public void run() {
+		try {
+			m_NewConnectionPort.setSoTimeout(1000);
+		} catch (SocketException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		
 		while( !m_Quit ) {
 			ConnectionDevice client = null;
 			
 			try{
 				client = new ConnectionDevice(m_NewConnectionPort.accept());
 				//ConsoleMessage( '-', "Client Connected." );
-				new ClientAccount(client);
-			} catch (IOException e ) {
+				if( client.isValid() ) {
+					new ClientAccount(client);
+				}
+			}	catch ( java.net.SocketTimeoutException e )  {
+				//DO NOTHING
+			}	catch (IOException e ) {
 				//ConsoleMessage( '!', "Error when accepting Socket. Continuing." );
 				e.printStackTrace();
-			}
-			
-			if( client == null ) {
-				//ConsoleMessage( '?', "Variable clientSocket was null. Waiting for connection." );
 			}
 		}
 

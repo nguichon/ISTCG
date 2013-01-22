@@ -2,6 +2,8 @@ package Server;
 
 import java.io.IOException;
 import java.net.ServerSocket;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.Date;
 import java.util.Scanner;
@@ -9,11 +11,14 @@ import java.util.Scanner;
 import Shared.ConnectionDevice;
 
 public class ServerMain {
+	static boolean m_Quit;
+	
 	public static void main(String[] args) {
 		ConsoleMessage( '-', "Server Starting..." );
 		
 		//Initialize the Database connection.
 		ConsoleMessage( '-', "Connecting to Database..." );
+		ConsoleMessage( '-', "Successfully connected to Database..." );
 		
 		try {
 			Database.initialize();
@@ -25,27 +30,25 @@ public class ServerMain {
 			System.exit(-1);
 		}
 		
-		ConsoleMessage( '-', "Done" );
-		
 		//Attempt to create the server port
 		ConsoleMessage( '-', "Creating server port..." );
 		
 		NewConnectionHandler.get().start();
 		
-		ConsoleMessage( '-', "Done" );
+		ConsoleMessage( '-', "Finished creating server port..." );
 		
 		//Exit "while" loop setup
-		boolean shutDownServer = false;
 		MessageHandler.get().start();
 		Scanner consoleInput = new Scanner(System.in);
 		
-		//Wait for connections, and connect them
-		//TODO: Wait for console command and execute them
-		while( shutDownServer == false ) {
+		m_Quit = false;
+		ConsoleMessage( '-', "Server Started!" );
+		while( !m_Quit ) {
 			if(consoleInput.hasNext()) {
 				ParseConsoleCommand(consoleInput.nextLine());
 			}
 		}
+		ConsoleMessage( '-', "Server Stopping..." );
 		
 		NewConnectionHandler.get().Quit();
 		MessageHandler.get().Quit();
@@ -53,8 +56,49 @@ public class ServerMain {
 		System.exit(0);
 	}
 	private static void ParseConsoleCommand(String next) {
-		// TODO Auto-generated method stub
-		ConsoleMessage('r', next);
+		String[] command = next.split(" ");
+		switch( command[0] ) {
+		case "quit":
+			m_Quit = true;
+			break;
+		case "create_user":
+			try {
+				ClientAccount.NewAccount( command[1], command[2], command[3] );
+				ConsoleMessage('-',"User account " + command[1] + " created.");
+			} catch (Exception e1) {
+				ConsoleMessage('!',"Failed to create account");
+				e1.printStackTrace();
+			}
+			break;
+		case "select":
+			ResultSet rs = Database.get().quickQuery(next);
+			
+			try {
+				ResultSetMetaData rsmd = rs.getMetaData();
+				for( int i = 1; i <= rsmd.getColumnCount(); i++ ) {
+					if( i != 1 ) {
+						System.out.print( " | " );
+					} else { System.out.println(); }
+					System.out.print(rsmd.getColumnName(i));
+				}
+				while(rs.next()) {
+					for( int i = 1; i <= rsmd.getColumnCount(); i++ ) {
+						if( i != 1 ) {
+							System.out.print( " | " );
+						} else { System.out.println(); }
+						System.out.print(rs.getString(rsmd.getColumnName(i)));
+					}
+				}
+				System.out.println();
+			} catch (SQLException e) {
+				ConsoleMessage('!',"Invalid Query");
+				e.printStackTrace();
+			}
+			break;
+		default:
+			ConsoleMessage('?',"Unknown command \"" + command[0] + "\"");
+			break;	
+		}
 	}
 	public static void ConsoleMessage( char sym, String message ) {
 		Date date = new Date();
@@ -62,11 +106,4 @@ public class ServerMain {
 							+ date.toString()
 							+ " - " + message );
 	}
-	public static void ConsoleMessageNoNewLine( char sym, String message ) {
-		Date date = new Date();
-		System.out.print( "[" + sym + "] " 
-							+ date.toString()
-							+ " - " + message );
-	}
-
 }

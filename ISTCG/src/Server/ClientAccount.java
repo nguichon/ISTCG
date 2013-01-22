@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.net.Socket;
 import java.security.SecureRandom;
 import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 
 import javax.crypto.SecretKey;
@@ -22,8 +23,13 @@ public class ClientAccount {
 	public static void NewAccount( String name, String password, String email ) throws Exception {
 		String db_password = getSaltedHash( password );
 		
-		Database.get().quickInsert( "INSERT INTO users(id, created_at, modified_at, user_name, password, email, points)" +
+		ResultSet rs = Database.get().quickQuery( "SELECT * FROM users WHERE user_name = '" + name + "';" );
+		if( !rs.next() ) {
+			Database.get().quickInsert( "INSERT INTO users(id, created_at, modified_at, user_name, password, email, points)" +
 				" VALUES (DEFAULT, NULL, NULL, '" + name + "', '" + db_password + "', '" + email + "', DEFAULT);");
+		} else {
+			throw new Exception("User name already exists");
+		}
 	}
 	
 	public boolean Authenticate( String user_name, String password_text ) {

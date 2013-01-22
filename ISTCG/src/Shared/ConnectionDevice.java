@@ -5,67 +5,37 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.Scanner;
 
-import org.keyczar.Crypter;
-import org.keyczar.exceptions.KeyczarException;
-
 public class ConnectionDevice {
 	private Socket connectionSocket;
 	private PrintWriter output;
 	private Scanner input;
-	private Crypter crypter=null;
 
 	public ConnectionDevice( Socket socket ) throws IOException {
 		connectionSocket = socket;
 		
-		input = new Scanner(connectionSocket.getInputStream());
-		output = new PrintWriter(connectionSocket.getOutputStream());
-		
-		try {
-			crypter = new Crypter(".");
-		} catch (KeyczarException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		if( connectionSocket != null ) {
+			input = new Scanner(connectionSocket.getInputStream());
+			output = new PrintWriter(connectionSocket.getOutputStream());
 		}
-		
-		
 	}
 	public ConnectionDevice( String host, int port ) throws IOException {
 		connectionSocket = new Socket( host, port );
 		
-		input = new Scanner(connectionSocket.getInputStream());
-		output = new PrintWriter(connectionSocket.getOutputStream());
-		
-		try {
-			crypter = new Crypter(".");
-		} catch (KeyczarException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		if( connectionSocket != null ) {
+			input = new Scanner(connectionSocket.getInputStream());
+			output = new PrintWriter(connectionSocket.getOutputStream());
 		}
 	}
 	
 	public String getData() {
 		if( input.hasNext() ) {
-			String s = "";
-			try {
-				s = crypter.decrypt(input.next());
-			} catch (KeyczarException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			return s;
+			return input.next();
 		}
 		return "";
 	}
 	
 	public void sendData( String Data ) {
-		String s = "";
-		try {
-			s = crypter.encrypt(Data);
-		} catch (KeyczarException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		output.println( s );
+		output.println( Data );
 		output.flush();
 	}
 	
@@ -73,5 +43,11 @@ public class ConnectionDevice {
 		input.close();
 		output.close();
 		connectionSocket.close();
+	}
+	public boolean isValid() {
+		if( connectionSocket != null ) {
+			return true;
+		}
+		return false;
 	}
 }
