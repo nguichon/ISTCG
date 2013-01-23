@@ -78,8 +78,10 @@ public class ClientMain {
         	  case MAIN:
         		  m_UIList[m_CurrentGameState.ordinal()].Disable();
         		  m_CurrentGameState = GameState.MAIN;
-        		  
         		  m_UIList[m_NextGameState.ordinal()].Enable();
+        		  //TESTING ABILITY TO GET MESSAGES
+        		  this.appendText("Testing this text box");
+        		  //END TESTING
         		  m_NextGameState = GameState.NOCHANGE;
         		  break;
        		  default:
@@ -96,13 +98,15 @@ public class ClientMain {
 	private ConnectionDevice m_Server;
 	public enum MessageType { CHAT, LOGIN_SUCCESS, LOGIN_FAILED; }
 	
-	private void MakeConnection() {
+	private boolean MakeConnection() {
 		int port = 4567;
   		String host = "127.0.0.1";
 		try {
 			m_Server = new ConnectionDevice( host, port );
+			return true;
 		} catch (IOException e) {
-			e.printStackTrace();
+			((LoginUI)m_UIList[GameState.LOGIN.ordinal()]).setText("Failed to Connect!");
+			return false;
 		}
 	}
 	public void SendTextMessage( String target, String text ){
@@ -110,9 +114,8 @@ public class ClientMain {
 		m_Server.sendData( "CHAT;" + target + ";" + text );
 	}
 	public void Login( String login, String password ) {
-		MakeConnection();
-		
-		m_Server.sendData( "LOGIN;" + login + ";" + password );
+		if(MakeConnection())
+			m_Server.sendData( "LOGIN;" + login + ";" + password );
 	}
 	public void ParseMessage( String input ) {
 		String[] inputs = input.split(";");
@@ -150,5 +153,9 @@ public class ClientMain {
         int nTop = (bds.height - p.y) / 2;
         
         m_ClientShell.setBounds(nLeft, nTop, p.x, p.y);
+    }
+    private void appendText(String s){
+    	if(m_UIList[m_NextGameState.ordinal()] instanceof MainUI)
+    		((MainUI)m_UIList[m_NextGameState.ordinal()]).appendMessage("DERP DERP DERP");
     }
 }
