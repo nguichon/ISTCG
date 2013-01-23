@@ -2,6 +2,7 @@ package Client;
 
 import java.io.IOException;
 import Shared.ConnectionDevice;
+import Shared.ThreadedConnectionDevice;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
@@ -41,12 +42,7 @@ public class ClientMain {
         String data = "";
         while (!m_ClientShell.isDisposed()) {
           if (!display.readAndDispatch()) {
-        	  if( m_Server != null ) {
-        		  data = m_Server.getData();
-        		  if( !data.equals("") ) {
-        			  ParseMessage( data );
-        		  }
-        	  }
+        	  
         	  
         	  switch( m_NextGameState ) {
         	  case LOGIN:
@@ -76,6 +72,12 @@ public class ClientMain {
        		  default:
        			  break;
         	  }
+        	  if( m_Server != null ) {
+        		  data = m_Server.getData();
+        		  if( !data.equals("") ) {
+        			  ParseMessage( data );
+        		  }
+        	  }
             display.sleep();
           }
         }
@@ -84,14 +86,16 @@ public class ClientMain {
 	//***********************************
 	// NETWORK
 	//***********************************
-	private ConnectionDevice m_Server;
+	//private ConnectionDevice m_Server;
+	private ThreadedConnectionDevice m_Server;
 	public enum MessageType { CHAT, LOGIN_SUCCESS, LOGIN_FAILED; }
 	
 	private boolean MakeConnection() {
 		int port = 4567;
   		String host = "127.0.0.1";
 		try {
-			m_Server = new ConnectionDevice( host, port );
+			//m_Server = new ConnectionDevice( host, port );
+			m_Server = new ThreadedConnectionDevice( host, port);
 			return true;
 		} catch (IOException e) {
 			((LoginUI)m_UIList[GameState.LOGIN.ordinal()]).setText("Failed to Connect!");
