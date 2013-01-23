@@ -18,6 +18,7 @@ import Client.ClientMain.MessageType;
 
 public class LoginUI extends GameStateUI {
 	Label m_Error;
+	Label labelError = null;
 	public LoginUI( Shell client, ClientMain main ) {
 		m_Host = main;
 		m_UIObjects = new Vector<Control>();
@@ -25,7 +26,7 @@ public class LoginUI extends GameStateUI {
 		final Button loginButton = new Button(client, SWT.PUSH);
 		loginButton.setBounds( 350, 307, 100, 25 );
 		loginButton.setText("Login");
-		final Label labelError = new Label( client, SWT.READ_ONLY );
+		labelError = new Label( client, SWT.READ_ONLY );
 		labelError.setBounds( 0, 332, 800, 25 );
 		labelError.setForeground( client.getDisplay().getSystemColor(SWT.COLOR_RED) );
 		labelError.setAlignment( SWT.CENTER );
@@ -122,5 +123,7 @@ public class LoginUI extends GameStateUI {
 			break;
 		}
 	}
-
+	public void setText(String s){
+		labelError.setText(s);
+	}
 }
