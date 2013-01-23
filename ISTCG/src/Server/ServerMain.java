@@ -1,16 +1,18 @@
 package Server;
 
-import java.io.IOException;
-import java.net.ServerSocket;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.Date;
 import java.util.Scanner;
 
-import Shared.ConnectionDevice;
-
 public class ServerMain {
+	
+	
+	private enum Commands {
+		QUIT, CREATE_USER, SELECT
+	}
+	
 	static boolean m_Quit;
 	
 	public static void main(String[] args) {
@@ -57,11 +59,11 @@ public class ServerMain {
 	}
 	private static void ParseConsoleCommand(String next) {
 		String[] command = next.split(" ");
-		switch( command[0] ) {
-		case "quit":
+		switch( Commands.valueOf(command[0].toUpperCase()) ) {
+		case QUIT:
 			m_Quit = true;
 			break;
-		case "create_user":
+		case CREATE_USER:
 			try {
 				ClientAccount.NewAccount( command[1], command[2], command[3] );
 				ConsoleMessage('-',"User account " + command[1] + " created.");
@@ -70,7 +72,7 @@ public class ServerMain {
 				e1.printStackTrace();
 			}
 			break;
-		case "select":
+		case SELECT:
 			ResultSet rs = Database.get().quickQuery(next);
 			
 			try {
