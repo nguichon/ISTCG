@@ -6,6 +6,8 @@ import java.security.SecureRandom;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
+import java.util.Queue;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 import javax.crypto.SecretKey;
 import javax.crypto.SecretKeyFactory;
@@ -63,10 +65,17 @@ public class ClientAccount {
 		}
 		String[] info = login.split( ";" );
 		if(Authenticate( info[1], info[2] )) {
-			m_ToClient.sendData("LOGIN_SUCCESS");
+			AddMessage("LOGIN_SUCCESS");
 		} else {
-			m_ToClient.sendData("LOGIN_FAILED");
+			AddMessage("LOGIN_FAILED");
 		}
+		
+		/*int queueSize = 2;
+		m_MessageQueues = new Queue[queueSize];
+		for( int i = 0; i < queueSize; i++) {
+			m_MessageQueues[i] = new Queue<String>();
+		}*/
+		m_MessageQueue = new ConcurrentLinkedQueue<String>();
 	}
 	
 	
@@ -140,5 +149,25 @@ public class ClientAccount {
 		}
 		String hashOfInput = hash(password, Base64.decode(saltAndPass[0]));
 		return hashOfInput.equals(saltAndPass[1]);
+	}
+	
+	private Queue<String> m_MessageQueue;
+	//private Queue<String> m_MessageQueues[];
+	//private int m_CurrentQueue = 0;
+	//private boolean m_Wait = false;
+
+	private void AddMessage( String message ) {
+		/*while( m_Wait ) { Waiting, do nothing }
+		m_Wait = true;
+		m_MessageQueues[m_CurrentQueue].add(message);
+		m_Wait = false;*/
+		m_MessageQueue.add(message);
+	}
+	
+	public void Update() {
+		/*while( m_Wait ) { /*Waiting, do nothing }
+		m_CurrentQueue = 1 - m_CurrentQueue;*/
+		//Read from queue
+		m_ToClient.sendData(m_MessageQueue.remove());
 	}
 }

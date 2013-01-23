@@ -10,7 +10,7 @@ public class ServerMain {
 	
 	
 	private enum Commands {
-		QUIT, CREATE_USER, SELECT
+		QUIT, CREATE_USER, SELECT, USERS
 	}
 	
 	static boolean m_Quit;
@@ -96,6 +96,9 @@ public class ServerMain {
 				ConsoleMessage('!',"Invalid Query");
 				e.printStackTrace();
 			}
+			break;
+		case USERS:
+			//Lists users currently connected
 			break;
 		default:
 			ConsoleMessage('?',"Unknown command \"" + command[0] + "\"");
