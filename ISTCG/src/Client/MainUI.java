@@ -19,7 +19,7 @@ import Client.ClientMain.GameState;
 import Client.ClientMain.MessageType;
 
 public class MainUI extends GameStateUI {
-	StyledText m_Messages;
+	private StyledText m_Messages;
 	
 	public MainUI( Shell client, ClientMain main ) {
 		m_Host = main;
@@ -98,5 +98,7 @@ public class MainUI extends GameStateUI {
 			break;
 		}
 	}
-
+	public void appendMessage(String s) {
+		m_Messages.setText(m_Messages.getText()+"\n"+s);
+	}
 }
