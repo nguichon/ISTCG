@@ -18,6 +18,10 @@ import org.postgresql.util.Base64;
 import Shared.ConnectionDevice;
 
 public class ClientAccount {
+	private enum ClientMessages {
+		SAY, TELL;
+	}
+	
 	private ConnectionDevice m_ToClient;
 	private int m_UserID;
 	private String m_UserName;
@@ -58,6 +62,8 @@ public class ClientAccount {
 	}
 	
 	public ClientAccount( ConnectionDevice client ) {
+		m_MessageQueue = new ConcurrentLinkedQueue<String>();
+		
 		m_ToClient = client;
 		String login = m_ToClient.getData();
 		while( login == "" ) {
@@ -70,12 +76,12 @@ public class ClientAccount {
 			AddMessage("LOGIN_FAILED");
 		}
 		
+		MessageHandler.get().AddClient( this );
 		/*int queueSize = 2;
 		m_MessageQueues = new Queue[queueSize];
 		for( int i = 0; i < queueSize; i++) {
 			m_MessageQueues[i] = new Queue<String>();
 		}*/
-		m_MessageQueue = new ConcurrentLinkedQueue<String>();
 	}
 	
 	
@@ -156,7 +162,7 @@ public class ClientAccount {
 	//private int m_CurrentQueue = 0;
 	//private boolean m_Wait = false;
 
-	private void AddMessage( String message ) {
+	public void AddMessage( String message ) {
 		/*while( m_Wait ) { Waiting, do nothing }
 		m_Wait = true;
 		m_MessageQueues[m_CurrentQueue].add(message);
@@ -169,5 +175,18 @@ public class ClientAccount {
 		m_CurrentQueue = 1 - m_CurrentQueue;*/
 		//Read from queue
 		m_ToClient.sendData(m_MessageQueue.remove());
+		
+		String clientInput;
+		while( (clientInput = m_ToClient.getData()) != "" ) {
+			String command[] = clientInput.split(";");
+			System.out.println( clientInput );
+			switch( ClientMessages.valueOf( command[0].toUpperCase() ) ) {
+			case SAY:
+				LobbyManager.say( m_UserName, command[1] );
+				break;
+			default:
+				break;
+			}
+		}
 	}
 }
