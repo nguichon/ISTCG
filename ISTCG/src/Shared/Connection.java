@@ -63,7 +63,7 @@ public class Connection implements Runnable {
 		try {
 			String s = Data;
 			System.out.println("Sending data: "+s);
-		output.println( Data );
+		//output.println( Data );
 		output.flush();
 		} catch (Exception e) {
 			System.err.println("Disconnected. Failed to send data");
