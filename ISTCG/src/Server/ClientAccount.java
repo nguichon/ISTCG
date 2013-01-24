@@ -170,6 +170,7 @@ public class ClientAccount {
 		if (m_UserID == -1) {
 			if (Authenticate(name, password)) {
 				AddMessage("LOGIN_SUCCESS");
+				LobbyManager.loginMessage(m_UserName);
 			} else {
 				AddMessage("LOGIN_FAILED");
 			}

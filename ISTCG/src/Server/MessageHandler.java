@@ -4,7 +4,7 @@ import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class MessageHandler extends Thread {
-	private MessageHandler() { m_ToAdd = new ConcurrentLinkedQueue<ClientAccount>(); }
+	private MessageHandler() { m_ToAdd = new ConcurrentLinkedQueue<ClientAccount>(); m_MessageToAll = new ConcurrentLinkedQueue<String>(); }
 	private static MessageHandler m_Instance;
 	public static MessageHandler get() {
 		if( m_Instance == null ) { m_Instance = new MessageHandler(); }
@@ -31,8 +31,12 @@ public class MessageHandler extends Thread {
 				}
 			}
 			ClientAccount next = m_First;
+			String toSendToAll = m_MessageToAll.poll();
 			while( next != null ) {
 				//Read/send messages from/to this client
+				if(toSendToAll != null) {
+					next.AddMessage(toSendToAll);
+				}
 				next.Update();
 				next = next.GetNext();
 			}
@@ -47,7 +51,12 @@ public class MessageHandler extends Thread {
 		m_ToAdd.add(ca);
 	}
 	
+	public void SayToAll(String message) {
+		m_MessageToAll.add(message);
+	}
+	
 	boolean m_Quit;
 	ClientAccount m_First;
 	private Queue<ClientAccount> m_ToAdd;
+	private Queue<String> m_MessageToAll;
 }

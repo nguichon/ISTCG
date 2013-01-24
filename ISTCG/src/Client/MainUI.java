@@ -91,9 +91,11 @@ public class MainUI extends GameStateUI {
 	@Override
 	public void HandleMessage(String[] inputs) {
 		switch( MessageType.valueOf(inputs[0].toUpperCase()) ) {
-		case CHAT:
+		case SAY:
 			m_Messages.setText( m_Messages.getText() + "\n" + inputs[1] + ":  " + inputs[2] );
 			break;
+		case LOGGED_IN_MESSAGE:
+			m_Messages.setText( m_Messages.getText() + "\n" + inputs[1] + " logged in.");
 		default:
 			break;
 		}

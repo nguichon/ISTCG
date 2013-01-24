@@ -14,7 +14,7 @@ public class ClientMain {
 	//***********************************
 	// MAIN
 	//***********************************
-	public enum GameState{ NOCHANGE, LOGIN, GAME, MAIN, ALREADY_LOGGED_IN; }
+	public enum GameState{ NOCHANGE, LOGIN, GAME, MAIN; }
 	private GameStateUI[] m_UIList;
 	private GameState m_NextGameState;
 	private GameState m_CurrentGameState;
@@ -88,7 +88,7 @@ public class ClientMain {
 	//***********************************
 	//private ConnectionDevice m_Server;
 	private ThreadedConnectionDevice m_Server;
-	public enum MessageType { CHAT, LOGIN_SUCCESS, LOGIN_FAILED; }
+	public enum MessageType { SAY, LOGIN_SUCCESS, LOGIN_FAILED, LOGGED_IN_MESSAGE, ALREADY_LOGGED_IN; }
 	
 	private boolean MakeConnection() {
 		int port = 4567;
@@ -113,7 +113,8 @@ public class ClientMain {
 	public void ParseMessage( String input ) {
 		String[] inputs = input.split(";");
 		switch( MessageType.valueOf(inputs[0].toUpperCase()) ) {
-		case CHAT:
+		case LOGGED_IN_MESSAGE:
+		case SAY:
 			m_UIList[GameState.MAIN.ordinal()].HandleMessage( inputs );
 			break;
 		case LOGIN_SUCCESS:
