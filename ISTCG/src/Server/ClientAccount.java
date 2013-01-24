@@ -3,6 +3,7 @@ package Server;
 import java.security.SecureRandom;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
@@ -21,6 +22,8 @@ public class ClientAccount {
 	private ThreadedConnectionDevice m_ToClient;
 	private int m_UserID;
 	private String m_UserName;
+	
+	static ArrayList<ClientAccount> clients = new ArrayList<ClientAccount>();
 
 	/**
 	 * 

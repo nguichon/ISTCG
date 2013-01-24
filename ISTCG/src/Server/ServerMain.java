@@ -14,7 +14,7 @@ public class ServerMain {
 	}
 
 	static boolean m_Quit;
-	static ArrayList<ClientAccount> clients = new ArrayList<ClientAccount>();
+	static ArrayList<ClientAccount> clients = ClientAccount.clients;
 	public static ClientAccount getClientByName(String name) {
 		ClientAccount c = null;
 		for(int i=0;i<clients.size();i++){
