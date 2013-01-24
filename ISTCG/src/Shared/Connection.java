@@ -47,8 +47,9 @@ public class Connection implements Runnable {
 	
 	private void getInput() {
 		if(input.hasNext()){
-			System.out.println("Got data");
-			q.add(input.next());
+			String s = input.next();
+			System.out.println("Got data "+s);
+			q.add(s);
 		}
 	}
 	public boolean hasData(){

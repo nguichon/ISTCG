@@ -137,14 +137,14 @@ public class ClientAccount {
 	 */
 	public void Update() {
 		if (m_MessageQueue.peek() != null) {
-			m_ToClient.sendData(m_MessageQueue.remove());
+			m_ToClient.sendData(m_MessageQueue.poll());
 		}
 
 		String clientInput;
 		while (m_ToClient.hasData()) {
 			clientInput = m_ToClient.getData();
 			String command[] = clientInput.split(";");
-			switch (ClientMessages.valueOf(command[0].toUpperCase())) {
+			switch( ClientMessages.valueOf( command[0].toUpperCase() ) ) {
 			case LOGIN:
 				LoginAttempt(command[1], command[2]);
 				break;
