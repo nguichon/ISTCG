@@ -14,7 +14,7 @@ public class ClientMain {
 	//***********************************
 	// MAIN
 	//***********************************
-	public enum GameState{ NOCHANGE, LOGIN, GAME, MAIN; }
+	public enum GameState{ NOCHANGE, LOGIN, GAME, MAIN, ALREADY_LOGGED_IN; }
 	private GameStateUI[] m_UIList;
 	private GameState m_NextGameState;
 	private GameState m_CurrentGameState;
