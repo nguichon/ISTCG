@@ -27,21 +27,28 @@ public class FalseClient {
 		
 		boolean m_Quit = false;
 		while( !m_Quit ) {
-			if(consoleInput.hasNext()) {
+
+			if( m_Server.hasData() ) {
+				String s = m_Server.getData();
+				System.out.println(s);
+			}
+			//if(consoleInput.hasNext()) {
 				String s = consoleInput.nextLine();
-				if( s.equals( "quit" ) ) {
+				if(s.equals("")){
+					//do nothing
+				}
+				else if( s.equals( "quit" ) ) {
 					m_Quit = true;
 				} else  {
 					m_Server.sendData( s );
+					s = m_Server.getData();
+					System.out.println(s);
 				}
-			}
+			//}
 
-			String serverData;
-			if( m_Server.hasData() ) {
-				if( ( serverData = m_Server.getData() ) != "" ) {
-					System.out.println( serverData );
-				}
-			}
+//			if( m_Server.hasData() ) {
+//				System.out.println(m_Server.getData());
+//			}
 		}
 		
 		
