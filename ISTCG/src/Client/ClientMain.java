@@ -42,7 +42,13 @@ public class ClientMain {
         String data = "";
         while (!m_ClientShell.isDisposed()) {
           if (!display.readAndDispatch()) {
-        	  
+        	  if( m_Server != null ) {
+        		  if (m_Server.hasData()) {
+        			  String s = m_Server.getData();
+        			  System.out.println("Data: "+s);
+        			  this.ParseMessage(s);
+        		  }
+        	  }
         	  
         	  switch( m_NextGameState ) {
         	  case LOGIN:
@@ -71,12 +77,6 @@ public class ClientMain {
         		  break;
        		  default:
        			  break;
-        	  }
-        	  if( m_Server != null ) {
-        		  data = m_Server.getData();
-        		  if( !data.equals("") ) {
-        			  ParseMessage( data );
-        		  }
         	  }
             display.sleep();
           }
@@ -149,6 +149,6 @@ public class ClientMain {
     }
     private void appendText(String s){
     	if(m_UIList[m_NextGameState.ordinal()] instanceof MainUI)
-    		((MainUI)m_UIList[m_NextGameState.ordinal()]).appendMessage("DERP DERP DERP");
+    		((MainUI)m_UIList[m_NextGameState.ordinal()]).appendMessage(s);
     }
 }
