@@ -16,13 +16,14 @@ import javax.crypto.spec.PBEKeySpec;
 import org.postgresql.util.Base64;
 
 import Shared.ConnectionDevice;
+import Shared.ThreadedConnectionDevice;
 
 public class ClientAccount {
 	private enum ClientMessages {
-		SAY, TELL;
+		LOGIN, SAY, TELL;
 	}
 	
-	private ConnectionDevice m_ToClient;
+	private ThreadedConnectionDevice m_ToClient;
 	private int m_UserID;
 	private String m_UserName;
 	
@@ -41,7 +42,10 @@ public class ClientAccount {
 	public boolean Authenticate( String user_name, String password_text ) {
 		ResultSet rs = Database.get().quickQuery( "SELECT * FROM users WHERE user_name = '" + user_name + "';" );
 		try {
-			rs.next();
+			if(!rs.next()) {
+				m_UserID = -1;
+				return false;
+			}
 			if(check(password_text, rs.getString("password"))) {
 				m_UserID = rs.getInt("id");
 			} else {
@@ -61,20 +65,10 @@ public class ClientAccount {
 		return "";
 	}
 	
-	public ClientAccount( ConnectionDevice client ) {
+	public ClientAccount( ThreadedConnectionDevice client ) {
 		m_MessageQueue = new ConcurrentLinkedQueue<String>();
-		
+		m_UserID = -1;
 		m_ToClient = client;
-		String login = m_ToClient.getData();
-		while( login == "" ) {
-			login = m_ToClient.getData();
-		}
-		String[] info = login.split( ";" );
-		if(Authenticate( info[1], info[2] )) {
-			AddMessage("LOGIN_SUCCESS");
-		} else {
-			AddMessage("LOGIN_FAILED");
-		}
 		
 		MessageHandler.get().AddClient( this );
 		/*int queueSize = 2;
@@ -174,19 +168,36 @@ public class ClientAccount {
 		/*while( m_Wait ) { /*Waiting, do nothing }
 		m_CurrentQueue = 1 - m_CurrentQueue;*/
 		//Read from queue
-		m_ToClient.sendData(m_MessageQueue.remove());
+		if( m_MessageQueue.peek() != null ) {
+			m_ToClient.sendData(m_MessageQueue.remove());
+		}
 		
 		String clientInput;
-		while( (clientInput = m_ToClient.getData()) != "" ) {
+		while( m_ToClient.hasData() ) {
+			clientInput = m_ToClient.getData();
 			String command[] = clientInput.split(";");
-			System.out.println( clientInput );
 			switch( ClientMessages.valueOf( command[0].toUpperCase() ) ) {
+			case LOGIN:
+				LoginAttempt( command[1], command[2] );
+				break;
 			case SAY:
 				LobbyManager.say( m_UserName, command[1] );
 				break;
 			default:
 				break;
 			}
+		}
+	}
+	
+	private void LoginAttempt( String name, String password ) {
+		if( m_UserID == -1 ) {
+			if(Authenticate( name, password )) {
+				AddMessage("LOGIN_SUCCESS");
+			} else {
+				AddMessage("LOGIN_FAILED");
+			}
+		} else {
+			AddMessage("ALREADY_LOGGED_IN");
 		}
 	}
 }

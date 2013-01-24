@@ -35,8 +35,10 @@ public class FalseClient {
 					m_Server.sendData( s );
 				}
 				String serverData;
-				if( ( serverData = m_Server.getData() ) != "" ) {
-					System.out.println( serverData );
+				if( m_Server.hasData() ) {
+					if( ( serverData = m_Server.getData() ) != "" ) {
+						System.out.println( serverData );
+					}
 				}
 			}
 		}

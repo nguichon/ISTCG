@@ -5,6 +5,7 @@ import java.net.ServerSocket;
 import java.net.SocketException;
 
 import Shared.ConnectionDevice;
+import Shared.ThreadedConnectionDevice;
 
 public class NewConnectionHandler extends Thread {
 	private NewConnectionHandler() {
@@ -36,10 +37,10 @@ public class NewConnectionHandler extends Thread {
 		}
 		
 		while( !m_Quit ) {
-			ConnectionDevice client = null;
+			ThreadedConnectionDevice client = null;
 			
 			try{
-				client = new ConnectionDevice(m_NewConnectionPort.accept());
+				client = new ThreadedConnectionDevice(m_NewConnectionPort.accept());
 				//ConsoleMessage( '-', "Client Connected." );
 				if( client.isValid() ) {
 					new ClientAccount(client);
