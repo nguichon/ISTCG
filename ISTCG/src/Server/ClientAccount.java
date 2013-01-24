@@ -1,10 +1,7 @@
 package Server;
 
-import java.io.IOException;
-import java.net.Socket;
 import java.security.SecureRandom;
 import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -15,7 +12,6 @@ import javax.crypto.spec.PBEKeySpec;
 
 import org.postgresql.util.Base64;
 
-import Shared.ConnectionDevice;
 import Shared.ThreadedConnectionDevice;
 
 public class ClientAccount {
