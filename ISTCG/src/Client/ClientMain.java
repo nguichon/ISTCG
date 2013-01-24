@@ -45,7 +45,7 @@ public class ClientMain {
         	  if( m_Server != null ) {
         		  if (m_Server.hasData()) {
         			  String s = m_Server.getData();
-        			  System.out.println("Data: "+s);
+        			  //System.out.println("Data: "+s);
         			  this.ParseMessage(s);
         		  }
         	  }

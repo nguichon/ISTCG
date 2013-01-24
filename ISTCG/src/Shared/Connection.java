@@ -48,7 +48,7 @@ public class Connection implements Runnable {
 	private void getInput() {
 		if(input.hasNext()){
 			String s = input.nextLine();
-			System.out.println("Got data "+s);
+			//System.out.println("Got data "+s);
 			q.add(s);
 		}
 	}
@@ -62,8 +62,8 @@ public class Connection implements Runnable {
 		//Test if live
 		try {
 			String s = Data;
-			System.out.println("Sending data: "+s);
-		output.println( Data );
+			//System.out.println("Sending data: "+s);
+		//output.println( Data );
 		output.flush();
 		} catch (Exception e) {
 			System.err.println("Disconnected. Failed to send data");
