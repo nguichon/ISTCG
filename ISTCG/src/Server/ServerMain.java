@@ -15,6 +15,16 @@ public class ServerMain {
 
 	static boolean m_Quit;
 	static ArrayList<ClientAccount> clients = new ArrayList<ClientAccount>();
+	public static ClientAccount getClientByName(String name) {
+		ClientAccount c = null;
+		for(int i=0;i<clients.size();i++){
+			if(clients.get(i).getName().equals(name))
+				c = clients.get(i);
+		}
+		
+		
+		return c;
+	}
 	public static void main(String[] args) {
 		ConsoleMessage('-', "Server Starting...");
 

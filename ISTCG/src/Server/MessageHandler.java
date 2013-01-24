@@ -43,7 +43,9 @@ public class MessageHandler extends Thread {
 				next.Update();
 				next = next.GetNext();
 				if(toWhisper!=null){
-					
+					String[] s = toWhisper.split(";");
+					ServerMain.getClientByName(s[2]).AddMessage("SAY;"+s[1]+";"+s[3]);
+					toWhisper=null;
 				}
 			}
 		}
