@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.SocketException;
 
-import Shared.ConnectionDevice;
 import Shared.ThreadedConnectionDevice;
 
 public class NewConnectionHandler extends Thread {
