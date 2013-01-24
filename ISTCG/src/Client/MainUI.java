@@ -51,10 +51,10 @@ public class MainUI extends GameStateUI {
 				String textToSend = sendMessageText.getText();
 				
 				if( !textToSend.equals( "" ) ) {
-					m_Host.SendTextMessage( "[main]", textToSend );
+					m_Host.SendTextMessage( textToSend );
 				}
 				
-				sendMessageText.setText( "" );
+				sendMessageText.setText( "Welcome to this TCG Server!" );
 				sendMessageText.setFocus();
 			}
 		});
@@ -69,7 +69,7 @@ public class MainUI extends GameStateUI {
 		m_UIObjects.add(sendMessageButton);
 		
 		m_Messages = messages;
-		m_Messages.setText( "WELCOME TO MY SERVER, THIS IS A HARD CODED MESSAGE. DON'T LET IT FOOL YOU" );
+		m_Messages.setText( "" );
 		
 		for( Control w : m_UIObjects ) {
 			w.setVisible(false);

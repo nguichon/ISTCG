@@ -102,9 +102,9 @@ public class ClientMain {
 			return false;
 		}
 	}
-	public void SendTextMessage( String target, String text ){
-		text.replace(";", "\\;");
-		m_Server.sendData( "SAY;" + target + ";" + text );
+	public void SendTextMessage( String text ){
+		text.replace(";", ":");
+		m_Server.sendData( "SAY;" + text );
 	}
 	public void Login( String login, String password ) {
 		if(MakeConnection())
