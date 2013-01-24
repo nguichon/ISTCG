@@ -3,6 +3,7 @@ package Shared;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.util.PriorityQueue;
 import java.util.Scanner;
 
 public class Connection implements Runnable {
@@ -12,9 +13,9 @@ public class Connection implements Runnable {
 	private Socket connectionSocket;
 	private PrintWriter output;
 	private Scanner input;
-	
+	private PriorityQueue<String> q = null;
 	public Connection (Socket socket) throws IOException {
-		
+		q = new PriorityQueue<String>();
 		connectionSocket = socket;
 		if( connectionSocket != null ) {
 			input = new Scanner(connectionSocket.getInputStream());
@@ -26,7 +27,7 @@ public class Connection implements Runnable {
 	}
 	public Connection (String host, int port)  throws IOException {
 		connectionSocket = new Socket( host, port );
-		
+		q = new PriorityQueue<String>();
 		if( connectionSocket != null ) {
 			input = new Scanner(connectionSocket.getInputStream());
 			output = new PrintWriter(connectionSocket.getOutputStream());
@@ -40,30 +41,31 @@ public class Connection implements Runnable {
 		// TODO Auto-generated method stub
 		while(!exit) {
 			//Do something
-			
+			getInput();
 		}
 	}
 	
-	public String getData() {
-		try {
-			if( input.hasNext() ) {
-				System.out.println("Getting data");
-				return input.next();
-			}
-			return "";
-		} catch (Exception e){
-			System.err.println("Network problem.");
-			return "";
+	private void getInput() {
+		if(input.hasNext()){
+			System.out.println("Got data");
+			q.add(input.next());
 		}
+	}
+	public boolean hasData(){
+		return !q.isEmpty();
+	}
+	public String getData(){
+		return q.poll();
 	}
 	public void sendData( String Data ) {
 		//Test if live
 		try {
-			System.out.println("Sending data");
+			String s = Data;
+			System.out.println("Sending data: "+s);
 		output.println( Data );
 		output.flush();
 		} catch (Exception e) {
-			System.err.println("Disconnected.");
+			System.err.println("Disconnected. Failed to send data");
 		}
 	}
 	public void close() throws IOException {
