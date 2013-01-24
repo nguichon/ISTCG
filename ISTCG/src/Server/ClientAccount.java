@@ -105,6 +105,8 @@ public class ClientAccount {
 			}
 			if (check(password_text, rs.getString("password"))) {
 				m_UserID = rs.getInt("id");
+				m_UserName = rs.getString("user_name");
+				
 			} else {
 				m_UserID = -1;
 				return false;
