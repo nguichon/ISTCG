@@ -71,7 +71,7 @@ public class ClientMain {
         		  m_CurrentGameState = GameState.MAIN;
         		  m_UIList[m_NextGameState.ordinal()].Enable();
         		  //TESTING ABILITY TO GET MESSAGES
-        		  this.appendText("Testing this text box");
+        		  //this.appendText("Testing this text box");
         		  //END TESTING
         		  m_NextGameState = GameState.NOCHANGE;
         		  break;

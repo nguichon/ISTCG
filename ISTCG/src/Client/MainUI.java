@@ -52,9 +52,10 @@ public class MainUI extends GameStateUI {
 				
 				if( !textToSend.equals( "" ) ) {
 					m_Host.SendTextMessage( textToSend );
+					sendMessageText.setText("");
 				}
 				
-				sendMessageText.setText( "Welcome to this TCG Server!" );
+				//sendMessageText.setText( "Welcome to this TCG Server!" );
 				sendMessageText.setFocus();
 			}
 		});

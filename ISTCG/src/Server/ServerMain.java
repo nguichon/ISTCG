@@ -3,6 +3,7 @@ package Server;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Scanner;
 
@@ -13,7 +14,7 @@ public class ServerMain {
 	}
 
 	static boolean m_Quit;
-
+	static ArrayList<ClientAccount> clients = new ArrayList<ClientAccount>();
 	public static void main(String[] args) {
 		ConsoleMessage('-', "Server Starting...");
 
@@ -35,7 +36,7 @@ public class ServerMain {
 		// Attempt to create the server port
 		ConsoleMessage('-', "Creating server port...");
 
-		NewConnectionHandler.get().start();
+		NewConnectionHandler.get(clients).start();
 
 		ConsoleMessage('-', "Finished creating server port...");
 
@@ -105,6 +106,10 @@ public class ServerMain {
 			break;
 		case USERS:
 			// Lists users currently connected
+			System.out.println("Listings Users:");
+			for(ClientAccount e : clients){
+				System.out.println(e.getName());
+			}
 			break;
 		default:
 			ConsoleMessage('?', "Unknown command \"" + command[0] + "\"");

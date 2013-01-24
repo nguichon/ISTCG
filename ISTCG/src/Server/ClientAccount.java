@@ -30,7 +30,7 @@ public class ClientAccount {
 	 * 
 	 */
 	private enum ClientMessages {
-		LOGIN, SAY, TELL;
+		LOGIN, SAY, TELL, WIS;
 	}
 
 	/**
@@ -44,7 +44,6 @@ public class ClientAccount {
 		m_MessageQueue = new ConcurrentLinkedQueue<String>();
 		m_UserID = -1;
 		m_ToClient = client;
-
 		MessageHandler.get().AddClient(this);
 		/*
 		 * int queueSize = 2; m_MessageQueues = new Queue[queueSize]; for( int i
@@ -121,6 +120,9 @@ public class ClientAccount {
 		return true;
 	}
 
+	public String getName(){
+		return this.m_UserName;
+	}
 	private Queue<String> m_MessageQueue;
 
 	/**
@@ -152,6 +154,9 @@ public class ClientAccount {
 				break;
 			case SAY:
 				LobbyManager.say(m_UserName, command[1]);
+				break;
+			case WIS:
+				LobbyManager.whisper(m_UserName, command[1], command[2]);
 				break;
 			default:
 				break;
