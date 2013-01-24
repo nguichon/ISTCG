@@ -6,6 +6,7 @@ import java.util.Scanner;
 import Client.LoginUI;
 import Client.ClientMain.GameState;
 import Shared.ConnectionDevice;
+import Shared.ThreadedConnectionDevice;
 
 public class FalseClient {
 
@@ -17,9 +18,9 @@ public class FalseClient {
 		
 		int port = 4567;
   		String host = "127.0.0.1";
-		ConnectionDevice m_Server = null;
+		ThreadedConnectionDevice m_Server = null;
 		try {
-			m_Server = new ConnectionDevice( host, port );
+			m_Server = new ThreadedConnectionDevice( host, port );
 		} catch (IOException e) {
 			System.exit(2000);
 		}

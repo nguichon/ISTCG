@@ -34,5 +34,7 @@ public class ThreadedConnectionDevice {
 	public boolean isValid() {
 		return c.isValid();
 	}
-	
+	public boolean hasData(){
+		return c.hasData();
+	}
 }
