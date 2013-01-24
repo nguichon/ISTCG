@@ -104,7 +104,7 @@ public class ClientMain {
 	}
 	public void SendTextMessage( String target, String text ){
 		text.replace(";", "\\;");
-		m_Server.sendData( "CHAT;" + target + ";" + text );
+		m_Server.sendData( "SAY;" + target + ";" + text );
 	}
 	public void Login( String login, String password ) {
 		if(MakeConnection())
