@@ -104,7 +104,12 @@ public class ClientMain {
 	}
 	public void SendTextMessage( String text ){
 		text.replace(";", ":");
-		m_Server.sendData( "SAY;" + text );
+		String s = text.substring(0, 4);
+		System.out.println(s);
+		if(s.equals("/wis"))
+			m_Server.sendData( "WIS;" + text.substring(5) );
+		else
+			m_Server.sendData( "SAY;" + text );
 	}
 	public void Login( String login, String password ) {
 		if(MakeConnection())
