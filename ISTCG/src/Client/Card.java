@@ -1,7 +1,5 @@
 package Client;
 
-import java.util.Vector;
-
 import Shared.NetworkObject;
 
 public class Card implements NetworkObject {
