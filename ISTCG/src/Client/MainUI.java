@@ -4,13 +4,14 @@ import java.util.Vector;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
-import org.eclipse.swt.events.ControlEvent;
-import org.eclipse.swt.events.ControlListener;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
+import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
@@ -21,7 +22,7 @@ import Client.ClientMain.MessageType;
 public class MainUI extends GameStateUI {
 	private StyledText m_Messages;
 	
-	public MainUI( Shell client, ClientMain main ) {
+	public MainUI( Shell client, final ClientMain main ) {
 		m_Host = main;
 		m_UIObjects = new Vector<Control>();
 
@@ -32,6 +33,32 @@ public class MainUI extends GameStateUI {
 		messages.setBounds(500,0,300,550);
 		sendMessageText.setBounds(500,550,240,50);
 		sendMessageButton.setBounds(740,550,60,50);
+		final Label advert = new Label(client, SWT.READ_ONLY);
+		advert.setBounds(0, 0, 500, 550);
+		advert.setText("THIS WILL BE STORE ADS AND NEWS");
+		advert.addMouseListener(new MouseListener(){
+
+			@Override
+			public void mouseDoubleClick(MouseEvent arg0) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void mouseDown(MouseEvent arg0) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void mouseUp(MouseEvent arg0) {
+				// TODO Auto-generated method stub
+				//main.changeState(GameState.STORE);
+				main.changeState(GameState.GAME);
+			}
+			
+		});
+		
 		sendMessageButton.setText( "Send" );
 		
 		sendMessageText.addKeyListener( new KeyListener() {
@@ -68,6 +95,8 @@ public class MainUI extends GameStateUI {
 		m_UIObjects.add(messages);
 		m_UIObjects.add(sendMessageText);
 		m_UIObjects.add(sendMessageButton);
+		m_UIObjects.add(advert);
+		
 		
 		m_Messages = messages;
 		m_Messages.setText( "" );

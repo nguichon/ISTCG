@@ -1,8 +1,6 @@
 package Client;
 
 import java.io.IOException;
-import Shared.ConnectionDevice;
-import Shared.ThreadedConnectionDevice;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
@@ -10,11 +8,13 @@ import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
+import Shared.ThreadedConnectionDevice;
+
 public class ClientMain {
 	//***********************************
 	// MAIN
 	//***********************************
-	public enum GameState{ NOCHANGE, LOGIN, GAME, MAIN; }
+	public enum GameState{ NOCHANGE, LOGIN, GAME, MAIN, STORE; }
 	private GameStateUI[] m_UIList;
 	private GameState m_NextGameState;
 	private GameState m_CurrentGameState;
@@ -32,7 +32,8 @@ public class ClientMain {
 		m_UIList[GameState.LOGIN.ordinal()] = new LoginUI( m_ClientShell, this );
 		m_UIList[GameState.MAIN.ordinal()] = new MainUI( m_ClientShell, this );
 		m_UIList[GameState.NOCHANGE.ordinal()] = new NoChangeUI( );
-        
+		m_UIList[GameState.STORE.ordinal()] = new StoreUI(m_ClientShell, this);
+        m_UIList[GameState.GAME.ordinal()] = new GameUI(m_ClientShell, this);
         WindowSize( 800, 600 );
         CenterWindow();
 
@@ -75,6 +76,13 @@ public class ClientMain {
         		  //END TESTING
         		  m_NextGameState = GameState.NOCHANGE;
         		  break;
+        		  
+        	  case STORE:
+        		  m_UIList[m_CurrentGameState.ordinal()].Disable();
+        		  m_CurrentGameState = GameState.STORE;
+        		  m_UIList[m_NextGameState.ordinal()].Enable();
+        		  m_NextGameState = GameState.NOCHANGE;
+        		  break;
        		  default:
        			  break;
         	  }
@@ -104,7 +112,13 @@ public class ClientMain {
 	}
 	public void SendTextMessage( String text ){
 		text.replace(";", ":");
-		m_Server.sendData( "SAY;" + text );
+		String s = text.substring(0, 6);
+		s = s.substring(0,5);
+		//System.out.println(s);
+		if(s.equals("/tell"))
+			m_Server.sendData( "TELL;" + text.substring(6) );
+		else
+			m_Server.sendData( "SAY;" + text );
 	}
 	public void Login( String login, String password ) {
 		if(MakeConnection())
@@ -151,5 +165,13 @@ public class ClientMain {
     private void appendText(String s){
     	if(m_UIList[m_NextGameState.ordinal()] instanceof MainUI)
     		((MainUI)m_UIList[m_NextGameState.ordinal()]).appendMessage(s);
+    }
+    
+    //****************************
+    // CHANGE STATE
+    //****************************
+    
+    public void changeState(GameState g){
+    	m_NextGameState = g;
     }
 }
