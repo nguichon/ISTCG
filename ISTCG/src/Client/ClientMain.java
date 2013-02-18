@@ -33,7 +33,7 @@ public class ClientMain {
 		m_UIList[GameState.MAIN.ordinal()] = new MainUI( m_ClientShell, this );
 		m_UIList[GameState.NOCHANGE.ordinal()] = new NoChangeUI( );
 		m_UIList[GameState.STORE.ordinal()] = new StoreUI(m_ClientShell, this);
-        
+        m_UIList[GameState.GAME.ordinal()] = new GameUI(m_ClientShell, this);
         WindowSize( 800, 600 );
         CenterWindow();
 
@@ -112,10 +112,11 @@ public class ClientMain {
 	}
 	public void SendTextMessage( String text ){
 		text.replace(";", ":");
-		String s = text.substring(0, 4);
+		String s = text.substring(0, 6);
+		s = s.substring(0,5);
 		//System.out.println(s);
-		if(s.equals("/wis"))
-			m_Server.sendData( "WIS;" + text.substring(5) );
+		if(s.equals("/tell"))
+			m_Server.sendData( "TELL;" + text.substring(6) );
 		else
 			m_Server.sendData( "SAY;" + text );
 	}

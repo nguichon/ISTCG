@@ -53,7 +53,8 @@ public class MainUI extends GameStateUI {
 			@Override
 			public void mouseUp(MouseEvent arg0) {
 				// TODO Auto-generated method stub
-				main.changeState(GameState.STORE);
+				//main.changeState(GameState.STORE);
+				main.changeState(GameState.GAME);
 			}
 			
 		});
