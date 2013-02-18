@@ -1,9 +1,13 @@
 package Server;
 
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.net.Socket;
 import java.security.SecureRandom;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Queue;
+import java.util.Scanner;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 import javax.crypto.SecretKey;
@@ -17,11 +21,33 @@ import Shared.ThreadedConnectionDevice;
 /**
  * @author Nicholas Guichon
  */
-public class ClientAccount {
-	private ThreadedConnectionDevice m_ToClient;
-	private int m_UserID;
-	private String m_UserName;
-
+public class ClientAccount extends Thread {
+	/**
+	 * Constructor for a this class. Adds the ClientAccount to MessageHandler's
+	 * queue.
+	 * 
+	 * @param client
+	 *            A valid ThreadedConnectionDevice, unique to this ClientAccount
+	 */
+	public ClientAccount(Socket client) {
+		m_UserID = -1;
+		m_ToClient = client;
+		
+		try {
+			m_Input = new Scanner( m_ToClient.getInputStream() );
+			m_Output = new PrintWriter( m_ToClient.getOutputStream() );
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	// ===================================
+	// -NETWORK FUNCTIONS-
+	// ===================================
+	private Socket m_ToClient;
+	private PrintWriter m_Output;
+	private Scanner m_Input;
 	/**
 	 * 
 	 * Various commands received from a client.
@@ -30,27 +56,42 @@ public class ClientAccount {
 	 * 
 	 */
 	private enum ClientMessages {
-		LOGIN, SAY, TELL, WIS;
+		LOGIN, SAY, TELL;
 	}
-
-	/**
-	 * Constructor for a this class. Adds the ClientAccount to MessageHandler's
-	 * queue.
-	 * 
-	 * @param client
-	 *            A valid ThreadedConnectionDevice, unique to this ClientAccount
-	 */
-	public ClientAccount(ThreadedConnectionDevice client) {
-		m_MessageQueue = new ConcurrentLinkedQueue<String>();
-		m_UserID = -1;
-		m_ToClient = client;
-		MessageHandler.get().AddClient(this);
-		/*
-		 * int queueSize = 2; m_MessageQueues = new Queue[queueSize]; for( int i
-		 * = 0; i < queueSize; i++) { m_MessageQueues[i] = new Queue<String>();
-		 * }
-		 */
+	
+	public void SendMessage( String message ) {
+		m_Output.println( message );
+		m_Output.flush();
 	}
+	public void run() {
+		boolean connected = true;
+		
+		while( connected ) {
+			String line = m_Input.nextLine();
+			if( line != null ) {
+				String command[] = line.split(";");
+	            switch( ClientMessages.valueOf( command[0].toUpperCase() ) ) {
+	            case LOGIN:
+	                    LoginAttempt(command[1], command[2]);
+	                    break;
+	            case SAY:
+	                    LobbyManager.say(m_UserName, command[1]);
+	                    break;
+	            case TELL:
+	                    LobbyManager.whisper(m_UserName, command[1], command[2]);
+	                    SendMessage("SAY;" + "to [" + command[1] + "];" + command[2]);
+	                    break;
+	            default:
+	                    break;
+	            }
+			}
+		}
+	}
+	// ===================================
+	// -ACCOUNT FUNCTIONS-
+	// ===================================
+	private int m_UserID;
+	private String m_UserName;
 
 	/**
 	 * Creates a new row in the table Users
@@ -117,51 +158,12 @@ public class ClientAccount {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		ConnectionsHandler.get().Authenticated( this, m_UserName );
 		return true;
 	}
 
-	public String getName(){
+	public String getUserName(){
 		return this.m_UserName;
-	}
-	private Queue<String> m_MessageQueue;
-
-	/**
-	 * Adds a message to this ClientAccount's queue. These messages will be sent
-	 * to the client when the ClientAccount is updated.
-	 * 
-	 * @param message
-	 */
-	public void AddMessage(String message) {
-		m_MessageQueue.add(message);
-	}
-
-	/**
-	 * Updates the ClientAccount. Processing queue messages and sending queue
-	 * messages.
-	 */
-	public void Update() {
-		if (m_MessageQueue.peek() != null) {
-			m_ToClient.sendData(m_MessageQueue.poll());
-		}
-
-		String clientInput;
-		while (m_ToClient.hasData()) {
-			clientInput = m_ToClient.getData();
-			String command[] = clientInput.split(";");
-			switch( ClientMessages.valueOf( command[0].toUpperCase() ) ) {
-			case LOGIN:
-				LoginAttempt(command[1], command[2]);
-				break;
-			case SAY:
-				LobbyManager.say(m_UserName, command[1]);
-				break;
-			case WIS:
-				LobbyManager.whisper(m_UserName, command[1], command[2]);
-				break;
-			default:
-				break;
-			}
-		}
 	}
 
 	/**
@@ -176,13 +178,13 @@ public class ClientAccount {
 	private void LoginAttempt(String name, String password) {
 		if (m_UserID == -1) {
 			if (Authenticate(name, password)) {
-				AddMessage("LOGIN_SUCCESS");
+				SendMessage("LOGIN_SUCCESS");
 				LobbyManager.loginMessage(m_UserName);
 			} else {
-				AddMessage("LOGIN_FAILED");
+				SendMessage("LOGIN_FAILED");
 			}
 		} else {
-			AddMessage("ALREADY_LOGGED_IN");
+			SendMessage("ALREADY_LOGGED_IN");
 		}
 	}
 

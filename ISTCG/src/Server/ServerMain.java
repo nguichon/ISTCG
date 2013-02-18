@@ -14,17 +14,6 @@ public class ServerMain {
 	}
 
 	static boolean m_Quit;
-	static ArrayList<ClientAccount> clients = new ArrayList<ClientAccount>();
-	public static ClientAccount getClientByName(String name) {
-		ClientAccount c = null;
-		for(int i=0;i<clients.size();i++){
-			if(clients.get(i).getName().equals(name))
-				c = clients.get(i);
-		}
-		
-		
-		return c;
-	}
 	public static void main(String[] args) {
 		ConsoleMessage('-', "Server Starting...");
 
@@ -46,12 +35,11 @@ public class ServerMain {
 		// Attempt to create the server port
 		ConsoleMessage('-', "Creating server port...");
 
-		NewConnectionHandler.get(clients).start();
+		ConnectionsHandler.get().start();
 
 		ConsoleMessage('-', "Finished creating server port...");
 
 		// Exit "while" loop setup
-		MessageHandler.get().start();
 		Scanner consoleInput = new Scanner(System.in);
 
 		m_Quit = false;
@@ -63,8 +51,7 @@ public class ServerMain {
 		}
 		ConsoleMessage('-', "Server Stopping...");
 
-		NewConnectionHandler.get().Quit();
-		MessageHandler.get().Quit();
+		ConnectionsHandler.get().Quit();
 
 		consoleInput.close();
 		System.exit(0);
@@ -116,10 +103,8 @@ public class ServerMain {
 			break;
 		case USERS:
 			// Lists users currently connected
-			System.out.println("Listings Users:");
-			for(ClientAccount e : clients){
-				System.out.println(e.getName());
-			}
+			System.out.println("Getting List of All Connected Users:");
+			
 			break;
 		default:
 			ConsoleMessage('?', "Unknown command \"" + command[0] + "\"");
