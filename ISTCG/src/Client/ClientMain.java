@@ -112,11 +112,17 @@ public class ClientMain {
 	}
 	public void SendTextMessage( String text ){
 		text.replace(";", ":");
-		String s = text.substring(0, 6);
-		s = s.substring(0,5);
+		String s = "";
+		try {
+			s = text.substring(0, 6);
+			s = s.substring(0,5);
+		} catch (Exception e){
+			
+		}
+		
 		//System.out.println(s);
 		if(s.equals("/tell"))
-			m_Server.sendData( "TELL;" + text.substring(6) );
+			m_Server.sendData( "TELL;" + text.substring(5) );
 		else
 			m_Server.sendData( "SAY;" + text );
 	}
