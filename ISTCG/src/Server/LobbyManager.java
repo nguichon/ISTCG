@@ -14,7 +14,7 @@ public class LobbyManager {
 	
 	public static boolean whisper(String userName1, String userName2, String message) {
 		//ConnectionsHandler.get().SendMessageToAll("TELL;"+userName1+";"+userName2+";"+message);
-		ClientAccount ca = ConnectionsHandler.get().GetClientByName( userName1 );
+		ClientAccount ca = ConnectionsHandler.get().GetClientByName( userName2 );
 		if( ca != null ) {
 			ca.SendMessage("SAY;" + "from [" + userName1 + "];" + message);
 			return true;
