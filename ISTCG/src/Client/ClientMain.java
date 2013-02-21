@@ -168,6 +168,9 @@ public class ClientMain {
         
         m_ClientShell.setBounds(nLeft, nTop, p.x, p.y);
     }
+    public Point getBounds() {
+    	return m_ClientShell.getSize();
+    }
     private void appendText(String s){
     	if(m_UIList[m_NextGameState.ordinal()] instanceof MainUI)
     		((MainUI)m_UIList[m_NextGameState.ordinal()]).appendMessage(s);
@@ -179,5 +182,16 @@ public class ClientMain {
     
     public void changeState(GameState g){
     	m_NextGameState = g;
+    }
+    //TESTING METHODS
+    public boolean isLoggedIn(){
+    	return ((m_UIList[m_NextGameState.ordinal()] instanceof MainUI)?true:false);
+    	
+    }
+    public String getTextContents() {
+    	if(isLoggedIn()){
+    		return ((MainUI)m_UIList[m_NextGameState.ordinal()]).getMessages();
+    	}
+    	return "";
     }
 }

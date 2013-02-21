@@ -133,4 +133,7 @@ public class MainUI extends GameStateUI {
 	public void appendMessage(String s) {
 		m_Messages.setText(m_Messages.getText()+"\n"+s);
 	}
+	public String getMessages(){
+		return m_Messages.getText();
+	}
 }
