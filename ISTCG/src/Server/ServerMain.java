@@ -10,7 +10,7 @@ import java.util.Scanner;
 public class ServerMain {
 
 	private enum Commands {
-		QUIT, CREATE_USER, SELECT, USERS
+		QUIT, CREATE_USER, SELECT, USERS, SHRINK
 	}
 
 	static boolean m_Quit;
@@ -106,6 +106,8 @@ public class ServerMain {
 			System.out.println("Getting List of All Connected Users:");
 			
 			break;
+		case SHRINK:
+			//TO DO: ADD CODE TO MINIMIZE CLIENTS
 		default:
 			ConsoleMessage('?', "Unknown command \"" + command[0] + "\"");
 			break;

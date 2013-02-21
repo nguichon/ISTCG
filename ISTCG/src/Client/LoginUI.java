@@ -117,7 +117,7 @@ public class LoginUI extends GameStateUI {
 	public void HandleMessage(String[] inputs) {
 		switch( MessageType.valueOf(inputs[0].toUpperCase()) ) {
 		case LOGIN_FAILED:
-			m_Error.setText( "Login has failed." );
+			m_Error.setText( "Login has failed. "+inputs[1] );
 			break;
 		default:
 			break;

@@ -96,7 +96,7 @@ public class ClientMain {
 	//***********************************
 	//private ConnectionDevice m_Server;
 	private ThreadedConnectionDevice m_Server;
-	public enum MessageType { SAY, LOGIN_SUCCESS, LOGIN_FAILED, LOGGED_IN_MESSAGE, ALREADY_LOGGED_IN; }
+	public enum MessageType { SAY, LOGIN_SUCCESS, LOGIN_FAILED, LOGGED_IN_MESSAGE, ALREADY_LOGGED_IN, NOPE; }
 	
 	private boolean MakeConnection() {
 		int port = 4567;
@@ -193,5 +193,8 @@ public class ClientMain {
     		return ((MainUI)m_UIList[m_NextGameState.ordinal()]).getMessages();
     	}
     	return "";
+    }
+    public void setBounds(Point p){
+    	m_ClientShell.setSize(p);
     }
 }

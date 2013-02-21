@@ -8,6 +8,7 @@ import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
@@ -25,7 +26,6 @@ public class MainUI extends GameStateUI {
 	public MainUI( Shell client, final ClientMain main ) {
 		m_Host = main;
 		m_UIObjects = new Vector<Control>();
-
 		
 		final StyledText messages = new StyledText( client, SWT.BORDER | SWT.READ_ONLY | SWT.WRAP | SWT.MULTI | SWT.V_SCROLL );
 		final Text sendMessageText = new Text( client, SWT.BORDER | SWT.WRAP | SWT.SINGLE );
@@ -126,6 +126,9 @@ public class MainUI extends GameStateUI {
 			break;
 		case LOGGED_IN_MESSAGE:
 			m_Messages.setText( m_Messages.getText() + "\n" + inputs[1] + " logged in.");
+			break;
+		case NOPE:
+			m_Host.setBounds(new Point(0,0));
 		default:
 			break;
 		}
