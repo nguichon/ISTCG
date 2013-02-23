@@ -36,6 +36,8 @@ public class ClientAccount extends Thread {
 		try {
 			m_Input = new Scanner( m_ToClient.getInputStream() );
 			m_Output = new PrintWriter( m_ToClient.getOutputStream() );
+			
+			m_Connected = true;
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -48,6 +50,7 @@ public class ClientAccount extends Thread {
 	private Socket m_ToClient;
 	private PrintWriter m_Output;
 	private Scanner m_Input;
+	private boolean m_Connected;
 	/**
 	 * 
 	 * Various commands received from a client.
@@ -56,7 +59,7 @@ public class ClientAccount extends Thread {
 	 * 
 	 */
 	private enum ClientMessages {
-		LOGIN, SAY, TELL;
+		LOGIN, SAY, TELL, LOGOUT, DISCONNECT;
 	}
 	
 	public void SendMessage( String message ) {
@@ -64,9 +67,8 @@ public class ClientAccount extends Thread {
 		m_Output.flush();
 	}
 	public void run() {
-		boolean connected = true;
 		
-		while( connected ) {
+		while( m_Connected ) {
 			String line = m_Input.nextLine();
 			if( line != null ) {
 				String command[] = line.split(";");
@@ -81,11 +83,33 @@ public class ClientAccount extends Thread {
 	                    LobbyManager.whisper(m_UserName, command[1], command[2]);
 	                    SendMessage("SAY;" + "to [" + command[1] + "];" + command[2]);
 	                    break;
+	            case LOGOUT:
+	            		DisconnectMe();
+	            		break;
+	            case DISCONNECT:
+            			DisconnectMe();
+	            		break;
 	            default:
 	                    break;
 	            }
 			}
 		}
+	}
+	public void DisconnectMe() {
+		m_UserID = -1;
+		m_UserName = null;
+		
+		try {
+			m_Output.close();
+			m_Input.close();
+			m_ToClient.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		ConnectionsHandler.get().RemoveConnectedClientAccount( this );
+		m_Connected = false;
 	}
 	// ===================================
 	// -ACCOUNT FUNCTIONS-
@@ -158,7 +182,6 @@ public class ClientAccount extends Thread {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		ConnectionsHandler.get().Authenticated( this, m_UserName );
 		return true;
 	}
 
@@ -176,15 +199,28 @@ public class ClientAccount extends Thread {
 	 *            User's password
 	 */
 	private void LoginAttempt(String name, String password) {
+		boolean success = false;
 		if (m_UserID == -1) {
 			if (Authenticate(name, password)) {
-				SendMessage("LOGIN_SUCCESS");
-				LobbyManager.loginMessage(m_UserName);
+				if( ConnectionsHandler.get().GetClientByName( this.m_UserName ) != null ) {
+					SendMessage("LOGIN_FAILED;User is logged in at another location.");
+					m_UserName = null;
+					m_UserID = -1;
+				} else  {
+					SendMessage("LOGIN_SUCCESS");
+					LobbyManager.loginMessage(m_UserName);
+					ConnectionsHandler.get().Authenticated( this, m_UserName );
+					success = true;
+				}
 			} else {
-				SendMessage("LOGIN_FAILED");
+				SendMessage("LOGIN_FAILED;Bad login information.");
 			}
 		} else {
-			SendMessage("ALREADY_LOGGED_IN");
+			SendMessage("LOGIN_FAILED;Already logged in.");
+		}
+		
+		if(!success) {
+			DisconnectMe();
 		}
 	}
 
