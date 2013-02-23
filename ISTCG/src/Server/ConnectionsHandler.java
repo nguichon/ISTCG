@@ -85,7 +85,7 @@ public class ConnectionsHandler extends Thread {
 	}
 	
 	public void RemoveAuthenticatedClientAccount( ClientAccount ca ) {
-		m_AuthenticatedClient.remove( ca );
+		m_AuthenticatedClient.remove( ca.getUserName() );
 	}
 	public void RemoveConnectedClientAccount( ClientAccount ca ) {
 		RemoveAuthenticatedClientAccount( ca );
@@ -94,6 +94,11 @@ public class ConnectionsHandler extends Thread {
 	
 	public void SendMessageToAll( String message ) {
 		for(ClientAccount ca : m_ConnectedClients) {
+			ca.SendMessage( message );
+		}
+	}
+	public void SendMessageToAllAuthenticated( String message ) {
+		for(ClientAccount ca : m_AuthenticatedClient.values()) {
 			ca.SendMessage( message );
 		}
 	}

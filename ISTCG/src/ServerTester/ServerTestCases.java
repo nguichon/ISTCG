@@ -52,5 +52,45 @@ public class ServerTestCases {
 		pw.flush();
 		
 		Assert.assertEquals("LOGIN_SUCCESS", s.nextLine());
+		
+		pw.println("DISCONNECT");
+		pw.flush();
+	}
+	
+	@Test
+	public void testLoginGoodCredentialsMultipleLoginFails() {
+		Socket client1 = makeConnection();
+		Socket client2 = makeConnection();
+		
+		PrintWriter pw1 = null;
+		Scanner s1 = null;
+
+		PrintWriter pw2 = null;
+		Scanner s2 = null;
+		
+		try {
+			pw1 = new PrintWriter(client1.getOutputStream());
+			s1 = new Scanner(client1.getInputStream());
+			pw2 = new PrintWriter(client2.getOutputStream());
+			s2 = new Scanner(client2.getInputStream());
+		} catch (IOException e) {
+			Assert.fail("Failed to create Scanner or Writer");
+		}
+		
+		pw1.println("LOGIN;" + m_User + ";" + m_Pass);
+		pw1.flush();
+		
+		Assert.assertEquals("LOGIN_SUCCESS", s1.nextLine());
+		
+		pw2.println("LOGIN;" + m_User + ";" + m_Pass);
+		pw2.flush();
+		
+		Assert.assertEquals("LOGIN_FAILED;User is logged in at another location.", s2.nextLine());
+		
+		pw1.println("DISCONNECT");
+		pw1.flush();
+		
+		pw2.println("DISCONNECT");
+		pw2.flush();
 	}
 }

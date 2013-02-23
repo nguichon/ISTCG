@@ -3,12 +3,12 @@ package Server;
 public class LobbyManager {
 
 	public static void say(String userName, String message) {
-		ConnectionsHandler.get().SendMessageToAll("SAY;" + userName + ";" + message);
+		ConnectionsHandler.get().SendMessageToAllAuthenticated("SAY;" + userName + ";" + message);
 		//MessageHandler.get().SayToAll("SAY;" + userName + ";" + message);
 	}
 
 	public static void loginMessage(String userName) {
-		ConnectionsHandler.get().SendMessageToAll("LOGGED_IN_MESSAGE;" + userName);
+		ConnectionsHandler.get().SendMessageToAllAuthenticated("LOGGED_IN_MESSAGE;" + userName);
 		//MessageHandler.get().SayToAll("LOGGED_IN_MESSAGE;" + userName);
 	}
 	
