@@ -8,8 +8,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-import Shared.ThreadedConnectionDevice;
-
 public class ConnectionsHandler extends Thread {
 	private ArrayList<ClientAccount> m_ConnectedClients = null;
 	private Map<String, ClientAccount> m_AuthenticatedClient = null;
