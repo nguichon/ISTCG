@@ -1,6 +1,6 @@
 package Server;
 
-public class CardBase extends Shared.CardBase {
+public class ServerCardBase extends Shared.CardBase {
 
 	@Override
 	public void LoadCard(String path) {

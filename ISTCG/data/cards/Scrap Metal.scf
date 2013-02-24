@@ -1,0 +1,5 @@
+<CardType>Resource</CardType>
+<Script event="play" file="add_resource">
+	<Parameter name="resource" value="metal" />
+	<Parameter name="amount" value="1" />
+</Script>

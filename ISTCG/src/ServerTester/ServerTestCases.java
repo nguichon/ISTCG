@@ -51,7 +51,7 @@ public class ServerTestCases {
 		pw.println("LOGIN;" + m_User + ";" + m_Pass);
 		pw.flush();
 		
-		Assert.assertEquals("LOGIN_SUCCESS", s.nextLine());
+		Assert.assertEquals("LOGIN_SUCCESS", s.nextLine().split(";")[0]);
 		
 		pw.println("DISCONNECT");
 		pw.flush();
@@ -80,7 +80,7 @@ public class ServerTestCases {
 		pw1.println("LOGIN;" + m_User + ";" + m_Pass);
 		pw1.flush();
 		
-		Assert.assertEquals("LOGIN_SUCCESS", s1.nextLine());
+		Assert.assertEquals("LOGIN_SUCCESS", s1.nextLine().split(";")[0]);
 		
 		pw2.println("LOGIN;" + m_User + ";" + m_Pass);
 		pw2.flush();

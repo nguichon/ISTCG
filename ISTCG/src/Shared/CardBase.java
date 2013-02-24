@@ -23,5 +23,7 @@ public abstract class CardBase implements SharedObject {
 	public int GetTime() { return m_Time; };
 	public int GetMetal() { return m_Metal; };
 	public int GetEnergy() { return m_Energy; };
-	public int GetTech() { return m_Tech; };
+	public int GetTech() { return m_Tech; }
+
+	public int getID() { return m_CardID; };
 }

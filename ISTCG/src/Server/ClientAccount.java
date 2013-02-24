@@ -219,7 +219,7 @@ public class ClientAccount extends Thread {
 					m_UserName = null;
 					m_UserID = -1;
 				} else {
-					SendMessage("LOGIN_SUCCESS");
+					SendMessage( "LOGIN_SUCCESS;" + m_UserID );
 					LobbyManager.loginMessage(m_UserName);
 					ConnectionsHandler.get().Authenticated(this, m_UserName);
 					success = true;
