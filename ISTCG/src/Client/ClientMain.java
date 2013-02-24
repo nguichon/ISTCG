@@ -96,7 +96,7 @@ public class ClientMain {
 	//***********************************
 	//private ConnectionDevice m_Server;
 	private ThreadedConnectionDevice m_Server;
-	public enum MessageType { SAY, LOGIN_SUCCESS, LOGIN_FAILED, LOGGED_IN_MESSAGE, ALREADY_LOGGED_IN, NOPE; }
+	public enum MessageType { SAY, LOGIN_SUCCESS, LOGIN_FAILED, LOGGED_IN_MESSAGE, ALREADY_LOGGED_IN, NOPE, PLAYERJOINED, JOINED; }
 	
 	private boolean MakeConnection() {
 		int port = 4567;
@@ -122,7 +122,10 @@ public class ClientMain {
 		
 		//System.out.println(s);
 		if(s.equals("/tell"))
-			m_Server.sendData( "TELL;" + text.substring(5) );
+			m_Server.sendData( "TELL;" + text.substring(6) );
+		else if(s.equals("/chal")){
+			m_Server.sendData( "CHALLENGE;"+text.substring(6));
+		}
 		else
 			m_Server.sendData( "SAY;" + text );
 	}
