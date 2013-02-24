@@ -27,18 +27,18 @@ public class ClientAccount extends Thread {
 	public ClientAccount(Socket client) {
 		m_UserID = -1;
 		m_ToClient = client;
-		
+
 		try {
-			m_Input = new Scanner( m_ToClient.getInputStream() );
-			m_Output = new PrintWriter( m_ToClient.getOutputStream() );
-			
+			m_Input = new Scanner(m_ToClient.getInputStream());
+			m_Output = new PrintWriter(m_ToClient.getOutputStream());
+
 			m_Connected = true;
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
-	
+
 	// ===================================
 	// -NETWORK FUNCTIONS-
 	// ===================================
@@ -46,6 +46,7 @@ public class ClientAccount extends Thread {
 	private PrintWriter m_Output;
 	private Scanner m_Input;
 	private boolean m_Connected;
+
 	/**
 	 * 
 	 * Various commands received from a client.
@@ -54,52 +55,62 @@ public class ClientAccount extends Thread {
 	 * 
 	 */
 	private enum ClientMessages {
-		LOGIN, SAY, TELL, LOGOUT, DISCONNECT;
+		LOGIN, SAY, TELL, LOGOUT, DISCONNECT, CHALLENGE;
 	}
-	
-	public void SendMessage( String message ) {
-		m_Output.println( message );
+
+	public void SendMessage(String message) {
+		m_Output.println(message);
 		m_Output.flush();
 	}
+
 	public void run() {
-		
-		while( m_Connected ) {
+
+		while (m_Connected) {
 			try {
 				String line = m_Input.nextLine();
-				if( line != null ) {
+				if (line != null) {
 					String command[] = line.split(";");
-		            switch( ClientMessages.valueOf( command[0].toUpperCase() ) ) {
-		            case LOGIN:
-		                    LoginAttempt(command[1], command[2]);
-		                    break;
-		            case SAY:
-		                    LobbyManager.say(m_UserName, command[1]);
-		                    break;
-		            case TELL:
-		                    LobbyManager.whisper(m_UserName, command[1], command[2]);
-		                    SendMessage("SAY;" + "to [" + command[1] + "];" + command[2]);
-		                    break;
-		            case LOGOUT:
-		            		DisconnectMe();
-		            		break;
-		            case DISCONNECT:
-	            			DisconnectMe();
-		            		break;
-		            default:
-		                    break;
-		            }
+					switch (ClientMessages.valueOf(command[0].toUpperCase())) {
+					case LOGIN:
+						LoginAttempt(command[1], command[2]);
+						break;
+					case SAY:
+						LobbyManager.say(m_UserName, command[1]);
+						break;
+					case TELL:
+						LobbyManager
+								.whisper(m_UserName, command[1], command[2]);
+						SendMessage("SAY;" + "to [" + command[1] + "];"
+								+ command[2]);
+						break;
+					case LOGOUT:
+						DisconnectMe();
+						break;
+					case DISCONNECT:
+						DisconnectMe();
+						break;
+					case CHALLENGE:
+						ClientAccount opponent = ConnectionsHandler.get().GetClientByName( command[1] );
+						int gameID = GameManager.get().CreateGame( this, opponent );
+						SendMessage( "JOIN;" + gameID );
+						opponent.SendMessage( "JOIN;" + gameID );
+						break;
+					default:
+						break;
+					}
 				}
 			} catch (Exception e) {
 				DisconnectMe();
 			}
 		}
 	}
+
 	public void DisconnectMe() {
-		ConnectionsHandler.get().RemoveConnectedClientAccount( this );
-		
+		ConnectionsHandler.get().RemoveConnectedClientAccount(this);
+
 		m_UserID = -1;
 		m_UserName = null;
-		
+
 		try {
 			m_Output.close();
 			m_Input.close();
@@ -108,9 +119,10 @@ public class ClientAccount extends Thread {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+
 		m_Connected = false;
 	}
+
 	// ===================================
 	// -ACCOUNT FUNCTIONS-
 	// ===================================
@@ -170,7 +182,7 @@ public class ClientAccount extends Thread {
 			if (check(password_text, rs.getString("password"))) {
 				m_UserID = rs.getInt("id");
 				m_UserName = rs.getString("user_name");
-				
+
 			} else {
 				m_UserID = -1;
 				return false;
@@ -185,7 +197,7 @@ public class ClientAccount extends Thread {
 		return true;
 	}
 
-	public String getUserName(){
+	public String getUserName() {
 		return this.m_UserName;
 	}
 
@@ -202,14 +214,14 @@ public class ClientAccount extends Thread {
 		boolean success = false;
 		if (m_UserID == -1) {
 			if (Authenticate(name, password)) {
-				if( ConnectionsHandler.get().GetClientByName( this.m_UserName ) != null ) {
+				if (ConnectionsHandler.get().GetClientByName(this.m_UserName) != null) {
 					SendMessage("LOGIN_FAILED;User is logged in at another location.");
 					m_UserName = null;
 					m_UserID = -1;
-				} else  {
+				} else {
 					SendMessage("LOGIN_SUCCESS");
 					LobbyManager.loginMessage(m_UserName);
-					ConnectionsHandler.get().Authenticated( this, m_UserName );
+					ConnectionsHandler.get().Authenticated(this, m_UserName);
 					success = true;
 				}
 			} else {
@@ -218,8 +230,8 @@ public class ClientAccount extends Thread {
 		} else {
 			SendMessage("LOGIN_FAILED;Already logged in.");
 		}
-		
-		if(!success) {
+
+		if (!success) {
 			DisconnectMe();
 		}
 	}

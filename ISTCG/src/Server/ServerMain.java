@@ -37,11 +37,6 @@ public class ServerMain {
 		ConnectionsHandler.get().start();
 
 		ConsoleMessage('-', "Finished creating server port...");
-		
-		GameManager.get().GetNewGameNumber();
-		GameManager.get().GetNewGameNumber();
-		GameManager.get().GetNewGameNumber();
-		GameManager.get().GetNewGameNumber();
 
 		// Exit "while" loop setup
 		Scanner consoleInput = new Scanner(System.in);
