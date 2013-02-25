@@ -104,6 +104,7 @@ public class ClientAccount extends Thread {
 	}
 
 	public void DisconnectMe() {
+		if( m_UserName != null ) { ServerMain.ConsoleMessage('-', m_UserName + " logged out."); } else { ServerMain.ConsoleMessage('-', "Unknown user disconnected"); }
 		ConnectionsHandler.get().RemoveConnectedClientAccount(this);
 
 		m_UserID = -1;
@@ -217,6 +218,7 @@ public class ClientAccount extends Thread {
 					m_UserName = null;
 					m_UserID = -1;
 				} else {
+					ServerMain.ConsoleMessage('-', m_UserName + " logged in.");
 					SendMessage( "LOGIN_SUCCESS;" + m_UserID );
 					LobbyManager.loginMessage(m_UserName);
 					ConnectionsHandler.get().Authenticated(this, m_UserName);
