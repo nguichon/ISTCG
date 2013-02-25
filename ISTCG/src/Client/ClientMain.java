@@ -96,7 +96,7 @@ public class ClientMain {
 	//***********************************
 	//private ConnectionDevice m_Server;
 	private ThreadedConnectionDevice m_Server;
-	public enum MessageType { SAY, LOGIN_SUCCESS, LOGIN_FAILED, LOGGED_IN_MESSAGE, ALREADY_LOGGED_IN, NOPE, PLAYERJOINED, JOINED; }
+	public enum MessageType { SAY, LOGIN_SUCCESS, LOGIN_FAILED, LOGGED_IN_MESSAGE, ALREADY_LOGGED_IN, NOPE, PLAYERJOINED, JOIN; }
 	
 	private boolean MakeConnection() {
 		int port = 4567;
@@ -145,6 +145,12 @@ public class ClientMain {
 			break;
 		case LOGIN_FAILED:
 			m_UIList[GameState.LOGIN.ordinal()].HandleMessage( inputs );
+			break;
+		case JOIN:
+			m_NextGameState = GameState.GAME;
+			break;
+		case PLAYERJOINED:
+			((GameUI)m_UIList[GameState.GAME.ordinal()]).initializeGame(inputs[3], Integer.valueOf(inputs[1]));
 			break;
 		default:
 			break;
@@ -199,5 +205,8 @@ public class ClientMain {
     }
     public void setBounds(Point p){
     	m_ClientShell.setSize(p);
+    }
+    public void sendData(String s){
+    	m_Server.sendData(s);
     }
 }

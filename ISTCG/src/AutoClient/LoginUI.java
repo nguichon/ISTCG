@@ -19,8 +19,8 @@ import Client.ClientMain.MessageType;
 public class LoginUI extends GameStateUI {
 	Label m_Error;
 	Label labelError = null;
-	public LoginUI( Shell client, AutoClientMain main ) {
-		m_Host = main;
+	public LoginUI( Shell client, AutoClientMain clientMain ) {
+		m_Host = clientMain;
 		m_UIObjects = new Vector<Control>();
 		
 		final Button loginButton = new Button(client, SWT.PUSH);
