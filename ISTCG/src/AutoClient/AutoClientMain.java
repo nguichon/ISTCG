@@ -7,7 +7,7 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
-
+import AutoClient.*;
 import Shared.ThreadedConnectionDevice;
 
 public class AutoClientMain {
@@ -18,6 +18,11 @@ public class AutoClientMain {
 	private GameStateUI[] m_UIList;
 	private GameState m_NextGameState;
 	private GameState m_CurrentGameState;
+	private boolean canLogin = false;
+	private boolean canGetMain = false;
+	private boolean canTalk = false;
+	private boolean canGame = false;
+	private int stage = 0; //at login
 	
 	public static void main(String[] args) {
 		Display display = new Display();
@@ -58,6 +63,16 @@ public class AutoClientMain {
         		  
         		  m_UIList[m_NextGameState.ordinal()].Enable();
         		  m_NextGameState = GameState.NOCHANGE;
+        		//Try to log in
+        		  if(stage == 0){
+        			  System.out.println("TRYING TO LOG IN...");
+            		  this.Login("user2", "password");
+            		  //move stage
+            		  stage++;
+        		  } else {
+        			  //Something has gone wrong.
+        			  System.err.println("I have reverted to the login screen this should not happen.");
+        		  }
         		  
         		  break;
         	  case GAME:
@@ -66,6 +81,10 @@ public class AutoClientMain {
         		  
         		  m_UIList[m_NextGameState.ordinal()].Enable();
         		  m_NextGameState = GameState.NOCHANGE;
+        		  if(stage == 2){
+        			  System.out.println("MAIN WORKS.");
+        			  canGetMain=true;
+        		  }
         		  break;
         	  case MAIN:
         		  m_UIList[m_CurrentGameState.ordinal()].Disable();
@@ -75,6 +94,32 @@ public class AutoClientMain {
         		  //this.appendText("Testing this text box");
         		  //END TESTING
         		  m_NextGameState = GameState.NOCHANGE;
+        		//try to confirm this is the main
+        		  if(stage!=0){
+        			  //We have logged in
+        			  canLogin=true;
+        		  }
+        		  if(stage == 1){
+        			  System.out.println("WE ARE IN THE MAIN");
+        			  this.SendTextMessage("TESTING THAT I, THE AUTOCLIENT CAN TALK");
+        			  //for loop for some stall until server can respond
+        			  int t = 0; //T cycles
+        			  while(((MainUI)this.m_UIList[m_NextGameState.MAIN.ordinal()]).getMessages().contains("TESTING THAT I")){
+        				  t = (2*t+2);
+        				  t/=2;
+        				  if(t==Integer.MAX_VALUE)
+        					  break;
+        			  }
+        			  System.out.println("T cycles to talk: "+t);
+        			  canTalk=true;
+        			  //change to game
+        			  stage++;
+        			  this.changeState(GameState.GAME);
+        		  }
+        		  else {
+        			  //Something has gone wrong
+        			  System.err.println("Error in Main");
+        		  }
         		  break;
         		  
         	  case STORE:
@@ -86,6 +131,10 @@ public class AutoClientMain {
        		  default:
        			  break;
         	  }
+        	  /*
+        	   * Attempt login test
+        	   *
+        	   */
             display.sleep();
           }
         }
@@ -96,7 +145,7 @@ public class AutoClientMain {
 	//***********************************
 	//private ConnectionDevice m_Server;
 	private ThreadedConnectionDevice m_Server;
-	public enum MessageType { SAY, LOGIN_SUCCESS, LOGIN_FAILED, LOGGED_IN_MESSAGE, ALREADY_LOGGED_IN, NOPE; }
+	public enum MessageType { SAY, LOGIN_SUCCESS, LOGIN_FAILED, LOGGED_IN_MESSAGE, ALREADY_LOGGED_IN, NOPE, PLAYERJOINED, JOINED; }
 	
 	private boolean MakeConnection() {
 		int port = 4567;
@@ -122,7 +171,10 @@ public class AutoClientMain {
 		
 		//System.out.println(s);
 		if(s.equals("/tell"))
-			m_Server.sendData( "TELL;" + text.substring(5) );
+			m_Server.sendData( "TELL;" + text.substring(6) );
+		else if(s.equals("/chal")){
+			m_Server.sendData( "CHALLENGE;"+text.substring(6));
+		}
 		else
 			m_Server.sendData( "SAY;" + text );
 	}

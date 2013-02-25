@@ -26,7 +26,7 @@ public class GameUI extends GameStateUI {
 	int graveCount = 0;
 	int deckCount = 0;
 	int handCount = 0;
-	
+	int gameID = 0;
 	/*
 	 * END GAME STATE STUFF
 	 */
@@ -60,7 +60,7 @@ public class GameUI extends GameStateUI {
 		final Button drawCard = new Button (client, SWT.PUSH);
 		final Button endTurn = new Button(client, SWT.PUSH);
 		
-		drawCard.setBounds(450, 450, 50, 25);
+		drawCard.setBounds(450, 450, 60, 25);
 		drawCard.setAlignment(SWT.CENTER);
 		drawCard.setText("Draw");
 		
@@ -105,6 +105,14 @@ public class GameUI extends GameStateUI {
 		hand.setText(Integer.toString(handCount));
 		hand.setBounds(40,430,100,100);
 		
+		Label foeName = new Label(client, SWT.READ_ONLY);
+		foeName.setAlignment(SWT.CENTER);
+		Label foeHand = new Label(client, SWT.READ_ONLY);
+		foeHand.setAlignment(SWT.CENTER);
+		Label foeDeck = new Label(client, SWT.READ_ONLY);
+		foeDeck.setAlignment(SWT.CENTER);
+		Label foeGrave = new Label(client, SWT.READ_ONLY);
+		foeGrave.setAlignment(SWT.CENTER);
 		
 		m_UIObjects.add(gameTitle); //0
 		m_UIObjects.add(drawCard); //1
@@ -112,6 +120,15 @@ public class GameUI extends GameStateUI {
 		m_UIObjects.add(grave); //3
 		m_UIObjects.add(deck); //4
 		m_UIObjects.add(hand);//5
+		
+		/*
+		 * Your mortal enemy's board state
+		 * 
+		 */
+		m_UIObjects.add(foeName); //6
+		m_UIObjects.add(foeDeck); //7
+		m_UIObjects.add(foeGrave); //8
+		m_UIObjects.add(foeHand); //9
 		
 		for( Control w : m_UIObjects ) {
 			w.setVisible(false);
@@ -136,10 +153,13 @@ public class GameUI extends GameStateUI {
 		
 	}
 	
-	public void initializeGame(String client1, String client2){
+	public void initializeGame(String client2, int gameID){
 		/*
 		 * Make game
 		 */
+		((Label) m_UIObjects.get(6)).setText(client2);
+		((Label) m_UIObjects.get(6)).setBounds(25, 50, 45, 150);
+		
 	}
 	
 	/*
