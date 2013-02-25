@@ -2,6 +2,8 @@ package Server;
 
 import java.util.ArrayList;
 
+import Shared.GameZones;
+
 public class Game {
 	private int m_GameID;
 	ArrayList<GamePlayer> m_Players;
@@ -11,6 +13,11 @@ public class Game {
 		
 		m_Players = new ArrayList<GamePlayer>();
 		for(ClientAccount ca : players) { AddToGame( ca ); }
+
+		for(ClientAccount ca : players ) {
+			SendMessageToAllPlayers("UPDATE;" + m_GameID + ";" + ca.getId() + ";" + GameZones.DECK + ";50");
+			SendMessageToAllPlayers("UPDATE;" + m_GameID + ";" + ca.getId() + ";" + GameZones.HAND + ";8");
+		}
 	}
 	
 	public void AddToGame( ClientAccount ca ) {
@@ -28,6 +35,10 @@ public class Game {
 		for( GamePlayer gp : m_Players ) {
 			gp.getClient().SendMessage( message );
 		}
+	}
+	
+	public void LoadDeck( GamePlayer gp, String decklist ) {
+		
 	}
 	
 	public int GetID() {

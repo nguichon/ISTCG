@@ -10,7 +10,8 @@ public class CardBase extends Shared.CardBase {
 	public String GetName() { return m_CardName; }
 	
 	@Override
-	public void LoadCard(String path) {
+	public CardBase LoadCard(String path) {
+		return null;
 		// TODO Auto-generated method stub
 		
 	}
