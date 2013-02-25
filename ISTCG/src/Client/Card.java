@@ -28,14 +28,17 @@ public class Card implements NetworkObject {
     // private int costC;
 
     // private Image m_CardImage;
+    private Display display = null;
+    private  Shell shell = null;
+    private  Canvas canvas = null;
+    private GC gc = null;
 
-    private static Display display = new Display();
-    private static Shell shell = new Shell(display);
-    private static Canvas canvas = new Canvas(shell, 0);
-    private static GC gc = new GC(canvas);
-
-    public Card(int cardID, String cardname, String cardtext,
+    public Card(Display display,int cardID, String cardname, String cardtext,
             StatBlock... stuff) {
+    	this.display=display;
+        shell = new Shell(display);
+        canvas = new Canvas(shell, 0);
+        gc = new GC(canvas);
         SetNetworkID(cardID);
         SetCardName(cardname);
         SetCardText(cardtext);
@@ -76,24 +79,24 @@ public class Card implements NetworkObject {
 
     public void SetCanvas() {
         // loading images
-        Image cardBL = new Image(display, "card_border_corner_bottom_left.png");
-        Image cardBR = new Image(display, "card_border_corner_bottom_right.png");
-        Image cardTL = new Image(display, "card_border_corner_top_left.png");
-        Image cardTR = new Image(display, "card_border_corner_top_right.png");
-        Image cardL = new Image(display, "card_border_edge_left.png");
-        Image cardR = new Image(display, "card_border_edge_right.png");
-        Image cardT = new Image(display, "card_border_edge_top.png");
-        Image cardB = new Image(display, "card_border_edge_bottom.png");
-        Image textBL = new Image(display, "text_box_corner_bottom_left.png");
-        Image textBR = new Image(display, "text_box_corner_bottom_right.png");
-        Image textTL = new Image(display, "text_box_corner_top_left.png");
-        Image textTR = new Image(display, "text_box_corner_top_right.png");
-        Image textL = new Image(display, "text_box_edge_left.png");
-        Image textR = new Image(display, "text_box_edge_righ.png");
-        Image textT = new Image(display, "text_box_edge_top.png");
-        Image textB = new Image(display, "text_box_edge_bottom.png");
-        Image textM = new Image(display, "text_box_body.png");
-        String png = m_CardName + ".png";
+        Image cardBL = new Image(display, "ISTCG/card_border_corner_bottom_left.png");
+        Image cardBR = new Image(display, "ISTCG/card_border_corner_bottom_right.png");
+        Image cardTL = new Image(display, "ISTCG/card_border_corner_top_left.png");
+        Image cardTR = new Image(display, "ISTCG/card_border_corner_top_right.png");
+        Image cardL = new Image(display, "ISTCG/card_border_edge_left.png");
+        Image cardR = new Image(display, "ISTCG/card_border_edge_right.png");
+        Image cardT = new Image(display, "ISTCG/card_border_edge_top.png");
+        Image cardB = new Image(display, "ISTCG/card_border_edge_bottom.png");
+        Image textBL = new Image(display, "ISTCG/text_box_corner_bottom_left.png");
+        Image textBR = new Image(display, "ISTCG/text_box_corner_bottom_right.png");
+        Image textTL = new Image(display, "ISTCG/text_box_corner_top_left.png");
+        Image textTR = new Image(display, "ISTCG/text_box_corner_top_right.png");
+        Image textL = new Image(display, "ISTCG/text_box_edge_left.png");
+        Image textR = new Image(display, "ISTCG/text_box_edge_righ.png");
+        Image textT = new Image(display, "ISTCG/text_box_edge_top.png");
+        Image textB = new Image(display, "ISTCG/text_box_edge_bottom.png");
+        Image textM = new Image(display, "ISTCG/text_box_body.png");
+        String png = "ISTCG/"+"text_box_body" + ".png";
         Image back = new Image(display, png);
 
         // prepare canvas

@@ -1,5 +1,6 @@
 package Client;
 
+import java.util.ArrayList;
 import java.util.Vector;
 
 import org.eclipse.swt.SWT;
@@ -11,6 +12,7 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 
 import Shared.GameZones;
+import Shared.StatBlock;
 
 
 /*
@@ -30,6 +32,8 @@ public class GameUI extends GameStateUI {
 	int handCount = 0;
 	int gameID = 0;
 	int foeID = 0;
+	Shell client = null;
+	ArrayList<Card> cards = new ArrayList<Card>();
 	/*
 	 * END GAME STATE STUFF
 	 */
@@ -40,7 +44,7 @@ public class GameUI extends GameStateUI {
 
 	
 	public GameUI( Shell client, ClientMain main ) {
-		
+		this.client=client;
 		m_Host = main;
 		final GameUI m_This = this;
 		m_UIObjects = new Vector<Control>();
@@ -143,6 +147,7 @@ public class GameUI extends GameStateUI {
 		for( Control w : m_UIObjects ) {
 			w.setVisible(false);
 		}
+		this.cardshide();
 	}
 
 	@Override
@@ -150,6 +155,7 @@ public class GameUI extends GameStateUI {
 		for( Control w : m_UIObjects ) {
 			w.setVisible(true);
 		}
+		this.cardsshow();
 	}
 	@Override
 	public void HandleMessage(String[] inputs) {
@@ -222,11 +228,26 @@ public class GameUI extends GameStateUI {
 		
 	}
 
-	public void addCard(String string, String string2, String string3) {
+	public void addCard(String pid, String val, String zone) {
 		// TODO Auto-generated method stub
 		
+		Card tmp = new Card(m_Host.getDisplay(),000,val,val);
+		tmp.Draw().setBounds(200, 145, 95, 95);
+		cards.add(tmp);
+		
+		
 	}
-
+	
+	public void cardshide(){
+		for(Card c:cards){
+			c.Draw().setVisible(false);
+		}
+	}
+	public void cardsshow(){
+		for(Card c:cards){
+			c.Draw().setVisible(true);
+		}
+	}
 
 	
 	
