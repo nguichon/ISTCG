@@ -44,6 +44,7 @@ public class Card implements NetworkObject {
         for (int i = 0; i < len; i++) {
             m_Stats[i] = stuff[i];
         }
+        SetCanvas();
 
     }
 

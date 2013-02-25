@@ -18,7 +18,7 @@ public class ClientMain {
 	private GameStateUI[] m_UIList;
 	private GameState m_NextGameState;
 	private GameState m_CurrentGameState;
-	
+	private int ID = 0;
 	public static void main(String[] args) {
 		Display display = new Display();
         new ClientMain(display);
@@ -96,7 +96,7 @@ public class ClientMain {
 	//***********************************
 	//private ConnectionDevice m_Server;
 	private ThreadedConnectionDevice m_Server;
-	public enum MessageType { SAY, LOGIN_SUCCESS, LOGIN_FAILED, LOGGED_IN_MESSAGE, ALREADY_LOGGED_IN, NOPE, PLAYERJOINED, JOIN; }
+	public enum MessageType { SAY, LOGIN_SUCCESS, LOGIN_FAILED, LOGGED_IN_MESSAGE, ALREADY_LOGGED_IN, NOPE, PLAYERJOINED, JOIN, UPDATEZONE, ADDCARD, REMOVECARD, CREATECARD; }
 	
 	private boolean MakeConnection() {
 		int port = 4567;
@@ -142,6 +142,7 @@ public class ClientMain {
 			break;
 		case LOGIN_SUCCESS:
 			m_NextGameState = GameState.MAIN;
+			ID = Integer.valueOf(inputs[1]);
 			break;
 		case LOGIN_FAILED:
 			m_UIList[GameState.LOGIN.ordinal()].HandleMessage( inputs );
@@ -150,7 +151,19 @@ public class ClientMain {
 			m_NextGameState = GameState.GAME;
 			break;
 		case PLAYERJOINED:
-			((GameUI)m_UIList[GameState.GAME.ordinal()]).initializeGame(inputs[3], Integer.valueOf(inputs[1]));
+			((GameUI)m_UIList[GameState.GAME.ordinal()]).initializeGame(inputs[3],Integer.valueOf(inputs[2]), Integer.valueOf(inputs[1]));
+			break;
+		case UPDATEZONE:
+			((GameUI)m_UIList[GameState.GAME.ordinal()]).updateZone(inputs[1],inputs[2],inputs[3]);
+			break;
+		case ADDCARD:
+			((GameUI)m_UIList[GameState.GAME.ordinal()]).addCard(inputs[1],inputs[2],inputs[3]);
+			break;
+		case REMOVECARD:
+			
+			break;
+		case CREATECARD:
+			
 			break;
 		default:
 			break;
@@ -208,5 +221,8 @@ public class ClientMain {
     }
     public void sendData(String s){
     	m_Server.sendData(s);
+    }
+    public int getID(){
+    	return ID;
     }
 }
