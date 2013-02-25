@@ -18,6 +18,7 @@ public class ClientMain {
 	private GameStateUI[] m_UIList;
 	private GameState m_NextGameState;
 	private GameState m_CurrentGameState;
+	private Display display;
 	private int ID = 0;
 	public static void main(String[] args) {
 		Display display = new Display();
@@ -25,6 +26,7 @@ public class ClientMain {
         display.dispose();
 	}
 	public ClientMain(Display display) {
+		this.display=display;
         m_ClientShell = new Shell(display, SWT.SHELL_TRIM & (~SWT.RESIZE));
         m_ClientShell.setText("ISTCG");
         
@@ -96,7 +98,7 @@ public class ClientMain {
 	//***********************************
 	//private ConnectionDevice m_Server;
 	private ThreadedConnectionDevice m_Server;
-	public enum MessageType { SAY, LOGIN_SUCCESS, LOGIN_FAILED, LOGGED_IN_MESSAGE, ALREADY_LOGGED_IN, NOPE, PLAYERJOINED, JOIN, UPDATEZONE, ADDCARD, REMOVECARD, CREATECARD; }
+	public enum MessageType { SAY, LOGIN_SUCCESS, LOGIN_FAILED, LOGGED_IN_MESSAGE, ALREADY_LOGGED_IN, NOPE, PLAYERJOINED, JOIN, UPDATE, ADDCARD, REMOVECARD, CREATECARD; }
 	
 	private boolean MakeConnection() {
 		int port = 4567;
@@ -153,7 +155,7 @@ public class ClientMain {
 		case PLAYERJOINED:
 			((GameUI)m_UIList[GameState.GAME.ordinal()]).initializeGame(inputs[3],Integer.valueOf(inputs[2]), Integer.valueOf(inputs[1]));
 			break;
-		case UPDATEZONE:
+		case UPDATE:
 			((GameUI)m_UIList[GameState.GAME.ordinal()]).updateZone(inputs[1],inputs[2],inputs[3]);
 			break;
 		case ADDCARD:
@@ -224,5 +226,8 @@ public class ClientMain {
     }
     public int getID(){
     	return ID;
+    }
+    public Display getDisplay(){
+    	return this.display;
     }
 }
