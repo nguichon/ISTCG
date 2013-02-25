@@ -10,6 +10,8 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 
+import Shared.GameZones;
+
 
 /*
  * GAME UI
@@ -27,6 +29,7 @@ public class GameUI extends GameStateUI {
 	int deckCount = 0;
 	int handCount = 0;
 	int gameID = 0;
+	int foeID = 0;
 	/*
 	 * END GAME STATE STUFF
 	 */
@@ -153,12 +156,13 @@ public class GameUI extends GameStateUI {
 		
 	}
 	
-	public void initializeGame(String client2, int gameID){
+	public void initializeGame(String client2,int foeID, int gameID){
 		/*
 		 * Make game
 		 */
 		((Label) m_UIObjects.get(6)).setText(client2);
 		((Label) m_UIObjects.get(6)).setBounds(25, 50, 45, 150);
+		this.foeID=foeID;
 		
 	}
 	
@@ -194,6 +198,28 @@ public class GameUI extends GameStateUI {
 		t.setText(Integer.toString(deckCount));
 		t = (Label) m_UIObjects.get(3);
 		t.setText(Integer.toString(graveCount));
+	}
+
+	public void updateZone(String player, String zone, String val) {
+	int pid = Integer.valueOf(player);
+	switch (GameZones.valueOf(zone)){
+	case HAND:
+		if(pid==foeID){
+			((Label)m_UIObjects.get(9)).setText(val);
+		}
+		if(pid==m_Host.getID()){
+			((Label)m_UIObjects.get(5)).setText(val);
+		}
+		break;
+	case DECK:
+		if(pid==foeID){
+			((Label)m_UIObjects.get(7)).setText(val);
+		}
+		if(pid==m_Host.getID()){
+			((Label)m_UIObjects.get(4)).setText(val);
+		}
+	}
+		
 	}
 	
 	
