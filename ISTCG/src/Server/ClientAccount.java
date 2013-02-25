@@ -92,8 +92,6 @@ public class ClientAccount extends Thread {
 					case CHALLENGE:
 						ClientAccount opponent = ConnectionsHandler.get().GetClientByName( command[1] );
 						int gameID = GameManager.get().CreateGame( this, opponent );
-						SendMessage( "JOIN;" + gameID );
-						opponent.SendMessage( "JOIN;" + gameID );
 						break;
 					default:
 						break;

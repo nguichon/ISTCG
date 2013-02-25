@@ -14,6 +14,7 @@ public class Game {
 	}
 	
 	public void AddToGame( ClientAccount ca ) {
+		ca.SendMessage( "JOIN;" + m_GameID );
 		SendMessageToAllPlayers( "PLAYERJOINED;" + m_GameID + ";" + ca.getId() + ";" + ca.getName() );
 		for( GamePlayer gp : m_Players ) { ca.SendMessage( "PLAYERJOINED;" + m_GameID + ";" + gp.getClient().getId() + ";" + gp.getClient().getName() ); }
 		m_Players.add( new GamePlayer( this, ca ));

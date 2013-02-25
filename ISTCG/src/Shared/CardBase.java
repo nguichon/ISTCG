@@ -2,7 +2,7 @@ package Shared;
 
 public abstract class CardBase implements SharedObject {
 	public enum CardType {
-		COMMAND_UNIT, UNIT, GEAR, RESOURCE, OPERATION
+		COMMAND_UNIT, UNIT, GEAR, RESOURCE, ORDER, EVENT
 	}
 
 	private int m_CardID;
