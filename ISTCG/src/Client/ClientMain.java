@@ -157,7 +157,7 @@ public class ClientMain {
 			((GameUI)m_UIList[GameState.GAME.ordinal()]).updateZone(inputs[1],inputs[2],inputs[3]);
 			break;
 		case ADDCARD:
-			
+			((GameUI)m_UIList[GameState.GAME.ordinal()]).addCard(inputs[1],inputs[2],inputs[3]);
 			break;
 		case REMOVECARD:
 			
