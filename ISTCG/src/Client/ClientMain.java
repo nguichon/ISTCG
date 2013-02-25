@@ -156,7 +156,7 @@ public class ClientMain {
 			((GameUI)m_UIList[GameState.GAME.ordinal()]).initializeGame(inputs[3],Integer.valueOf(inputs[2]), Integer.valueOf(inputs[1]));
 			break;
 		case UPDATE:
-			((GameUI)m_UIList[GameState.GAME.ordinal()]).updateZone(inputs[1],inputs[2],inputs[3]);
+			((GameUI)m_UIList[GameState.GAME.ordinal()]).updateZone(inputs[1],inputs[3],inputs[2]);
 			break;
 		case ADDCARD:
 			((GameUI)m_UIList[GameState.GAME.ordinal()]).addCard(inputs[1],inputs[2],inputs[3]);
