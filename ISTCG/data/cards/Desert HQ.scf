@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ns2:serverCardBase xmlns:ns2="de.vogella.xml.jaxb.model">
+<cardID>5</cardID>
+<cardType>COMMAND_UNIT</cardType>
+<statList>
+	<stat>
+		<StatType>ATTACK</StatType>
+		<Value>5</Value>
+	</stat>
+	<stat>
+		<StatType>DEFENSE</StatType>
+		<Value>10</Value>
+	</stat>
+	<stat>
+		<StatType>STRUCTURE</StatType>
+		<Value>15</Value>
+	</stat>
+	<stat>
+		<StatType>DAMAGE</StatType>
+		<Value>1</Value>
+	</stat>
+	<stat>
+		<StatType>GEAR POINTS</StatType>
+		<Value>0</Value>
+	</stat>
+</statList>
+</ns2:serverCardBase>

@@ -28,7 +28,6 @@ public class ServerMain {
 
 		// Initialize the Database connection.
 		ConsoleMessage('-', "Connecting to Database...");
-		ConsoleMessage('-', "Successfully connected to Database...");
 
 		try {
 			Database.initialize();
@@ -40,6 +39,15 @@ public class ServerMain {
 			e.printStackTrace();
 			System.exit(-1);
 		}
+
+		ConsoleMessage('-', "Successfully connected to Database...");
+		
+		//Initalize cardbase list
+		ConsoleMessage('-', "Initalizing cards...");
+		
+		CardBaseStorage.get().Initialize();
+		
+		ConsoleMessage('-', "Finished intializing cards...");
 
 		// Attempt to create the server port
 		ConsoleMessage('-', "Creating server port...");
