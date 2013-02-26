@@ -7,11 +7,13 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 
 public class Login extends Composite {
 	private Text text;
 	private Text text_1;
-
+	final ClientMain m_Host;
 	/**
 	 * Create the composite.
 	 * @param parent
@@ -19,11 +21,11 @@ public class Login extends Composite {
 	 */
 	public Login(Composite parent, int style, ClientMain main) {
 		super(parent, style);
-		final ClientMain m_Host = main;
+		m_Host = main;
 		text = new Text(this, SWT.BORDER);
 		text.setBounds(174, 85, 152, 31);
 		
-		text_1 = new Text(this, SWT.BORDER);
+		text_1 = new Text( this, SWT.BORDER|SWT.PASSWORD );
 		text_1.setBounds(174, 128, 152, 31);
 		
 		final Label lblUsername = new Label(this, SWT.NONE);
@@ -33,40 +35,46 @@ public class Login extends Composite {
 		final Label lblPassword = new Label(this, SWT.NONE);
 		lblPassword.setText("Password:");
 		lblPassword.setBounds(76, 128, 72, 31);
-		
-		Button btnLogin = new Button(this, SWT.NONE);
-		btnLogin.setBounds(156, 174, 94, 28);
-		btnLogin.setText("Login");
-		
 		final Label label = new Label(this, SWT.NONE);
-		label.setBounds(174, 208, 59, 14);
-		btnLogin.addListener(SWT.Selection, new Listener(){
-
+		label.setBounds(174, 208, 200, 20);
+		label.setText("Please login");
+		Button btnLogin = new Button(this, SWT.PUSH);
+		btnLogin.addSelectionListener(new SelectionAdapter() {
 			@Override
-			public void handleEvent(Event arg0) {
-				// TODO Auto-generated method stub
+			public void widgetSelected(SelectionEvent arg0) {
 				String login = lblUsername.getText();
 				String password = lblPassword.getText();
 				
-				if( login.equals("") ) {
+				if( getUsername().getText().equals("") ) {
 					label.setText( "Enter a username." );
 					lblUsername.setFocus();
 					return;
 				}
-				if( password.equals("") ) {
+				if( getPassword().getText().equals("") ) {
 					label.setText( "Enter a password." );
 					lblPassword.setFocus();
 					return;
 				}
 				m_Host.login( login, password );
-			}
 			
+			}
 		});
+		btnLogin.setBounds(156, 174, 94, 28);
+		btnLogin.setText("Login");
+		
+		
 
 	}
 
+	
 	@Override
 	protected void checkSubclass() {
 		// Disable the check that prevents subclassing of SWT components
+	}
+	public Text getUsername() {
+		return text;
+	}
+	public Text getPassword() {
+		return text_1;
 	}
 }
