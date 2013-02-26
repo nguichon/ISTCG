@@ -79,24 +79,24 @@ public class Card implements NetworkObject {
 
     public void SetCanvas() {
         // loading images
-        Image cardBL = new Image(display, "ISTCG/card_border_corner_bottom_left.png");
-        Image cardBR = new Image(display, "ISTCG/card_border_corner_bottom_right.png");
-        Image cardTL = new Image(display, "ISTCG/card_border_corner_top_left.png");
-        Image cardTR = new Image(display, "ISTCG/card_border_corner_top_right.png");
-        Image cardL = new Image(display, "ISTCG/card_border_edge_left.png");
-        Image cardR = new Image(display, "ISTCG/card_border_edge_right.png");
-        Image cardT = new Image(display, "ISTCG/card_border_edge_top.png");
-        Image cardB = new Image(display, "ISTCG/card_border_edge_bottom.png");
-        Image textBL = new Image(display, "ISTCG/text_box_corner_bottom_left.png");
-        Image textBR = new Image(display, "ISTCG/text_box_corner_bottom_right.png");
-        Image textTL = new Image(display, "ISTCG/text_box_corner_top_left.png");
-        Image textTR = new Image(display, "ISTCG/text_box_corner_top_right.png");
-        Image textL = new Image(display, "ISTCG/text_box_edge_left.png");
-        Image textR = new Image(display, "ISTCG/text_box_edge_righ.png");
-        Image textT = new Image(display, "ISTCG/text_box_edge_top.png");
-        Image textB = new Image(display, "ISTCG/text_box_edge_bottom.png");
-        Image textM = new Image(display, "ISTCG/text_box_body.png");
-        String png = "ISTCG/"+"text_box_body" + ".png";
+        Image cardBL = new Image(display, System.getProperty("user.dir") + "/data/card_border_corner_bottom_left.png");
+        Image cardBR = new Image(display, System.getProperty("user.dir") + "/data/card_border_corner_bottom_right.png");
+        Image cardTL = new Image(display, System.getProperty("user.dir") + "/data/card_border_corner_top_left.png");
+        Image cardTR = new Image(display, System.getProperty("user.dir") + "/data/card_border_corner_top_right.png");
+        Image cardL = new Image(display, System.getProperty("user.dir") + "/data/card_border_edge_left.png");
+        Image cardR = new Image(display, System.getProperty("user.dir") + "/data/card_border_edge_right.png");
+        Image cardT = new Image(display, System.getProperty("user.dir") + "/data/card_border_edge_top.png");
+        Image cardB = new Image(display, System.getProperty("user.dir") + "/data/card_border_edge_bottom.png");
+        Image textBL = new Image(display, System.getProperty("user.dir") + "/data/text_box_corner_bottom_left.png");
+        Image textBR = new Image(display, System.getProperty("user.dir") + "/data/text_box_corner_bottom_right.png");
+        Image textTL = new Image(display, System.getProperty("user.dir") + "/data/text_box_corner_top_left.png");
+        Image textTR = new Image(display, System.getProperty("user.dir") + "/data/text_box_corner_top_right.png");
+        Image textL = new Image(display, System.getProperty("user.dir") + "/data/text_box_edge_left.png");
+        Image textR = new Image(display, System.getProperty("user.dir") + "/data/text_box_edge_righ.png");
+        Image textT = new Image(display, System.getProperty("user.dir") + "/data/text_box_edge_top.png");
+        Image textB = new Image(display, System.getProperty("user.dir") + "/data/text_box_edge_bottom.png");
+        Image textM = new Image(display, System.getProperty("user.dir") + "/data/text_box_body.png");
+        String png = System.getProperty("user.dir") + "/data/"+"text_box_body" + ".png";
         Image back = new Image(display, png);
 
         // prepare canvas

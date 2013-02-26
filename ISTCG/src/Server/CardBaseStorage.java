@@ -23,7 +23,7 @@ public class CardBaseStorage {
 			final Unmarshaller reader = JAXBContext.newInstance(
 					ServerCardBase.class).createUnmarshaller();
 
-			ServerCardBase scb = (ServerCardBase)reader.unmarshal(new File("ISTCG/data/cards/" + card_name + ".scf"));
+			ServerCardBase scb = (ServerCardBase)reader.unmarshal(new File("data/cards/" + card_name + ".scf"));
 			m_LoadedCards.put( scb.getCardID(), scb );
 		} catch (JAXBException e) {
 			e.printStackTrace();

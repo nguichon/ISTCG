@@ -15,18 +15,18 @@ public class Game {
 		for(ClientAccount ca : players) { AddToGame( ca ); }
 
 		for(ClientAccount ca : players ) {
-			SendMessageToAllPlayers("UPDATE;" + m_GameID + ";" + ca.getId() + ";" + GameZones.DECK + ";50");
-			SendMessageToAllPlayers("UPDATE;" + m_GameID + ";" + ca.getId() + ";" + GameZones.HAND + ";8");
-			ca.SendMessage( "ADDCARD;" + m_GameID + ";" + ca.getId() + ";" + GameZones.HAND + ";2");
-			ca.SendMessage( "ADDCARD;" + m_GameID + ";" + ca.getId() + ";" + GameZones.HAND + ";2");
-			ca.SendMessage( "ADDCARD;" + m_GameID + ";" + ca.getId() + ";" + GameZones.HAND + ";3");
+			SendMessageToAllPlayers("UPDATE;" + m_GameID + ";" + ca.getId() + ";" + GameZones.DECK.toString() + ";50");
+			SendMessageToAllPlayers("UPDATE;" + m_GameID + ";" + ca.getId() + ";" + GameZones.HAND.toString() + ";8");
+			ca.SendMessage( "ADDCARD;" + m_GameID + ";" + ca.getId() + ";" + GameZones.HAND.toString() + ";2");
+			ca.SendMessage( "ADDCARD;" + m_GameID + ";" + ca.getId() + ";" + GameZones.HAND.toString() + ";2");
+			ca.SendMessage( "ADDCARD;" + m_GameID + ";" + ca.getId() + ";" + GameZones.HAND.toString() + ";3");
 		}
 	}
 	
 	public void AddToGame( ClientAccount ca ) {
 		ca.SendMessage( "JOIN;" + m_GameID );
 		SendMessageToAllPlayers( "PLAYERJOINED;" + m_GameID + ";" + ca.getId() + ";" + ca.getUserName() );
-		for( GamePlayer gp : m_Players ) { ca.SendMessage( "PLAYERJOINED;" + m_GameID + ";" + gp.getClient().getId() + ";" + gp.getClient().getName() ); }
+		for( GamePlayer gp : m_Players ) { ca.SendMessage( "PLAYERJOINED;" + m_GameID + ";" + gp.getClient().getId() + ";" + gp.getClient().getUserName() ); }
 		m_Players.add( new GamePlayer( this, ca ));
 	}
 
