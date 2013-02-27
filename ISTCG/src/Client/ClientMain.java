@@ -156,10 +156,11 @@ public class ClientMain {
 			((GameUI)m_UIList[GameState.GAME.ordinal()]).initializeGame(inputs[3],Integer.valueOf(inputs[2]), Integer.valueOf(inputs[1]));
 			break;
 		case UPDATE:
-			((GameUI)m_UIList[GameState.GAME.ordinal()]).updateZone(inputs[1],inputs[3],inputs[2]);
+			System.out.println(input);
+			((GameUI)m_UIList[GameState.GAME.ordinal()]).updateZone(inputs[2],inputs[3],inputs[4]);
 			break;
 		case ADDCARD:
-			((GameUI)m_UIList[GameState.GAME.ordinal()]).addCard(inputs[1],inputs[2],inputs[3]);
+			((GameUI)m_UIList[GameState.GAME.ordinal()]).addCard(inputs[2],inputs[4],inputs[3]);
 			break;
 		case REMOVECARD:
 			

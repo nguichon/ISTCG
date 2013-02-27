@@ -66,7 +66,7 @@ public class AutoClientMain {
         		//Try to log in
         		  if(stage == 0){
         			  System.out.println("TRYING TO LOG IN...");
-            		  this.Login("user2", "password");
+            		  this.Login("TestUser", "password");
             		  //move stage
             		  stage++;
         		  } else {
