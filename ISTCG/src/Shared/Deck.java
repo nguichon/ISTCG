@@ -64,4 +64,10 @@ public class Deck {
 	public void Clear() {
 		m_CardsInDeck.clear();
 	}
+	
+	public boolean Validate() {
+		// There are not requirements for deck construction at 
+		// this time! Yay! Your deck is legal!
+		return true;
+	}
 }
