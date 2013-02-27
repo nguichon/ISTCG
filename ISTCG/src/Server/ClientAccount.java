@@ -26,6 +26,7 @@ public class ClientAccount extends Thread {
 	 */
 	public ClientAccount(Socket client) {
 		m_UserID = -1;
+		m_AdminAccount = false;
 		m_ToClient = client;
 
 		try {
@@ -55,7 +56,7 @@ public class ClientAccount extends Thread {
 	 * 
 	 */
 	private enum ClientMessages {
-		LOGIN, SAY, TELL, LOGOUT, DISCONNECT, CHALLENGE;
+		LOGIN, SAY, TELL, LOGOUT, DISCONNECT, CHALLENGE, ADMIN;
 	}
 
 	public void SendMessage(String message) {
@@ -75,13 +76,17 @@ public class ClientAccount extends Thread {
 						LoginAttempt(command[1], command[2]);
 						break;
 					case SAY:
-						LobbyManager.say(m_UserName, command[1]);
+						if( m_UserID != -1 ) {
+							LobbyManager.say(m_UserName, command[1]);
+						}
 						break;
 					case TELL:
-						LobbyManager
-								.whisper(m_UserName, command[1], command[2]);
-						SendMessage("SAY;" + "to [" + command[1] + "];"
-								+ command[2]);
+						if( m_UserID != -1 ) {
+							LobbyManager
+									.whisper(m_UserName, command[1], command[2]);
+							SendMessage("SAY;" + "to [" + command[1] + "];"
+									+ command[2]);
+						}
 						break;
 					case LOGOUT:
 						DisconnectMe();
@@ -90,9 +95,13 @@ public class ClientAccount extends Thread {
 						DisconnectMe();
 						break;
 					case CHALLENGE:
-						ClientAccount opponent = ConnectionsHandler.get().GetClientByName( command[1] );
-						int gameID = GameManager.get().CreateGame( this, opponent );
+						if( m_UserID != -1 ) {
+							ClientAccount opponent = ConnectionsHandler.get().GetClientByName( command[1] );
+							GameManager.get().CreateGame( this, opponent );
+						}
 						break;
+					case ADMIN:
+						if( m_AdminAccount ) {}
 					default:
 						break;
 					}
@@ -109,6 +118,7 @@ public class ClientAccount extends Thread {
 
 		m_UserID = -1;
 		m_UserName = null;
+		m_AdminAccount = false;
 
 		try {
 			m_Output.close();
@@ -127,6 +137,7 @@ public class ClientAccount extends Thread {
 	// ===================================
 	private int m_UserID;
 	private String m_UserName;
+	private boolean m_AdminAccount = false;
 
 	/**
 	 * Creates a new row in the table Users
@@ -181,7 +192,8 @@ public class ClientAccount extends Thread {
 			if (check(password_text, rs.getString("password"))) {
 				m_UserID = rs.getInt("id");
 				m_UserName = rs.getString("user_name");
-
+				Database.get().quickInsert("UPDATE Users SET last_login = NOW() WHERE Users.id = " + m_UserID + ";");
+				//m_AdminAccount = rs.getBoolean("is_admin");
 			} else {
 				m_UserID = -1;
 				return false;
@@ -198,6 +210,9 @@ public class ClientAccount extends Thread {
 
 	public String getUserName() {
 		return this.m_UserName;
+	}
+	public int getUserID() {
+		return this.m_UserID;
 	}
 
 	/**
