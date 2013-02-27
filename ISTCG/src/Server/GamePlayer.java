@@ -56,7 +56,7 @@ public class GamePlayer {
 		if( m_PlayerDeck == null ) {
 			Deck newDeck = new Deck();
 			
-			//TODO: Load the deck from string.
+			//TODO Load the deck from string.
 			
 			if( newDeck.Validate() ) {
 				m_PlayerDeck = newDeck;
@@ -65,5 +65,8 @@ public class GamePlayer {
 			} 
 		}
 		//Do nothing
+	}
+	public int GetPlayerID() {
+		return m_PlayerAccount.getUserID();
 	}
 }

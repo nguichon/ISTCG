@@ -9,12 +9,13 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 
+
 public class CardBaseStorage {
 	HashMap<Integer, ServerCardBase> m_LoadedCards;
 	
-	public void Initialize() {
+	public boolean Initialize() {
 		m_LoadedCards = new HashMap<Integer, ServerCardBase>();
-		LoadAllCards();
+		return LoadAllCards();
 	}
 	private void LoadCard(String card_name) {
 		ServerMain.ConsoleMessage( '-', "Loading card \"" + card_name + "\"..." );
@@ -29,16 +30,18 @@ public class CardBaseStorage {
 			e.printStackTrace();
 		}				
 	}
-	private void LoadAllCards() {
+	private boolean LoadAllCards() {
 		ResultSet rs = Database.get().quickQuery("SELECT card_name FROM cards");
 		try {
 			while(rs.next()) {
 				LoadCard(rs.getString(1));
 			}
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
+			ServerMain.ConsoleMessage('!', "A card failed to load, fatal error");
 			e.printStackTrace();
+			return false;
 		}
+		return true;
 	}
 	
 	//=====

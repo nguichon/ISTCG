@@ -5,6 +5,7 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
+
 public class GameManager {
 	private Map<Integer, Game> m_ActiveGames;
 	

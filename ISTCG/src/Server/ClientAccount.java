@@ -13,6 +13,7 @@ import javax.crypto.spec.PBEKeySpec;
 
 import org.postgresql.util.Base64;
 
+
 /**
  * @author Nicholas Guichon
  */
@@ -35,7 +36,7 @@ public class ClientAccount extends Thread {
 
 			m_Connected = true;
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
+			ServerMain.ConsoleMessage('!', "A client connected, but creating Scanner and Print Writer failed.");
 			e.printStackTrace();
 		}
 	}
@@ -125,7 +126,7 @@ public class ClientAccount extends Thread {
 			m_Input.close();
 			m_ToClient.close();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
+			ServerMain.ConsoleMessage('!',"Failed to close Socket, Scanner, and/or PrintWriter for a disconnecting/disconnected client.");
 			e.printStackTrace();
 		}
 
@@ -199,10 +200,10 @@ public class ClientAccount extends Thread {
 				return false;
 			}
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
+			ServerMain.ConsoleMessage('!', "Problem accessing database while authenticating user " + user_name );
 			e.printStackTrace();
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
+			ServerMain.ConsoleMessage('!', "Error while authenticating user " + user_name );
 			e.printStackTrace();
 		}
 		return true;

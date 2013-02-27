@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+
 public class ConnectionsHandler extends Thread {
 	private ArrayList<ClientAccount> m_ConnectedClients = null;
 	private Map<String, ClientAccount> m_AuthenticatedClient = null;
@@ -38,7 +39,7 @@ public class ConnectionsHandler extends Thread {
 		try {
 			m_NewConnectionPort.setSoTimeout(1000);
 		} catch (SocketException e1) {
-			// TODO Auto-generated catch block
+			ServerMain.ConsoleMessage('!', "Error setting  Socket Timeout, how odd.");
 			e1.printStackTrace();
 		}
 		
@@ -62,7 +63,7 @@ public class ConnectionsHandler extends Thread {
 		try {
 			m_NewConnectionPort.close();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
+			ServerMain.ConsoleMessage('!', "Error while closing ServerSocket m_NewConnectionPort");
 			e.printStackTrace();
 		}
 	}
