@@ -2,7 +2,7 @@ package AutoClient;
 
 import org.eclipse.swt.graphics.Image;
 
-public class CardBase extends Shared.CardBase {
+public class CardBase extends Shared.CardTemplates {
 	private Image m_CardImage;
 	private String m_CardName;
 	

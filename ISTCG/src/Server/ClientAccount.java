@@ -13,6 +13,7 @@ import javax.crypto.spec.PBEKeySpec;
 
 import org.postgresql.util.Base64;
 
+
 /**
  * @author Nicholas Guichon
  */
@@ -26,6 +27,7 @@ public class ClientAccount extends Thread {
 	 */
 	public ClientAccount(Socket client) {
 		m_UserID = -1;
+		m_AdminAccount = false;
 		m_ToClient = client;
 
 		try {
@@ -34,7 +36,7 @@ public class ClientAccount extends Thread {
 
 			m_Connected = true;
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
+			ServerMain.ConsoleMessage('!', "A client connected, but creating Scanner and Print Writer failed.");
 			e.printStackTrace();
 		}
 	}
@@ -55,7 +57,7 @@ public class ClientAccount extends Thread {
 	 * 
 	 */
 	private enum ClientMessages {
-		LOGIN, SAY, TELL, LOGOUT, DISCONNECT, CHALLENGE;
+		LOGIN, SAY, TELL, LOGOUT, DISCONNECT, CHALLENGE, ADMIN;
 	}
 
 	public void SendMessage(String message) {
@@ -75,13 +77,17 @@ public class ClientAccount extends Thread {
 						LoginAttempt(command[1], command[2]);
 						break;
 					case SAY:
-						LobbyManager.say(m_UserName, command[1]);
+						if( m_UserID != -1 ) {
+							LobbyManager.say(m_UserName, command[1]);
+						}
 						break;
 					case TELL:
-						LobbyManager
-								.whisper(m_UserName, command[1], command[2]);
-						SendMessage("SAY;" + "to [" + command[1] + "];"
-								+ command[2]);
+						if( m_UserID != -1 ) {
+							LobbyManager
+									.whisper(m_UserName, command[1], command[2]);
+							SendMessage("SAY;" + "to [" + command[1] + "];"
+									+ command[2]);
+						}
 						break;
 					case LOGOUT:
 						DisconnectMe();
@@ -90,9 +96,13 @@ public class ClientAccount extends Thread {
 						DisconnectMe();
 						break;
 					case CHALLENGE:
-						ClientAccount opponent = ConnectionsHandler.get().GetClientByName( command[1] );
-						int gameID = GameManager.get().CreateGame( this, opponent );
+						if( m_UserID != -1 ) {
+							ClientAccount opponent = ConnectionsHandler.get().GetClientByName( command[1] );
+							GameManager.get().CreateGame( this, opponent );
+						}
 						break;
+					case ADMIN:
+						if( m_AdminAccount ) {}
 					default:
 						break;
 					}
@@ -109,13 +119,14 @@ public class ClientAccount extends Thread {
 
 		m_UserID = -1;
 		m_UserName = null;
+		m_AdminAccount = false;
 
 		try {
 			m_Output.close();
 			m_Input.close();
 			m_ToClient.close();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
+			ServerMain.ConsoleMessage('!',"Failed to close Socket, Scanner, and/or PrintWriter for a disconnecting/disconnected client.");
 			e.printStackTrace();
 		}
 
@@ -127,6 +138,7 @@ public class ClientAccount extends Thread {
 	// ===================================
 	private int m_UserID;
 	private String m_UserName;
+	private boolean m_AdminAccount = false;
 
 	/**
 	 * Creates a new row in the table Users
@@ -181,16 +193,17 @@ public class ClientAccount extends Thread {
 			if (check(password_text, rs.getString("password"))) {
 				m_UserID = rs.getInt("id");
 				m_UserName = rs.getString("user_name");
-
+				Database.get().quickInsert("UPDATE Users SET last_login = NOW() WHERE Users.id = " + m_UserID + ";");
+				//m_AdminAccount = rs.getBoolean("is_admin");
 			} else {
 				m_UserID = -1;
 				return false;
 			}
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
+			ServerMain.ConsoleMessage('!', "Problem accessing database while authenticating user " + user_name );
 			e.printStackTrace();
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
+			ServerMain.ConsoleMessage('!', "Error while authenticating user " + user_name );
 			e.printStackTrace();
 		}
 		return true;
@@ -198,6 +211,9 @@ public class ClientAccount extends Thread {
 
 	public String getUserName() {
 		return this.m_UserName;
+	}
+	public int getUserID() {
+		return this.m_UserID;
 	}
 
 	/**

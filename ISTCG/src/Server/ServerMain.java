@@ -13,15 +13,10 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 
-import Shared.CardBase;
+import Shared.CardTemplates;
 import Shared.StatBlock;
 
 public class ServerMain {
-
-	private enum Commands {
-		QUIT, CREATE_USER, SELECT, USERS, SHRINK
-	}
-
 	static boolean m_Quit;
 	public static void main(String[] args) {
 		ConsoleMessage('-', "Server Starting...");
@@ -45,7 +40,7 @@ public class ServerMain {
 		//Initalize cardbase list
 		ConsoleMessage('-', "Initalizing cards...");
 		
-		CardBaseStorage.get().Initialize();
+		CardTemplateManager.get().Initialize();
 		
 		ConsoleMessage('-', "Finished intializing cards...");
 
@@ -76,7 +71,7 @@ public class ServerMain {
 
 	private static void ParseConsoleCommand(String next) {
 		String[] command = next.split(" ");
-		switch (Commands.valueOf(command[0].toUpperCase())) {
+		switch (ClientResponses.valueOf(command[0].toUpperCase())) {
 		case QUIT:
 			m_Quit = true;
 			break;

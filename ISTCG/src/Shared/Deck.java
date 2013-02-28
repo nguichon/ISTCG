@@ -10,13 +10,13 @@ import java.util.Collections;
  * @author nguichon
  */
 public class Deck {
-	private ArrayList<CardBase> m_CardsInDeck;
+	private ArrayList<CardTemplates> m_CardsInDeck;
 
 	/**
 	 * Default constructor, only initializes ArrayList collection
 	 */
 	public Deck() {
-		m_CardsInDeck = new ArrayList<CardBase>();
+		m_CardsInDeck = new ArrayList<CardTemplates>();
 	}
 
 	/**
@@ -35,7 +35,7 @@ public class Deck {
 	 *            The cardBase to add, there can be multiple of the same
 	 *            cardBase in a deck. e.g. multiple copies of the same card
 	 */
-	public void AddCard(CardBase toAdd) {
+	public void AddCard(CardTemplates toAdd) {
 		m_CardsInDeck.add(toAdd);
 	}
 
@@ -45,7 +45,7 @@ public class Deck {
 	 * @return The first card in order, e.g. the card added the earliest through
 	 *         AddCard, unless shuffled of course
 	 */
-	public CardBase DrawCard() {
+	public CardTemplates DrawCard() {
 		return m_CardsInDeck.get(0);
 	}
 
@@ -63,5 +63,11 @@ public class Deck {
 	 */
 	public void Clear() {
 		m_CardsInDeck.clear();
+	}
+	
+	public boolean Validate() {
+		// There are not requirements for deck construction at 
+		// this time! Yay! Your deck is legal!
+		return true;
 	}
 }

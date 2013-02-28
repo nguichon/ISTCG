@@ -2,7 +2,9 @@ package Server;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.Map;
+
 
 public class GameManager {
 	private Map<Integer, Game> m_ActiveGames;
@@ -35,8 +37,8 @@ public class GameManager {
 		RemoveGame( g.GetID() );
 	}
 	
-	public void SendMessageToGame( int game_id, String[] message ) {
-		m_ActiveGames.get(game_id).HandleMessage(message);
+	public void SendMessageToGame( int game_id, int origin, String[] message ) {
+		m_ActiveGames.get(game_id).HandleMessage(origin, message);
 	}
 	
 	//=====
@@ -44,7 +46,7 @@ public class GameManager {
 	//=====
 	private static GameManager m_Instance;
 	private GameManager() {
-		
+		m_ActiveGames = new HashMap<Integer, Game>();
 	}
 	public static GameManager get() {
 		if( m_Instance == null ) { m_Instance = new GameManager(); }

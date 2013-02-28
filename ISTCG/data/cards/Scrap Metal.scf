@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<ns2:serverCardBase xmlns:ns2="de.vogella.xml.jaxb.model">
+<ns2:serverCardTemplate xmlns:ns2="de.vogella.xml.jaxb.model">
 <cardID>2</cardID>
 <cardType>RESOURCE</cardType>
 <statList> </statList>
-</ns2:serverCardBase>
+</ns2:serverCardTemplate>

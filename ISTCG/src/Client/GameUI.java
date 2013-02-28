@@ -114,12 +114,16 @@ public class GameUI extends GameStateUI {
 		
 		Label foeName = new Label(client, SWT.READ_ONLY);
 		foeName.setAlignment(SWT.CENTER);
+		foeName.setBounds(40,400,100,100);
 		Label foeHand = new Label(client, SWT.READ_ONLY);
 		foeHand.setAlignment(SWT.CENTER);
+		foeHand.setBounds(40,460,100,100);
 		Label foeDeck = new Label(client, SWT.READ_ONLY);
 		foeDeck.setAlignment(SWT.CENTER);
+		foeDeck.setBounds(40,490,100,100);
 		Label foeGrave = new Label(client, SWT.READ_ONLY);
 		foeGrave.setAlignment(SWT.CENTER);
+		foeGrave.setBounds(40,520,100,100);
 		
 		m_UIObjects.add(gameTitle); //0
 		m_UIObjects.add(drawCard); //1
@@ -208,6 +212,7 @@ public class GameUI extends GameStateUI {
 
 	public void updateZone(String player, String zone, String val) {
 	int pid = Integer.valueOf(player);
+	((Label)m_UIObjects.get(9)).setText( "TEST" );
 	switch (GameZones.valueOf(zone)){
 	case HAND:
 		if(pid==foeID){
