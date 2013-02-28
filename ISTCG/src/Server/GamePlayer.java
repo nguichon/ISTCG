@@ -1,6 +1,6 @@
 package Server;
 
-import Shared.CardBase;
+import Shared.CardTemplates;
 import Shared.Deck;
 import Shared.GameZones;
 
@@ -26,7 +26,7 @@ public class GamePlayer {
 	public void DrawCards( int number ) {
 		//Draw the cards from the deck and place them in hand.
 		for( int i = 0; i < number; i++ ) {
-			CardBase cardDrawn = m_PlayerDeck.DrawCard();
+			CardTemplates cardDrawn = m_PlayerDeck.DrawCard();
 			m_PlayerHand.AddCard( cardDrawn );
 	        m_PlayerAccount.SendMessage( "ADDCARD;" + 
 					m_Game.GetID() + ";" + 

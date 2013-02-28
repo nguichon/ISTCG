@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<ns2:serverCardBase xmlns:ns2="de.vogella.xml.jaxb.model">
+<ns2:serverCardTemplate xmlns:ns2="de.vogella.xml.jaxb.model">
 <cardType>COMMAND_UNIT</cardType>
 <statList>
 	<stat>
@@ -11,4 +11,4 @@
 		<Value>12</Value>
 	</stat>
 </statList>
-</ns2:serverCardBase>
+</ns2:serverCardTemplate>

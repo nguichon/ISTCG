@@ -13,7 +13,7 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 
-import Shared.CardBase;
+import Shared.CardTemplates;
 import Shared.StatBlock;
 
 public class ServerMain {
@@ -40,7 +40,7 @@ public class ServerMain {
 		//Initalize cardbase list
 		ConsoleMessage('-', "Initalizing cards...");
 		
-		CardBaseStorage.get().Initialize();
+		CardTemplateManager.get().Initialize();
 		
 		ConsoleMessage('-', "Finished intializing cards...");
 

@@ -10,21 +10,39 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 
 
-public class CardBaseStorage {
-	HashMap<Integer, ServerCardBase> m_LoadedCards;
+public class CardTemplateManager {
+	//=========
+	//CONSTANTS
+	//=========
+	private static String DEFAULT_CARD_PATH = System.getProperty("user.dir") + "/data/cards/";
 	
+	//CardTemplate collection variables
+	private HashMap<Integer, ServerCardTemplate> m_LoadedCards;
+	
+	/**
+	 * Kind of a constructor for CardTemplateManager. 
+	 * <pre>
+	 * 		Class Database has been initialized successfully.
+	 * @return
+	 * 		Whether initialization was successful or not
+	 */
 	public boolean Initialize() {
-		m_LoadedCards = new HashMap<Integer, ServerCardBase>();
+		m_LoadedCards = new HashMap<Integer, ServerCardTemplate>();
 		return LoadAllCards();
 	}
+	
+	/**
+	 * Loads a speicifed card by card name.
+	 * @param card_name
+	 */
 	private void LoadCard(String card_name) {
 		ServerMain.ConsoleMessage( '-', "Loading card \"" + card_name + "\"..." );
 		
 		try {
 			final Unmarshaller reader = JAXBContext.newInstance(
-					ServerCardBase.class).createUnmarshaller();
+					ServerCardTemplate.class).createUnmarshaller();
 
-			ServerCardBase scb = (ServerCardBase)reader.unmarshal(new File("data/cards/" + card_name + ".scf"));
+			ServerCardTemplate scb = (ServerCardTemplate)reader.unmarshal(new File(DEFAULT_CARD_PATH + card_name + ".scf"));
 			m_LoadedCards.put( scb.getCardID(), scb );
 		} catch (JAXBException e) {
 			e.printStackTrace();
@@ -47,12 +65,12 @@ public class CardBaseStorage {
 	//=====
 	//Singleton methods
 	//=====
-	private static CardBaseStorage m_Instance;
-	private CardBaseStorage() {
+	private static CardTemplateManager m_Instance;
+	private CardTemplateManager() {
 		
 	}
-	public static CardBaseStorage get() {
-		if( m_Instance == null ) { m_Instance = new CardBaseStorage(); }
+	public static CardTemplateManager get() {
+		if( m_Instance == null ) { m_Instance = new CardTemplateManager(); }
 		return m_Instance;
 	}
 }

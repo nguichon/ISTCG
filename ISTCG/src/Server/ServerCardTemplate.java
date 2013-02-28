@@ -10,21 +10,21 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import Shared.CardBase;
+import Shared.CardTemplates;
 import Shared.StatBlock;
 
 @XmlRootElement(namespace = "de.vogella.xml.jaxb.model")
-public class ServerCardBase extends Shared.CardBase {
+public class ServerCardTemplate extends Shared.CardTemplates {
 	private CardType m_CardType;
 	private int m_CardID;
 
 	@Override
-	public CardBase LoadCard(String path) {
+	public CardTemplates LoadCard(String path) {
 		try {
 			final Unmarshaller reader = JAXBContext.newInstance(
-					ServerCardBase.class).createUnmarshaller();
+					ServerCardTemplate.class).createUnmarshaller();
 
-			return (ServerCardBase) reader.unmarshal(new File(path));
+			return (ServerCardTemplate) reader.unmarshal(new File(path));
 		} catch (JAXBException e) {
 			e.printStackTrace();
 		}
