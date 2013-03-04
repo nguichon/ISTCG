@@ -61,6 +61,13 @@ public class Game {
 			//TODO needs to check that "stack" is empty
 			if( m_Started && m_CurrentPlayer.GetPlayerID() == origin ) { EndTurn(); }
 			break;
+		case LOAD_DECK:
+			for( GamePlayer gp : m_Players ) { 
+				if(gp.GetPlayerID() == Integer.valueOf(message[2])) {
+					gp.LoadDeck( message[3] );
+				}
+			}
+			break;
 		default:
 			break;
 		}
