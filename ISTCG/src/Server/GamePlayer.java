@@ -60,9 +60,12 @@ public class GamePlayer {
 		if( m_PlayerDeck == null ) {
 			Deck newDeck = new Deck();
 			
+			ServerMain.ConsoleMessage('?', deckList);
+			
 			//TODO Load the deck from string.
-			String[] cards = deckList.split("|");
+			String[] cards = deckList.split("\\|");
 			for( String s : cards ) {
+				ServerMain.ConsoleMessage('?', s);
 				String[] values = s.split(",");
 				ServerCardTemplate toAdd = CardTemplateManager.get().GetCardTemplate( Integer.valueOf(values[0]) );
 				for( int i = 0; i < Integer.valueOf(values[1]); i++ ) {
