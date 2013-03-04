@@ -63,8 +63,8 @@ public class Game {
 			break;
 		case LOAD_DECK:
 			for( GamePlayer gp : m_Players ) { 
-				if(gp.GetPlayerID() == Integer.valueOf(message[2])) {
-					gp.LoadDeck( message[3] );
+				if(gp.GetPlayerID() == Integer.valueOf(origin)) {
+					gp.LoadDeck( message[2] );
 				}
 			}
 			break;
