@@ -48,18 +48,6 @@ public class ClientAccount extends Thread {
 	private PrintWriter m_Output;
 	private Scanner m_Input;
 	private boolean m_Connected;
-
-	/**
-	 * 
-	 * Various commands received from a client.
-	 * 
-	 * @author Nicholas Guichon
-	 * 
-	 */
-	private enum ClientMessages {
-		LOGIN, SAY, TELL, LOGOUT, DISCONNECT, CHALLENGE, ADMIN;
-	}
-
 	public void SendMessage(String message) {
 		m_Output.println(message);
 		m_Output.flush();
@@ -72,7 +60,7 @@ public class ClientAccount extends Thread {
 				String line = m_Input.nextLine();
 				if (line != null) {
 					String command[] = line.split(";");
-					switch (ClientMessages.valueOf(command[0].toUpperCase())) {
+					switch (ClientResponses.valueOf(command[0].toUpperCase())) {
 					case LOGIN:
 						LoginAttempt(command[1], command[2]);
 						break;
@@ -103,6 +91,9 @@ public class ClientAccount extends Thread {
 						break;
 					case ADMIN:
 						if( m_AdminAccount ) {}
+					case LOAD_DECK:
+					case END_TURN:
+						GameManager.get().SendMessageToGame(Integer.valueOf(command[1]), this.m_UserID, command);
 					default:
 						break;
 					}

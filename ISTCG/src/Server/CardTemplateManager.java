@@ -32,6 +32,15 @@ public class CardTemplateManager {
 	}
 	
 	/**
+	 * Retrieves a card from the singleton
+	 * <pre>
+	 * 		LoadAllCards has been called.
+	 */
+	public ServerCardTemplate GetCardTemplate( int id ) {
+		return m_LoadedCards.get(id);
+	}
+	
+	/**
 	 * Loads a speicifed card by card name.
 	 * @param card_name
 	 */

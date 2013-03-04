@@ -51,12 +51,26 @@ public class GamePlayer {
 	public boolean isReady() {
 		return m_Ready;
 	}
+
+	public ClientAccount getAccount() {
+		return m_PlayerAccount;
+	}
 	
 	public void LoadDeck( String deckList ) {
 		if( m_PlayerDeck == null ) {
 			Deck newDeck = new Deck();
 			
 			//TODO Load the deck from string.
+			String[] cards = deckList.split("|");
+			for( String s : cards ) {
+				String[] values = s.split(",");
+				ServerCardTemplate toAdd = CardTemplateManager.get().GetCardTemplate( Integer.valueOf(values[0]) );
+				for( int i = 0; i < Integer.valueOf(values[1]); i++ ) {
+					newDeck.AddCard(toAdd);
+				}
+			}
+			
+			newDeck.Shuffle();
 			
 			if( newDeck.Validate() ) {
 				m_PlayerDeck = newDeck;

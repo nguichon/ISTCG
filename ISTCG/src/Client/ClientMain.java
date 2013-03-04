@@ -102,7 +102,7 @@ public class ClientMain {
 	
 	private boolean MakeConnection() {
 		int port = 4567;
-  		String host = "127.0.0.1";
+  		String host = "192.168.0.21";
 		try {
 			//m_Server = new ConnectionDevice( host, port );
 			m_Server = new ThreadedConnectionDevice( host, port);

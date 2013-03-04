@@ -107,7 +107,8 @@ public class Game {
 	 * Starts the current turn.
 	 */
 	private void StartTurn() {
-		
+		SendMessageToAllPlayers("CHANGETURN;" + m_GameID + ";" + m_CurrentPlayer.GetPlayerID());
+		m_CurrentPlayer.DrawCards(1);
 	}
 	
 	/**
@@ -115,6 +116,7 @@ public class Game {
 	 */
 	private void EndTurn() {
 		NextPlayer();
+		StartTurn();
 	}
 	
 	/**
