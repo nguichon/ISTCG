@@ -94,11 +94,13 @@ public class ClientAccount extends Thread {
 					case LOAD_DECK:
 					case END_TURN:
 						GameManager.get().SendMessageToGame(Integer.valueOf(command[1]), this.m_UserID, command);
+						break;
 					default:
 						break;
 					}
 				}
 			} catch (Exception e) {
+				e.printStackTrace();
 				DisconnectMe();
 			}
 		}
