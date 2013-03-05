@@ -41,7 +41,7 @@ public class CardTemplateManager {
 	}
 	
 	/**
-	 * Loads a speicifed card by card name.
+	 * Loads a specified card by card name.
 	 * @param card_name
 	 */
 	private void LoadCard(String card_name) {

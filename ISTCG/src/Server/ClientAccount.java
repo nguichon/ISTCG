@@ -13,7 +13,6 @@ import javax.crypto.spec.PBEKeySpec;
 
 import org.postgresql.util.Base64;
 
-
 /**
  * @author Nicholas Guichon
  */
@@ -36,7 +35,9 @@ public class ClientAccount extends Thread {
 
 			m_Connected = true;
 		} catch (IOException e) {
-			ServerMain.ConsoleMessage('!', "A client connected, but creating Scanner and Print Writer failed.");
+			ServerMain
+					.ConsoleMessage('!',
+							"A client connected, but creating Scanner and Print Writer failed.");
 			e.printStackTrace();
 		}
 	}
@@ -48,6 +49,7 @@ public class ClientAccount extends Thread {
 	private PrintWriter m_Output;
 	private Scanner m_Input;
 	private boolean m_Connected;
+
 	public void SendMessage(String message) {
 		m_Output.println(message);
 		m_Output.flush();
@@ -65,14 +67,14 @@ public class ClientAccount extends Thread {
 						LoginAttempt(command[1], command[2]);
 						break;
 					case SAY:
-						if( m_UserID != -1 ) {
+						if (m_UserID != -1) {
 							LobbyManager.say(m_UserName, command[1]);
 						}
 						break;
 					case TELL:
-						if( m_UserID != -1 ) {
-							LobbyManager
-									.whisper(m_UserName, command[1], command[2]);
+						if (m_UserID != -1) {
+							LobbyManager.whisper(m_UserName, command[1],
+									command[2]);
 							SendMessage("SAY;" + "to [" + command[1] + "];"
 									+ command[2]);
 						}
@@ -84,16 +86,23 @@ public class ClientAccount extends Thread {
 						DisconnectMe();
 						break;
 					case CHALLENGE:
-						if( m_UserID != -1 ) {
-							ClientAccount opponent = ConnectionsHandler.get().GetClientByName( command[1] );
-							GameManager.get().CreateGame( this, opponent );
+						if (m_UserID != -1) {
+							ClientAccount opponent = ConnectionsHandler.get()
+									.GetClientByName(command[1]);
+							GameManager.get().CreateGame(this, opponent);
 						}
 						break;
 					case ADMIN:
-						if( m_AdminAccount ) {}
+						if (m_AdminAccount) {
+							SendMessage("SAY;Console;"
+									+ ServerMain.RunCommand(command[1]));
+						}
 					case LOAD_DECK:
+						// Drop through
 					case END_TURN:
-						GameManager.get().SendMessageToGame(Integer.valueOf(command[1]), this.m_UserID, command);
+						GameManager.get().SendMessageToGame(
+								Integer.valueOf(command[1]), this.m_UserID,
+								command);
 						break;
 					default:
 						break;
@@ -107,7 +116,11 @@ public class ClientAccount extends Thread {
 	}
 
 	public void DisconnectMe() {
-		if( m_UserName != null ) { ServerMain.ConsoleMessage('-', m_UserName + " logged out."); } else { ServerMain.ConsoleMessage('-', "Unknown user disconnected"); }
+		if (m_UserName != null) {
+			ServerMain.ConsoleMessage('-', m_UserName + " logged out.");
+		} else {
+			ServerMain.ConsoleMessage('-', "Unknown user disconnected");
+		}
 		ConnectionsHandler.get().RemoveConnectedClientAccount(this);
 
 		m_UserID = -1;
@@ -119,7 +132,10 @@ public class ClientAccount extends Thread {
 			m_Input.close();
 			m_ToClient.close();
 		} catch (IOException e) {
-			ServerMain.ConsoleMessage('!',"Failed to close Socket, Scanner, and/or PrintWriter for a disconnecting/disconnected client.");
+			ServerMain
+					.ConsoleMessage(
+							'!',
+							"Failed to close Socket, Scanner, and/or PrintWriter for a disconnecting/disconnected client.");
 			e.printStackTrace();
 		}
 
@@ -186,17 +202,22 @@ public class ClientAccount extends Thread {
 			if (check(password_text, rs.getString("password"))) {
 				m_UserID = rs.getInt("id");
 				m_UserName = rs.getString("user_name");
-				Database.get().quickInsert("UPDATE Users SET last_login = NOW() WHERE Users.id = " + m_UserID + ";");
-				//m_AdminAccount = rs.getBoolean("is_admin");
+				Database.get().quickInsert(
+						"UPDATE Users SET last_login = NOW() WHERE Users.id = "
+								+ m_UserID + ";");
+				// m_AdminAccount = rs.getBoolean("is_admin");
 			} else {
 				m_UserID = -1;
 				return false;
 			}
 		} catch (SQLException e) {
-			ServerMain.ConsoleMessage('!', "Problem accessing database while authenticating user " + user_name );
+			ServerMain.ConsoleMessage('!',
+					"Problem accessing database while authenticating user "
+							+ user_name);
 			e.printStackTrace();
 		} catch (Exception e) {
-			ServerMain.ConsoleMessage('!', "Error while authenticating user " + user_name );
+			ServerMain.ConsoleMessage('!', "Error while authenticating user "
+					+ user_name);
 			e.printStackTrace();
 		}
 		return true;
@@ -205,6 +226,7 @@ public class ClientAccount extends Thread {
 	public String getUserName() {
 		return this.m_UserName;
 	}
+
 	public int getUserID() {
 		return this.m_UserID;
 	}
@@ -228,7 +250,7 @@ public class ClientAccount extends Thread {
 					m_UserID = -1;
 				} else {
 					ServerMain.ConsoleMessage('-', m_UserName + " logged in.");
-					SendMessage( "LOGIN_SUCCESS;" + m_UserID );
+					SendMessage("LOGIN_SUCCESS;" + m_UserID);
 					LobbyManager.loginMessage(m_UserName);
 					ConnectionsHandler.get().Authenticated(this, m_UserName);
 					success = true;

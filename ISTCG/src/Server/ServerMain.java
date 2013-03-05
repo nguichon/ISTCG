@@ -16,8 +16,20 @@ import javax.xml.bind.Unmarshaller;
 import Shared.CardTemplates;
 import Shared.StatBlock;
 
+/**
+ * Main class for the Server.
+ * 
+ * @author Grogian
+ */
 public class ServerMain {
 	static boolean m_Quit;
+
+	/**
+	 * Server starts here.
+	 * 
+	 * @param args
+	 *            Command line arguments for the server
+	 */
 	public static void main(String[] args) {
 		ConsoleMessage('-', "Server Starting...");
 
@@ -36,12 +48,12 @@ public class ServerMain {
 		}
 
 		ConsoleMessage('-', "Successfully connected to Database...");
-		
-		//Initalize cardbase list
+
+		// Initialize Card Templates
 		ConsoleMessage('-', "Initalizing cards...");
-		
+
 		CardTemplateManager.get().Initialize();
-		
+
 		ConsoleMessage('-', "Finished intializing cards...");
 
 		// Attempt to create the server port
@@ -51,9 +63,10 @@ public class ServerMain {
 
 		ConsoleMessage('-', "Finished creating server port...");
 
-		// Exit "while" loop setup
+		// Create something to accept console input
 		Scanner consoleInput = new Scanner(System.in);
 
+		// Start main thread loop
 		m_Quit = false;
 		ConsoleMessage('-', "Server Started!");
 		while (!m_Quit) {
@@ -63,14 +76,17 @@ public class ServerMain {
 		}
 		ConsoleMessage('-', "Server Stopping...");
 
+		// Stop accepting new connections
 		ConnectionsHandler.get().Quit();
 
+		// Clean up
 		consoleInput.close();
 		System.exit(0);
 	}
 
-	private static void ParseConsoleCommand(String next) {
-		String[] command = next.split(" ");
+	
+	public static String RunCommand( String text ) {
+		String[] command = text.split(" ");
 		switch (ClientResponses.valueOf(command[0].toUpperCase())) {
 		case QUIT:
 			m_Quit = true;
@@ -78,52 +94,55 @@ public class ServerMain {
 		case CREATE_USER:
 			try {
 				ClientAccount.NewAccount(command[1], command[2], command[3]);
-				ConsoleMessage('-', "User account " + command[1] + " created.");
+				return "User account " + command[1] + " created.";
 			} catch (Exception e1) {
-				ConsoleMessage('!', "Failed to create account");
 				e1.printStackTrace();
+				return "Failed to create account";
 			}
-			break;
 		case SELECT:
-			ResultSet rs = Database.get().quickQuery(next);
-
+			ResultSet rs = Database.get().quickQuery(text);
+			String toReturn = "";
 			try {
 				ResultSetMetaData rsmd = rs.getMetaData();
 				for (int i = 1; i <= rsmd.getColumnCount(); i++) {
 					if (i != 1) {
-						System.out.print(" | ");
+						toReturn += " | ";
 					} else {
-						System.out.println();
+						toReturn += "\n";
 					}
-					System.out.print(rsmd.getColumnName(i));
+					toReturn += rsmd.getColumnName(i);
 				}
 				while (rs.next()) {
 					for (int i = 1; i <= rsmd.getColumnCount(); i++) {
 						if (i != 1) {
-							System.out.print(" | ");
+							toReturn += " | ";
 						} else {
-							System.out.println();
+							toReturn += "\n";
 						}
-						System.out.print(rs.getString(rsmd.getColumnName(i)));
+						toReturn += rs.getString(rsmd.getColumnName(i));
 					}
 				}
-				System.out.println();
+				toReturn += "\n";
+				return toReturn;
 			} catch (SQLException e) {
-				ConsoleMessage('!', "Invalid Query");
+				toReturn = "Invalid query.";
 				e.printStackTrace();
+				return toReturn;
 			}
-			break;
 		case USERS:
 			// Lists users currently connected
-			System.out.println("Getting List of All Connected Users:");
-			
-			break;
+			String userList = "";
+			userList += "Currently connected users: \n";
+			return userList;
 		case SHRINK:
-			//TO DO: ADD CODE TO MINIMIZE CLIENTS
+			// TO DO: ADD CODE TO MINIMIZE CLIENTS
 		default:
-			ConsoleMessage('?', "Unknown command \"" + command[0] + "\"");
 			break;
 		}
+		return "Unknown command \"" + command[0] + "\"";
+	}
+	private static void ParseConsoleCommand(String next) {
+		ConsoleMessage('?',RunCommand(next));
 	}
 
 	public static void ConsoleMessage(char sym, String message) {
