@@ -1,4 +1,4 @@
-package Server;
+package Old;
 
 import Shared.CardTemplates;
 import Shared.Deck;

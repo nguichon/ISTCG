@@ -1,4 +1,4 @@
-package Server;
+package Old;
 
 public enum ClientResponses {
 		QUIT, CREATE_USER, SELECT, USERS, SHRINK, LOAD_DECK, END_TURN, LOGIN, SAY, TELL, LOGOUT, DISCONNECT, CHALLENGE, ADMIN;
