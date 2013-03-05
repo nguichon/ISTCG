@@ -46,7 +46,7 @@ public class Deck {
 	 *         AddCard, unless shuffled of course
 	 */
 	public CardTemplates DrawCard() {
-		return m_CardsInDeck.get(0);
+		return m_CardsInDeck.remove(0);
 	}
 
 	/**

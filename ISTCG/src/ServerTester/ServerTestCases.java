@@ -121,6 +121,60 @@ public class ServerTestCases {
 	}
 	
 	@Test
+	public void testTwoPlayersLoginStartGame() {
+		Socket clientA = makeConnection();
+		PrintWriter clientAOut = null;
+		Scanner clientAIn = null;
+		
+		Socket clientB = makeConnection();
+		PrintWriter clientBOut = null;
+		Scanner clientBIn = null;
+		
+		try {
+			clientAOut = new PrintWriter(clientA.getOutputStream());
+			clientAIn = new Scanner(clientA.getInputStream());
+
+			clientBOut = new PrintWriter(clientB.getOutputStream());
+			clientBIn = new Scanner(clientB.getInputStream());
+		} catch (IOException e) {
+			Assert.fail("Failed to create Scanner or Writer");
+		}
+		
+		clientAOut.println("LOGIN;" + m_User + ";" + m_Pass);
+		clientAOut.flush();
+		Assert.assertEquals("LOGIN_SUCCESS;3", clientAIn.nextLine());
+
+		clientBOut.println("LOGIN;" + m_User2 + ";" + m_Pass2);
+		clientBOut.flush();
+		Assert.assertEquals("LOGIN_SUCCESS;5", clientBIn.nextLine());
+		Assert.assertEquals("LOGGED_IN_MESSAGE;TestUser", clientAIn.nextLine());
+		
+		clientAOut.println("CHALLENGE;" + m_User2);
+		clientAOut.flush();
+		
+		String[] testString = clientAIn.nextLine().split(";");
+		Assert.assertEquals("JOIN", testString[0]);
+		int game_id = Integer.parseInt( testString[1] );
+		testString = clientBIn.nextLine().split(";");
+		Assert.assertEquals("JOIN", testString[0]);
+		Assert.assertEquals( game_id, Integer.parseInt(testString[1]));
+		
+		Assert.assertEquals(  "PLAYERJOINED" ,  clientBIn.nextLine().split(";")[0]);
+		Assert.assertEquals(  "PLAYERJOINED" ,  clientAIn.nextLine().split(";")[0]);
+		
+		clientAOut.println( "LOAD_DECK;" + game_id + ";3,15|4,15");
+		clientAOut.flush();
+		clientBOut.println( "LOAD_DECK;" + game_id + ";3,15|4,15");
+		clientAOut.flush();
+		
+
+		clientAOut.println("DISCONNECT");
+		clientAOut.flush();
+		clientBOut.println("DISCONNECT");
+		clientBOut.flush();
+	}
+	
+	@Test
 	public void testLoginGoodCredentialsSuccessful() {
 		Socket toServer = makeConnection();
 		PrintWriter pw = null;
