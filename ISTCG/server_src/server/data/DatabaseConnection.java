@@ -2,6 +2,7 @@ package server.data;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import server.ServerMain;
@@ -26,6 +27,34 @@ public class DatabaseConnection {
 
 		return INSTANCE;
 	}
+	
+	public ResultSet RunQuery( String query ) {
+		try {
+			
+			return m_DBConnection.prepareCall( query ).executeQuery();
+			
+		} catch (SQLException e) {
+			try {
+				m_DBConnection.rollback();
+			} catch (SQLException e1) {
+				e1.printStackTrace();
+			}
+			e.printStackTrace();
+		}
+		
+		return null;
+	}
+	public ResultSet RunQueryAndCommit( String query ) {
+		ResultSet toReturn = RunQuery( query );
+
+		try {
+			m_DBConnection.commit();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		return toReturn;
+	}
 
 	/**
 	 * Private constructor. Creates a connection to the database.
@@ -34,6 +63,8 @@ public class DatabaseConnection {
 		try {
 			m_DBConnection = DriverManager.getConnection("jdbc:postgresql://"
 					+ DATABASE_URL, DATABASE_LOGIN, DATABASE_PASSWORD);
+			
+			m_DBConnection.setAutoCommit( false );
 		} catch (SQLException e) {
 			ServerMain.DisplayMessage("!!!",
 					"Failed to create database connection.");

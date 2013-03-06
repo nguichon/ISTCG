@@ -1,6 +1,10 @@
 package server;
 
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.util.Date;
+
+import Old.Database;
 
 public class ServerMain {
 	public static void main(String[] args) {
