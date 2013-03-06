@@ -42,9 +42,9 @@ public class Game {
 	 * 		The ClientAccount/Socket connection for this new player
 	 */
 	private void AddToGame( ClientAccount ca ) {
-		ca.SendMessage( "JOIN;" + m_GameID );
-		SendMessageToAllPlayers( "PLAYERJOINED;" + m_GameID + ";" + ca.getUserID() + ";" + ca.getUserName() );
-		for( GamePlayer gp : m_Players ) { ca.SendMessage( "PLAYERJOINED;" + m_GameID + ";" + gp.getClient().getUserID() + ";" + gp.getClient().getUserName() ); }
+		ca.SendMessage( ClientMessages.JOIN, "" + m_GameID );
+		SendMessageToAllPlayers( ClientMessages.PLAYER_JOINED, "" + m_GameID,  ca.getUserName(), "" + ca.getUserID() );
+		for( GamePlayer gp : m_Players ) { ca.SendMessage( ClientMessages.PLAYER_JOINED, "" + m_GameID,  gp.getAccount().getUserName(), "" + gp.GetPlayerID() ); }
 		m_Players.add( new GamePlayer( this, ca ));
 	}
 
@@ -57,11 +57,11 @@ public class Game {
 	 */
 	public synchronized void HandleMessage( int origin, String[] message ) {
 		switch(ClientResponses.valueOf( message[0].toUpperCase() )) {
-		case END_TURN:
+		case END:
 			//TODO needs to check that "stack" is empty
 			if( m_Started && m_CurrentPlayer.GetPlayerID() == origin ) { EndTurn(); }
 			break;
-		case LOAD_DECK:
+		case DECKLIST:
 			for( GamePlayer gp : m_Players ) { 
 				if(gp.GetPlayerID() == Integer.valueOf(origin)) {
 					gp.LoadDeck( message[2] );
@@ -78,9 +78,9 @@ public class Game {
 	 * @param message
 	 * 		Message that will be sent to users
 	 */
-	public void SendMessageToAllPlayers( String message ) {
+	public void SendMessageToAllPlayers( ClientMessages messageType, String ... parameters ) {
 		for( GamePlayer gp : m_Players ) {
-			gp.getClient().SendMessage( message );
+			gp.getClient().SendMessage( messageType, parameters );
 		}
 	}
 	
@@ -114,7 +114,7 @@ public class Game {
 	 * Starts the current turn.
 	 */
 	private void StartTurn() {
-		SendMessageToAllPlayers("CHANGETURN;" + m_GameID + ";" + m_CurrentPlayer.GetPlayerID());
+		SendMessageToAllPlayers( ClientMessages.PLAYER_TURN, "" + m_GameID, "" + m_CurrentPlayer.GetPlayerID());
 		m_CurrentPlayer.DrawCards(1);
 	}
 	
