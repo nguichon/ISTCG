@@ -50,13 +50,19 @@ public class ClientAccount extends Thread {
 	private Scanner m_Input;
 	private boolean m_Connected;
 
-	public void SendMessage(String message) {
-		m_Output.println(message);
-		m_Output.flush();
+	public void SendMessage(ClientMessages messageType, String ... parameters ) {
+		String parameterString = "";
+		for( int i = 0; i < parameters.length; i++ ) {
+			parameterString += parameters[i] + ";";
+		}
+		
+		synchronized(m_Output){
+			m_Output.println(messageType.name() + ";" + parameterString);
+			m_Output.flush();
+		}
 	}
 
 	public void run() {
-
 		while (m_Connected) {
 			try {
 				String line = m_Input.nextLine();
@@ -73,10 +79,7 @@ public class ClientAccount extends Thread {
 						break;
 					case TELL:
 						if (m_UserID != -1) {
-							LobbyManager.whisper(m_UserName, command[1],
-									command[2]);
-							SendMessage("SAY;" + "to [" + command[1] + "];"
-									+ command[2]);
+							LobbyManager.whisper(m_UserName, command[1], command[2]);
 						}
 						break;
 					case LOGOUT:
@@ -94,12 +97,11 @@ public class ClientAccount extends Thread {
 						break;
 					case ADMIN:
 						if (m_AdminAccount) {
-							SendMessage("SAY;Console;"
-									+ ServerMain.RunCommand(command[1]));
+							SendMessage(ClientMessages.SERVER, ServerMain.RunCommand(command[1]));
 						}
-					case LOAD_DECK:
+					case DECKLIST:
 						// Drop through
-					case END_TURN:
+					case END:
 						GameManager.get().SendMessageToGame(
 								Integer.valueOf(command[1]), this.m_UserID,
 								command);
@@ -247,21 +249,21 @@ public class ClientAccount extends Thread {
 		if (m_UserID == -1) {
 			if (Authenticate(name, password)) {
 				if (ConnectionsHandler.get().GetClientByName(this.m_UserName) != null) {
-					SendMessage("LOGIN_FAILED;User is logged in at another location.");
+					SendMessage( ClientMessages.LOGIN_FAILED, "User is logged in at another location.");
 					m_UserName = null;
 					m_UserID = -1;
 				} else {
 					ServerMain.ConsoleMessage('-', m_UserName + " logged in.");
-					SendMessage("LOGIN_SUCCESS;" + m_UserID);
+					SendMessage( ClientMessages.LOGIN_SUCCESS, "" + m_UserID);
 					LobbyManager.loginMessage(m_UserName);
 					ConnectionsHandler.get().Authenticated(this, m_UserName);
 					success = true;
 				}
 			} else {
-				SendMessage("LOGIN_FAILED;Bad login information.");
+				SendMessage( ClientMessages.LOGIN_FAILED, "Bad login information.");
 			}
 		} else {
-			SendMessage("LOGIN_FAILED;Already logged in.");
+			SendMessage( ClientMessages.LOGIN_FAILED, "Already logged in.");
 		}
 
 		if (!success) {

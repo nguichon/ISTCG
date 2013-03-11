@@ -30,24 +30,24 @@ public class GamePlayer {
 		for( int i = 0; i < number; i++ ) {
 			CardTemplates cardDrawn = m_PlayerDeck.DrawCard();
 			m_PlayerHand.AddCard( cardDrawn );
-	        m_PlayerAccount.SendMessage( "ADDCARD;" + 
-					m_Game.GetID() + ";" + 
-					m_PlayerAccount.getUserID() + ";" + 
-					GameZones.HAND.toString() + ";" + 
-					cardDrawn.getID() );
+	        m_PlayerAccount.SendMessage( ClientMessages.CREATE_TEMPLATE,
+					"" + m_Game.GetID(),
+					"" + m_PlayerAccount.getUserID(),
+					GameZones.HAND.name(),
+					"" + cardDrawn.getID() );
 		}
 		
 		//Notify clients
-		m_Game.SendMessageToAllPlayers("UPDATE;" + 
-											m_Game.GetID() + ";" + 
-											m_PlayerAccount.getUserID() + ";" + 
-											GameZones.DECK.toString() + ";" +
-											m_PlayerDeck.DeckCount());
-		m_Game.SendMessageToAllPlayers("UPDATE;" + 
-											m_Game.GetID() + ";" + 
-											m_PlayerAccount.getUserID() + ";" + 
-											GameZones.HAND.toString() + ";" +
-											m_PlayerHand.DeckCount());
+		m_Game.SendMessageToAllPlayers( ClientMessages.UPDATE_ZONE,
+											"" + m_Game.GetID(), 
+											"" + m_PlayerAccount.getUserID(), 
+											GameZones.DECK.name(),
+											"" + m_PlayerDeck.DeckCount());
+		m_Game.SendMessageToAllPlayers( ClientMessages.UPDATE_ZONE,
+											"" + m_Game.GetID(),
+											"" + m_PlayerAccount.getUserID(),
+											GameZones.HAND.name(),
+											"" + m_PlayerHand.DeckCount());
 	}
 	
 	public boolean isReady() {

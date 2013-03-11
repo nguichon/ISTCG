@@ -91,14 +91,14 @@ public class ConnectionsHandler extends Thread {
 		m_ConnectedClients.remove( ca );
 	}
 	
-	public void SendMessageToAll( String message ) {
+	public void SendMessageToAll( ClientMessages messageType, String ... parameters ) {
 		for(ClientAccount ca : m_ConnectedClients) {
-			ca.SendMessage( message );
+			ca.SendMessage( messageType, parameters );
 		}
 	}
-	public void SendMessageToAllAuthenticated( String message ) {
+	public void SendMessageToAllAuthenticated( ClientMessages messageType, String ... parameters ) {
 		for(ClientAccount ca : m_AuthenticatedClient.values()) {
-			ca.SendMessage( message );
+			ca.SendMessage( messageType, parameters );
 		}
 	}
 }

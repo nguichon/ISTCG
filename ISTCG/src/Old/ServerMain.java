@@ -87,11 +87,11 @@ public class ServerMain {
 	
 	public static String RunCommand( String text ) {
 		String[] command = text.split(" ");
-		switch (ClientResponses.valueOf(command[0].toUpperCase())) {
+		switch (AdminCommands.valueOf(command[0].toUpperCase())) {
 		case QUIT:
 			m_Quit = true;
 			break;
-		case CREATE_USER:
+		case CREATE_ACCOUNT:
 			try {
 				ClientAccount.NewAccount(command[1], command[2], command[3]);
 				return "User account " + command[1] + " created.";
@@ -129,7 +129,7 @@ public class ServerMain {
 				e.printStackTrace();
 				return toReturn;
 			}
-		case USERS:
+		case GET_USERS:
 			// Lists users currently connected
 			String userList = "";
 			userList += "Currently connected users: \n";
