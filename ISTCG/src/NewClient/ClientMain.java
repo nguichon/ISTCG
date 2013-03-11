@@ -112,6 +112,10 @@ public class ClientMain {
 			break;
 		case LOGIN_SUCCESS:
 			this.ID=inputs[1];
+			shell.setBounds(display.getPrimaryMonitor().getBounds());
+			composite = new Lobby(shell, SWT.NONE,this);
+			Rectangle r = shell.getBounds();
+			composite.setBounds(r);
 			break;
 		case LOGIN_FAILED:
 			//ERROR
@@ -148,10 +152,7 @@ public class ClientMain {
 			
 			composite.dispose();
 			
-			shell.setBounds(display.getPrimaryMonitor().getBounds());
-			composite = new Lobby(shell, SWT.NONE,this);
-			Rectangle r = shell.getBounds();
-			composite.setBounds(r);
+			
 		}
 		else {
 			//ERROR
