@@ -1,4 +1,4 @@
-package Old;
+package Server;
 
 public class LobbyManager {
 
