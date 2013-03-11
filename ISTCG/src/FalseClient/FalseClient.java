@@ -51,6 +51,8 @@ public class FalseClient {
 //			}
 		}
 		
+		consoleInput.close();
+		
 		
 	}
 

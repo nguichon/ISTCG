@@ -6,8 +6,6 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 
 import org.eclipse.swt.graphics.GC;
-import org.eclipse.swt.graphics.Image;
-
 import Shared.StatBlock;
 import Shared.CardTemplates.CardType;
 
