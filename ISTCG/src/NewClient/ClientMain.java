@@ -36,9 +36,12 @@ public class ClientMain {
 		shell.pack();
 		shell.open();
 		shell.layout();
-		
+		this.MakeConnection();
 		while (!shell.isDisposed()) {
 			if (!display.readAndDispatch()) {
+				if(m_Server.hasData()){
+					this.ParseMessage(m_Server.getData());
+				}
 				display.sleep();
 			}
 		}
@@ -112,6 +115,7 @@ public class ClientMain {
 			break;
 		case LOGIN_SUCCESS:
 			this.ID=inputs[1];
+			composite.dispose();
 			shell.setBounds(display.getPrimaryMonitor().getBounds());
 			composite = new Lobby(shell, SWT.NONE,this);
 			Rectangle r = shell.getBounds();
@@ -148,10 +152,10 @@ public class ClientMain {
 		String p = ((Login)composite).getPassword().getText();
 		
 		if(!u.isEmpty()&&!p.isEmpty()){
-			if(this.MakeConnection()){
+			
 			m_Server.sendData("login;"+u+";"+p);
-			composite.dispose();
-			}
+			
+			
 			
 			
 		}
