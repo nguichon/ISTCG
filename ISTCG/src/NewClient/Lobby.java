@@ -24,7 +24,7 @@ public class Lobby extends Composite {
 	 * @param style
 	 */
 	public static String newline = String.valueOf(new char[]{SWT.CR});
-	public Lobby(Composite parent, int style, ClientMain main) {
+	public Lobby(Composite parent, int style, final ClientMain main) {
 		super(parent, style);
 		
 		text = new Text(this, SWT.BORDER | SWT.READ_ONLY|SWT.WRAP|SWT.MULTI|SWT.V_SCROLL);
@@ -35,7 +35,7 @@ public class Lobby extends Composite {
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
 				//onClick
-				addMessageBox(getPlayerMessage().getText());
+				main.SendTextMessage(getPlayerMessage().getText());
 				getPlayerMessage().setText("");
 			}
 		});
