@@ -148,7 +148,7 @@ public class ClientMain {
 		String p = ((Login)composite).getPassword().getText();
 		
 		if(!u.isEmpty()&&!p.isEmpty()){
-			this.login(u, p);
+			m_Server.sendData("login;u;p");
 			
 			composite.dispose();
 			
