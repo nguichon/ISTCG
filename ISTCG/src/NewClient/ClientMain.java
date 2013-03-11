@@ -118,6 +118,9 @@ public class ClientMain {
 			break;
 		case LOGIN_FAILED:
 			//ERROR
+			if(composite instanceof Login){
+				((Login)(composite)).setLabel("LOGIN FAILED");
+			}
 			break;
 		case JOIN:
 			

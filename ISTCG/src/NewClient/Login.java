@@ -13,6 +13,7 @@ import org.eclipse.swt.events.SelectionEvent;
 public class Login extends Composite {
 	private Text text;
 	private Text text_1;
+	private Label label;
 	final ClientMain m_Host;
 	/**
 	 * Create the composite.
@@ -35,7 +36,7 @@ public class Login extends Composite {
 		final Label lblPassword = new Label(this, SWT.NONE);
 		lblPassword.setText("Password:");
 		lblPassword.setBounds(76, 128, 72, 31);
-		final Label label = new Label(this, SWT.NONE);
+		label = new Label(this, SWT.NONE);
 		label.setBounds(174, 208, 200, 20);
 		label.setText("Please login");
 		Button btnLogin = new Button(this, SWT.PUSH);
@@ -76,5 +77,8 @@ public class Login extends Composite {
 	}
 	public Text getPassword() {
 		return text_1;
+	}
+	public void setLabel(String s){
+		this.label.setText(s);
 	}
 }
