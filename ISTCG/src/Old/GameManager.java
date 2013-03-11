@@ -25,12 +25,16 @@ public class GameManager {
 
 	public int CreateGame( ClientAccount... players ) {
 		int gameNumber = GetNewGameNumber();
-		m_ActiveGames.put( gameNumber , new Game(gameNumber, players) );
+		synchronized( m_ActiveGames ) {
+			m_ActiveGames.put( gameNumber , new Game(gameNumber, players) );
+		}
 		return gameNumber;
 	}
 	
 	public void RemoveGame( int id ) {
-		m_ActiveGames.remove( id );
+		synchronized( m_ActiveGames ) {
+			m_ActiveGames.remove( id );
+		}
 	}
 	
 	public void RemoveGame( Game g ) {

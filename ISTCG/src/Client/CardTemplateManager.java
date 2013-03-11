@@ -1,8 +1,6 @@
 package Client;
 
 import java.io.File;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.HashMap;
 
 import javax.xml.bind.JAXBContext;
@@ -33,8 +31,6 @@ public class CardTemplateManager {
 	
 	/**
 	 * Retrieves a card from the singleton
-	 * <pre>
-	 * 		LoadAllCards has been called.
 	 */
 	public CardTemplate GetCardTemplate( int id ) {
 		CardTemplate toReturn = m_LoadedCards.get(id);
