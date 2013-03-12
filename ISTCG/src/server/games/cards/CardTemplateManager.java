@@ -9,8 +9,8 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 
+import server.Database;
 import server.ServerMain;
-import server.admin.Database;
 
 
 public class CardTemplateManager {

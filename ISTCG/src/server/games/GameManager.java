@@ -5,8 +5,8 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
+import server.Database;
 import server.ServerMain;
-import server.admin.Database;
 import server.network.ClientAccount;
 
 

@@ -13,9 +13,9 @@ import javax.crypto.spec.PBEKeySpec;
 
 import org.postgresql.util.Base64;
 
+import server.Database;
 import server.LobbyManager;
 import server.ServerMain;
-import server.admin.Database;
 import server.games.GameManager;
 
 /**
