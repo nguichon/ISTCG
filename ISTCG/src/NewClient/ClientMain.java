@@ -62,7 +62,7 @@ public class ClientMain {
 		return shell.getBounds();
 	}
 	private ThreadedConnectionDevice m_Server;
-	public enum MessageType { SAY, LOGIN_SUCCESS, LOGIN_FAILED, LOGGED_IN_MESSAGE, ALREADY_LOGGED_IN, NOPE, PLAYERJOINED, JOIN, UPDATE, ADDCARD, REMOVECARD, CREATECARD; }
+	public enum MessageType { JOIN,PLAYER_JOINED,UPDATE_ZONE,CREATE_TEMPLATE,REMOVE_TEMPLATE,CREATE_INSTANCE,UPDATE_INSTANCE,DELETE_INSTANCE,PRIVATE_MESSAGE,MESSAGE,LOGIN_FAILED,LOGIN_SUCCESS,USER_LOGGED_IN,SERVER,PLAYER_TURN }
 	
 	private boolean MakeConnection() {
 		int port = 4567;
@@ -93,25 +93,20 @@ public class ClientMain {
 			
 		}
 		
-		//System.out.println(s);
-		if(s.equals("/tell"))
-			m_Server.sendData( "TELL;" + text.substring(6) );
-		else if(s.equals("/chal")){
-			m_Server.sendData( "CHALLENGE;"+text.substring(6));
-		}
-		else
-			m_Server.sendData( "SAY;" + text );
+		
 	}
 	public void Login( String login, String password ) {
 		if(MakeConnection())
 			m_Server.sendData( "LOGIN;" + login + ";" + password );
 	}
 	public void ParseMessage( String input ) {
+		//System.out.println(input);
 		String[] inputs = input.split(";");
 		switch( MessageType.valueOf(inputs[0].toUpperCase()) ) {
-		case LOGGED_IN_MESSAGE:
-		case SAY:
-			
+		case MESSAGE:
+			if(composite instanceof Lobby){
+			((Lobby)(composite)).addMessageBox(inputs[1]+": "+inputs[2]);
+			}
 			break;
 		case LOGIN_SUCCESS:
 			this.ID=inputs[1];
@@ -123,24 +118,40 @@ public class ClientMain {
 			break;
 		case LOGIN_FAILED:
 			//ERROR
+			if(composite instanceof Login){
+				((Login)(composite)).setLabel("LOGIN FAILED");
+			}
 			break;
 		case JOIN:
 			
 			break;
-		case PLAYERJOINED:
-			
+		case PLAYER_JOINED:
 			break;
-		case UPDATE:
-			
+		case UPDATE_ZONE:
 			break;
-		case ADDCARD:
-			
+		case CREATE_TEMPLATE:
 			break;
-		case REMOVECARD:
-			
+		case REMOVE_TEMPLATE:
 			break;
-		case CREATECARD:
-			
+		case CREATE_INSTANCE:
+			break;
+		case UPDATE_INSTANCE:
+			break;
+		case DELETE_INSTANCE:
+			break;
+		case PRIVATE_MESSAGE:
+			if(composite instanceof Lobby){
+				((Lobby)(composite)).addMessageBox(inputs[1]+": "+inputs[2]);
+				}
+			break;
+		case USER_LOGGED_IN:
+			if(composite instanceof Lobby){
+				((Lobby)(composite)).addMessageBox(inputs[1]+" has logged in.");
+				}
+			break;
+		case SERVER:
+			break;
+		case PLAYER_TURN:
 			break;
 		default:
 			break;
