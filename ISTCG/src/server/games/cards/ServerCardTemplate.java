@@ -2,6 +2,8 @@ package server.games.cards;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -12,6 +14,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import Shared.CardTemplates;
 import Shared.StatBlock;
+import Shared.StatBlock.StatType;
 
 @XmlRootElement(namespace = "de.vogella.xml.jaxb.model")
 public class ServerCardTemplate extends Shared.CardTemplates {
@@ -49,15 +52,21 @@ public class ServerCardTemplate extends Shared.CardTemplates {
 		m_CardType = type;
 	}
 
-	private ArrayList<StatBlock> m_Stats;
+	private HashMap<StatBlock.StatType, StatBlock> m_Stats;
 
 	@XmlElementWrapper(name = "statList")
 	@XmlElement(name = "stat")
-	public void setStats(ArrayList<StatBlock> stats) {
-		this.m_Stats = stats;
+	public void setStats(Collection<StatBlock> stats) {
+		for( StatBlock sb : stats ) {
+			m_Stats.put( sb.m_Type, sb );
+		}
 	}
 
-	public ArrayList<StatBlock> getStats() {
-		return m_Stats;
+	public Collection<StatBlock> getStats() {
+		return m_Stats.values();
+	}
+
+	public final StatBlock getStat(StatType type) {
+		return m_Stats.get( type );
 	}
 }

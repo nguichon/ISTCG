@@ -31,7 +31,7 @@ public class Game {
 	private HashMap<Integer, CardInstance> m_CardsInPlay = new HashMap<Integer, CardInstance>();
 	private int m_CardsCreated = 0;
 	
-	private synchronized int getNewCardID() {
+	public synchronized int getNewCardID() {
 		return m_CardsCreated++;
 	}
 	
