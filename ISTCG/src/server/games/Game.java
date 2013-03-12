@@ -1,8 +1,14 @@
-package Server;
+package server.games;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Random;
+
+import server.games.cards.CardInstance;
+import server.network.ClientAccount;
+import server.network.ClientMessages;
+import server.network.ClientResponses;
 
 /**
  * This is a specific game. I'll write more documentation later...
@@ -14,12 +20,20 @@ public class Game {
 	
 	//Game setup variables
 	private int m_GameID;
-	ArrayList<GamePlayer> m_Players;
+	private ArrayList<GamePlayer> m_Players;
 	private boolean m_Started;
 	
 	//Game turn variables
-	Iterator<GamePlayer> m_PlayerIterator;
-	GamePlayer m_CurrentPlayer;
+	private Iterator<GamePlayer> m_PlayerIterator;
+	private GamePlayer m_CurrentPlayer;
+	
+	//Game object variables
+	private HashMap<Integer, CardInstance> m_CardsInPlay = new HashMap<Integer, CardInstance>();
+	private int m_CardsCreated = 0;
+	
+	private synchronized int getNewCardID() {
+		return m_CardsCreated++;
+	}
 	
 	/**
 	 * This creates a game instance, should ONLY be called by GameManager

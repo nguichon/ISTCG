@@ -1,4 +1,8 @@
-package Server;
+package server;
+
+import server.network.ClientAccount;
+import server.network.ClientMessages;
+import server.network.ConnectionsHandler;
 
 public class LobbyManager {
 

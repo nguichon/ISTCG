@@ -1,4 +1,4 @@
-package Server;
+package server.network;
 
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -7,6 +7,8 @@ import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+
+import server.ServerMain;
 
 
 public class ConnectionsHandler extends Thread {

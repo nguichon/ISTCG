@@ -1,4 +1,4 @@
-package Server;
+package server.games.cards;
 
 import java.io.File;
 import java.util.ArrayList;

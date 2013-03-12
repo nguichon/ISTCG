@@ -1,4 +1,4 @@
-package Server;
+package server.network;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -12,6 +12,11 @@ import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
 
 import org.postgresql.util.Base64;
+
+import server.LobbyManager;
+import server.ServerMain;
+import server.admin.Database;
+import server.games.GameManager;
 
 /**
  * @author Nicholas Guichon

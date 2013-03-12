@@ -1,4 +1,4 @@
-package Server;
+package server.games.cards;
 
 import java.io.File;
 import java.sql.ResultSet;
@@ -8,6 +8,9 @@ import java.util.HashMap;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
+
+import server.ServerMain;
+import server.admin.Database;
 
 
 public class CardTemplateManager {

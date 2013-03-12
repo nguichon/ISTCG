@@ -1,9 +1,13 @@
-package Server;
+package server.games;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
+
+import server.ServerMain;
+import server.admin.Database;
+import server.network.ClientAccount;
 
 
 public class GameManager {

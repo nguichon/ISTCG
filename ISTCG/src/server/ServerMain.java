@@ -1,4 +1,4 @@
-package Server;
+package server;
 
 import java.io.File;
 import java.sql.ResultSet;
@@ -12,6 +12,12 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
+
+import server.admin.AdminCommands;
+import server.admin.Database;
+import server.games.cards.CardTemplateManager;
+import server.network.ClientAccount;
+import server.network.ConnectionsHandler;
 
 import Shared.CardTemplates;
 import Shared.StatBlock;

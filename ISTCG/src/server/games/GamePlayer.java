@@ -1,5 +1,9 @@
-package Server;
+package server.games;
 
+import server.games.cards.CardTemplateManager;
+import server.games.cards.ServerCardTemplate;
+import server.network.ClientAccount;
+import server.network.ClientMessages;
 import Shared.CardTemplates;
 import Shared.Deck;
 import Shared.GameZones;
