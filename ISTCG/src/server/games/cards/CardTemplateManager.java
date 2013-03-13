@@ -55,7 +55,7 @@ public class CardTemplateManager {
 					ServerCardTemplate.class).createUnmarshaller();
 
 			ServerCardTemplate scb = (ServerCardTemplate)reader.unmarshal(new File(DEFAULT_CARD_PATH + card_name + ".scf"));
-			m_LoadedCards.put( scb.getCardID(), scb );
+			m_LoadedCards.put( scb.getCardTemplateID(), scb );
 		} catch (JAXBException e) {
 			e.printStackTrace();
 		}				
