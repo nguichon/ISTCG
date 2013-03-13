@@ -42,6 +42,20 @@ public class CardTemplate {
 	 */
 	public void Render( GC targetGC, CardRenderSize size, StatBlock...overwriteStats ) {
 		targetGC.drawRectangle(0, 0, size.getWidth(), size.getHeight() );
+		switch( size ) {
+		case TINY:
+			//TODO stuff here
+			break;
+		case SMALL:
+			//TODO stuff here
+			break;
+		case MEDIUM:
+			//TODO stuff here
+			break;
+		case LARGE:
+			//TODO stuff here
+			break;
+		}
 	}
 	
 	/**

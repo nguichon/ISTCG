@@ -3,6 +3,8 @@ package server.games;
 import server.games.cards.CardInstance;
 
 public class GameEvent {
+	private Game m_HostGame;
+	
 	private GamePlayer m_SourcePlayer;
 	private CardInstance m_SourceCard;
 	
@@ -12,4 +14,6 @@ public class GameEvent {
 	private String m_EventString;
 	
 	public GamePlayer getSourcePlayer() { return m_SourcePlayer; }
+	public CardInstance getSourceCard() { return m_SourceCard; }
+	public Game getHostGame() { return m_HostGame; }
 }

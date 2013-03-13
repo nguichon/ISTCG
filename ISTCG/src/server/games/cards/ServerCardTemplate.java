@@ -16,6 +16,10 @@ public abstract class ServerCardTemplate {
 	private HashMap<StatBlock.StatType, StatBlock> m_Stats;
 	private int[] m_Cost = new int[3];
 	
+	public ServerCardTemplate( int id, int atk, int pow, int def, int str, int hp, int delay, int[] cost ) { 
+		Initialize( id, atk, pow, def, str, hp, delay, cost ); }
+	protected abstract void Initialize( int id, int atk, int pow, int def, int str, int hp, int delay, int[] cost );
+	
 	public final int getCardTemplateID() { return m_CardID; }
 	public final CardTypes getCardType() { return m_CardType; }
 	public final StatBlock getStat( StatBlock.StatType type ) { return m_Stats.get( type ); }
