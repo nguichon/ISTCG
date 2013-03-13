@@ -1,5 +1,5 @@
 package server.games;
 
-public class AttackEvent {
+public class AttackEvent extends GameEvent {
 
 }

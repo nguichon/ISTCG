@@ -1,11 +1,11 @@
 package server.games;
 
 import server.games.cards.CardTemplateManager;
+import server.games.cards.Deck;
 import server.games.cards.ServerCardTemplate;
 import server.network.ClientAccount;
 import server.network.ClientMessages;
-import Shared.CardTemplates;
-import Shared.Deck;
+import Shared.GameResources;
 import Shared.GameZones;
 
 public class GamePlayer {
@@ -32,13 +32,13 @@ public class GamePlayer {
 	public void DrawCards( int number ) {
 		//Draw the cards from the deck and place them in hand.
 		for( int i = 0; i < number; i++ ) {
-			CardTemplates cardDrawn = m_PlayerDeck.DrawCard();
+			ServerCardTemplate cardDrawn = m_PlayerDeck.DrawCard();
 			m_PlayerHand.AddCard( cardDrawn );
 	        m_PlayerAccount.SendMessage( ClientMessages.CREATE_TEMPLATE,
 					"" + m_Game.GetID(),
 					"" + m_PlayerAccount.getUserID(),
 					GameZones.HAND.name(),
-					"" + cardDrawn.getID() );
+					"" + cardDrawn.getCardTemplateID() );
 		}
 		
 		//Notify clients
@@ -60,6 +60,10 @@ public class GamePlayer {
 
 	public ClientAccount getAccount() {
 		return m_PlayerAccount;
+	}
+	
+	public void AddResource( GameResources res, int value ) {
+		//TODO Resource handling
 	}
 	
 	public void LoadDeck( String deckList ) {

@@ -6,12 +6,13 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 
 import org.eclipse.swt.graphics.GC;
+
+import Shared.CardTypes;
 import Shared.StatBlock;
-import Shared.CardTemplates.CardType;
 
 public class CardTemplate {
 	private String m_BGImage;
-	private CardType m_CardType;
+	private CardTypes m_CardType;
 	private int m_CardID;
 	private ArrayList<StatBlock> m_Stats;
 	private String m_CardName;
@@ -68,11 +69,11 @@ public class CardTemplate {
 	}
 	
 	@XmlElement(name = "cardType")
-	public CardType getCardType() {
+	public CardTypes getCardType() {
 		return m_CardType;
 	}
 
-	public void setCardType(CardType type) {
+	public void setCardType(CardTypes type) {
 		m_CardType = type;
 	}
 	

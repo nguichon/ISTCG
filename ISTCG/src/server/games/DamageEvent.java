@@ -1,5 +1,5 @@
 package server.games;
 
-public class DamageEvent {
+public class DamageEvent extends GameEvent {
 
 }

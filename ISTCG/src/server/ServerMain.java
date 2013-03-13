@@ -18,7 +18,6 @@ import server.games.cards.CardTemplateManager;
 import server.network.ClientAccount;
 import server.network.ConnectionsHandler;
 
-import Shared.CardTemplates;
 import Shared.StatBlock;
 
 /**

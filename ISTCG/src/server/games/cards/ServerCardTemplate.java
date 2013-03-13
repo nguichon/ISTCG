@@ -1,35 +1,37 @@
 package server.games.cards;
 
-import java.util.Collection;
 import java.util.HashMap;
 
 import server.games.AttackEvent;
 import server.games.DamageEvent;
 import server.games.GameEvent;
 
-import Shared.CardTemplates;
+import Shared.CardTypes;
+import Shared.GameResources;
 import Shared.StatBlock;
-import Shared.StatBlock.StatType;
 
-public abstract class ServerCardTemplate extends Shared.CardTemplates {
-	private CardType m_CardType;
+public abstract class ServerCardTemplate {
+	private CardTypes m_CardType;
 	private int m_CardID, m_AbilityCount;
 	private HashMap<StatBlock.StatType, StatBlock> m_Stats;
+	private int[] m_Cost = new int[3];
 	
-	public int getCardTemplateID() { return m_CardID; }
-	public CardType getCardType() { return m_CardType; }
+	public final int getCardTemplateID() { return m_CardID; }
+	public final CardTypes getCardType() { return m_CardType; }
 	public final StatBlock getStat( StatBlock.StatType type ) { return m_Stats.get( type ); }
+	public final int[] getCost() { return m_Cost; }
 	
-	protected void setCardTemplateID( int id ) { m_CardID = id; }
-	protected void setStat( StatBlock.StatType type, int value ) { setStat( new StatBlock( type, value ) ); }
-	protected void setStat( StatBlock sb ) { m_Stats.put( sb.m_Type, sb ); }
-	protected void setCardType(CardType type) { m_CardType = type; }
-	protected void setAbilityCount( int abilities ) { m_AbilityCount = abilities; }
+	protected final void setCardTemplateID( int id ) { m_CardID = id; }
+	protected final void setStat( StatBlock.StatType type, int value ) { setStat( new StatBlock( type, value ) ); }
+	protected final void setStat( StatBlock sb ) { m_Stats.put( sb.m_Type, sb ); }
+	protected final void setCardType(CardTypes type) { m_CardType = type; }
+	protected final void setAbilityCount( int abilities ) { m_AbilityCount = abilities; }
+	protected final void setCost( GameResources res, int value ) { m_Cost[res.ordinal()] = value; }
 	
-	public abstract void onEnter();
-	public abstract void onExit();
-	public abstract void onDeath();
-	public abstract void onActivate( int index );
+	public abstract void onEnter( GameEvent e );
+	public abstract void onExit( GameEvent e );
+	public abstract void onDeath( GameEvent e );
+	public abstract void onActivate(  GameEvent e, int index );
 	public abstract void onGlobalUpdate( GameEvent e );
 	public abstract void preAttacked( AttackEvent e );
 	public abstract void postAttacked( AttackEvent e );
@@ -37,4 +39,5 @@ public abstract class ServerCardTemplate extends Shared.CardTemplates {
 	public abstract void postAttack( AttackEvent e );
 	public abstract void preDamage( DamageEvent e );
 	public abstract void postDamage( DamageEvent e);
+	public abstract void onPlay( GameEvent e );
 }
