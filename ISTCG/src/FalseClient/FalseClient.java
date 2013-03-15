@@ -26,7 +26,9 @@ public class FalseClient {
 		@Override
 		public void run() {
 			while( !m_Quit ) {
-				System.out.println(input.nextLine());
+				if( input.hasNext() ) {
+					System.out.println(input.nextLine());
+				}
 			}
 		}
 	}

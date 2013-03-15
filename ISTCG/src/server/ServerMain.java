@@ -96,7 +96,7 @@ public class ServerMain {
 		try {
 			return AdminCommands.valueOf(command[0].toUpperCase()).Activate(command);
 		} catch (IllegalArgumentException e) {
-			return "Invalid command";
+			return "Admin command " + command[0].toUpperCase() + " does not exist.";
 		}
 	}
 	private static void ParseConsoleCommand(String next) {

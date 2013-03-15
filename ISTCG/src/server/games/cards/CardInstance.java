@@ -21,12 +21,16 @@ public class CardInstance {
 	
 	public int getUID() { return m_UID; }
 	public void setStat( StatBlock.StatType type, int value ) {
-		StatBlock sb = m_Stats.get( type );
-		if( sb == null ) { 
-			sb = new StatBlock( type, value ); 
-			m_Stats.put( type, sb ); 
+		if( value <= -1 ) {
+			m_Stats.put( type, null );
 		} else {
-			sb.m_Value = value;
+			StatBlock sb = m_Stats.get( type );
+			if( sb == null ) { 
+				sb = new StatBlock( type, value ); 
+				m_Stats.put( type, sb ); 
+			} else {
+				sb.m_Value = value;
+			}
 		}
 	}
 	public final StatBlock getStat( StatBlock.StatType type ) {

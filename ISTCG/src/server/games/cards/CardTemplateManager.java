@@ -1,6 +1,9 @@
 package server.games.cards;
 
 import java.io.File;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
@@ -21,6 +24,8 @@ public class CardTemplateManager {
 	
 	//CardTemplate collection variables
 	private HashMap<Integer, ServerCardTemplate> m_LoadedCards;
+
+	private URLClassLoader m_TemplateLoader;
 	
 	/**
 	 * Kind of a constructor for CardTemplateManager. 
@@ -45,26 +50,54 @@ public class CardTemplateManager {
 	
 	/**
 	 * Loads a specified card by card name.
-	 * @param card_name
+	 * @param rs
 	 */
-	private void LoadCard(String card_name) {
-		ServerMain.ConsoleMessage( '-', "Loading card \"" + card_name + "\"..." );
+	private void LoadCard(ResultSet card) {
+		try {
+			ServerMain.ConsoleMessage( '-', "Loading card \"" + card.getString("name") + "\" (" + card.getInt("id") + ")..." );
+		} catch (SQLException e1) {
+			ServerMain.ConsoleMessage( '!', "SQL Error, couldn't find column \"name\" in result." );
+			e1.printStackTrace();
+		}
+	
+		if( m_TemplateLoader == null ) {
+			ClassLoader templateLoader = ServerCardTemplate.class.getClassLoader();
+			URL uri = null;
+			try {
+				uri = new URL(  "file://" + System.getProperty("user.dir") + "/data/cards/" );
+			} catch (MalformedURLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			URL[] uris = new URL[1];
+			uris[0] = uri;
+			m_TemplateLoader = new URLClassLoader( uris, templateLoader);
+		}
 		
 		try {
-			final Unmarshaller reader = JAXBContext.newInstance(
-					ServerCardTemplate.class).createUnmarshaller();
-
-			ServerCardTemplate scb = (ServerCardTemplate)reader.unmarshal(new File(DEFAULT_CARD_PATH + card_name + ".scf"));
-			m_LoadedCards.put( scb.getCardTemplateID(), scb );
-		} catch (JAXBException e) {
+			Class<ServerCardTemplate> loadedCard = (Class<ServerCardTemplate>)m_TemplateLoader.loadClass( card.getString("name").replaceAll(" ", ""));
+			ServerCardTemplate sct = loadedCard.newInstance();
+			sct.Initialize( card );
+			m_LoadedCards.put( sct.getCardTemplateID(), sct );
+		} catch (ClassNotFoundException e1) {
+			ServerMain.ConsoleMessage( '!', "Class was not found." );
+			e1.printStackTrace();
+		} catch (SQLException e1) {
+			ServerMain.ConsoleMessage( '!', "SQL Error, couldn't find some column in result." );
+			e1.printStackTrace();
+		} catch (InstantiationException e) {
+			ServerMain.ConsoleMessage( '!', "Failed to load class." );
 			e.printStackTrace();
-		}				
+		} catch (IllegalAccessException e) {
+			ServerMain.ConsoleMessage( '!', "Bad class accessing, baddie." );
+			e.printStackTrace();
+		}		
 	}
 	private boolean LoadAllCards() {
-		ResultSet rs = Database.get().quickQuery("SELECT name FROM cards");
+		ResultSet rs = Database.get().quickQuery("SELECT * FROM cards");
 		try {
 			while(rs.next()) {
-				LoadCard(rs.getString(1));
+				LoadCard(rs);
 			}
 		} catch (SQLException e) {
 			ServerMain.ConsoleMessage('!', "A card failed to load, fatal error");

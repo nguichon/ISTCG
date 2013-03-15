@@ -1,5 +1,8 @@
 package server.games.cards;
 
+import java.sql.Array;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.HashMap;
 
 import server.games.AttackEvent;
@@ -15,17 +18,18 @@ public abstract class ServerCardTemplate {
 	private int m_CardID, m_AbilityCount;
 	private HashMap<StatBlock.StatType, StatBlock> m_Stats;
 	
-	public ServerCardTemplate( int id, int atk, int pow, int def, int str, int hp, int delay, int[] cost ) { 
-		Initialize( id, atk, pow, def, str, hp, delay, cost ); }
-	protected final void Initialize( int id, int atk, int pow, int def, int str, int hp, int delay, int[] cost ) {
-		setCardTemplateID( id );
-		setStat( StatBlock.StatType.ATTACK, atk );
-		setStat( StatBlock.StatType.DEFENSE, def );
-		setStat( StatBlock.StatType.DAMAGE, pow );
-		setStat( StatBlock.StatType.STRUCTURE, str);
-		setStat( StatBlock.StatType.GEAR_POINTS, hp );
-		setStat( StatBlock.StatType.DELAY, delay );
-		
+	public ServerCardTemplate( ) {  }
+	public void Initialize(ResultSet card) throws SQLException  {
+		setCardTemplateID( card.getInt( "id" ) );
+		setStat( StatBlock.StatType.ATTACK, card.getInt( "attack" ) );
+		setStat( StatBlock.StatType.DEFENSE,  card.getInt( "defense" ) );
+		setStat( StatBlock.StatType.DAMAGE,  card.getInt( "power" ) );
+		setStat( StatBlock.StatType.STRUCTURE,  card.getInt( "structure" ) );
+		setStat( StatBlock.StatType.GEAR_POINTS,  card.getInt( "hard_points" ) );
+		setStat( StatBlock.StatType.DELAY,  card.getInt( "delay" ) );
+		setStat( StatBlock.StatType.METAL,  card.getInt( "metal" ) );
+		setStat( StatBlock.StatType.ENERGY,  card.getInt( "energy" ) );
+		setStat( StatBlock.StatType.TECH,  card.getInt( "tech" ) );
 	}
 	
 	public final int getCardTemplateID() { return m_CardID; }
@@ -33,7 +37,7 @@ public abstract class ServerCardTemplate {
 	public final StatBlock getStat( StatBlock.StatType type ) { return m_Stats.get( type ); }
 	
 	protected final void setCardTemplateID( int id ) { m_CardID = id; }
-	protected final void setStat( StatBlock.StatType type, int value ) { setStat( new StatBlock( type, value ) ); }
+	protected final void setStat( StatBlock.StatType type, int value ) { if( value != -1 ) { setStat( new StatBlock( type, value ) ); } }
 	protected final void setStat( StatBlock sb ) { m_Stats.put( sb.m_Type, sb ); }
 	protected final void setCardType(CardTypes type) { m_CardType = type; }
 	protected final void setAbilityCount( int abilities ) { m_AbilityCount = abilities; }

@@ -84,7 +84,7 @@ public class ClientAccount extends Thread {
 						break;
 					case TELL:
 						if (m_UserID != -1) {
-							LobbyManager.whisper(m_UserName, command[1], command[2]);
+							LobbyManager.whisper( this, command[1], command[2]);
 						}
 						break;
 					case LOGOUT:
