@@ -14,23 +14,29 @@ public abstract class ServerCardTemplate {
 	private CardTypes m_CardType;
 	private int m_CardID, m_AbilityCount;
 	private HashMap<StatBlock.StatType, StatBlock> m_Stats;
-	private int[] m_Cost = new int[3];
 	
 	public ServerCardTemplate( int id, int atk, int pow, int def, int str, int hp, int delay, int[] cost ) { 
 		Initialize( id, atk, pow, def, str, hp, delay, cost ); }
-	protected abstract void Initialize( int id, int atk, int pow, int def, int str, int hp, int delay, int[] cost );
+	protected final void Initialize( int id, int atk, int pow, int def, int str, int hp, int delay, int[] cost ) {
+		setCardTemplateID( id );
+		setStat( StatBlock.StatType.ATTACK, atk );
+		setStat( StatBlock.StatType.DEFENSE, def );
+		setStat( StatBlock.StatType.DAMAGE, pow );
+		setStat( StatBlock.StatType.STRUCTURE, str);
+		setStat( StatBlock.StatType.GEAR_POINTS, hp );
+		setStat( StatBlock.StatType.DELAY, delay );
+		
+	}
 	
 	public final int getCardTemplateID() { return m_CardID; }
 	public final CardTypes getCardType() { return m_CardType; }
 	public final StatBlock getStat( StatBlock.StatType type ) { return m_Stats.get( type ); }
-	public final int[] getCost() { return m_Cost; }
 	
 	protected final void setCardTemplateID( int id ) { m_CardID = id; }
 	protected final void setStat( StatBlock.StatType type, int value ) { setStat( new StatBlock( type, value ) ); }
 	protected final void setStat( StatBlock sb ) { m_Stats.put( sb.m_Type, sb ); }
 	protected final void setCardType(CardTypes type) { m_CardType = type; }
 	protected final void setAbilityCount( int abilities ) { m_AbilityCount = abilities; }
-	protected final void setCost( GameResources res, int value ) { m_Cost[res.ordinal()] = value; }
 	
 	public abstract void onEnter( GameEvent e );
 	public abstract void onExit( GameEvent e );

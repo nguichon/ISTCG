@@ -14,6 +14,7 @@ public class GamePlayer {
 	Deck m_PlayerDeck;
 	Deck m_PlayerHand;
 	boolean m_Ready;
+	int[] m_Resources = new int[GameResources.values().length];
 
 	public GamePlayer( Game g, ClientAccount acc ) {
 		m_Game = g;
@@ -63,14 +64,14 @@ public class GamePlayer {
 	}
 	
 	public void AddResource( GameResources res, int value ) {
-		//TODO Resource handling
+		m_Resources[ res.ordinal() ] += value;
+		m_Game.SendMessageToAllPlayers( ClientMessages.UPDATE_PLAYER, res.name(), "" + m_Resources[ res.ordinal() ] );
 	}
 	
 	public void LoadDeck( String deckList ) {
 		if( m_PlayerDeck == null ) {
 			Deck newDeck = new Deck();
 			
-			//TODO Load the deck from string.
 			String[] cards = deckList.split("\\|");
 			for( String s : cards ) {
 				String[] values = s.split(",");
@@ -88,7 +89,6 @@ public class GamePlayer {
 				m_Game.Ready();
 			} 
 		}
-		//Do nothing
 	}
 	public int GetPlayerID() {
 		return m_PlayerAccount.getUserID();

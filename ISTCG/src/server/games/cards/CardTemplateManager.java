@@ -61,7 +61,7 @@ public class CardTemplateManager {
 		}				
 	}
 	private boolean LoadAllCards() {
-		ResultSet rs = Database.get().quickQuery("SELECT card_name FROM cards");
+		ResultSet rs = Database.get().quickQuery("SELECT name FROM cards");
 		try {
 			while(rs.next()) {
 				LoadCard(rs.getString(1));

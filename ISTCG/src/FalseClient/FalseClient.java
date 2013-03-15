@@ -1,6 +1,9 @@
 package FalseClient;
 
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.net.Socket;
+import java.net.UnknownHostException;
 import java.util.Scanner;
 
 import Client.LoginUI;
@@ -9,51 +12,59 @@ import Shared.ConnectionDevice;
 import Shared.ThreadedConnectionDevice;
 
 public class FalseClient {
-
+	private final static String HOST_IP = "127.0.0.1";
+	private final static int HOST_PORT = 4567;
+	
+	private static Scanner input;
+	private static PrintWriter output;
+	private static Scanner consoleInput;
+	
+	private static boolean m_Quit = false;
+	
+	
+	private class Reader extends Thread {
+		@Override
+		public void run() {
+			while( !m_Quit ) {
+				System.out.println(input.nextLine());
+			}
+		}
+	}
 	/**
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		Scanner consoleInput = new Scanner(System.in);
+		consoleInput = new Scanner( System.in );
 		
-		int port = 4567;
-  		String host = "127.0.0.1";
-		ThreadedConnectionDevice m_Server = null;
 		try {
-			m_Server = new ThreadedConnectionDevice( host, port );
-		} catch (IOException e) {
-			System.exit(2000);
+			Socket socket = new Socket( HOST_IP, HOST_PORT );
+			input = new Scanner( socket.getInputStream() );
+			output = new PrintWriter( socket.getOutputStream() );
+		} catch (Exception e) {
+			System.out.println( "Socket faild to connect, or something" );
+			System.exit( - 1 );
 		}
 		
-		boolean m_Quit = false;
+		new FalseClient().RunThings();
+		
 		while( !m_Quit ) {
-
-			if( m_Server.hasData() ) {
-				String s = m_Server.getData();
-				System.out.println(s);
+			String input = consoleInput.nextLine();
+			
+			if( input.equals( "quit" ) ) {
+				m_Quit = true;
+				input = "disconnect";
 			}
-			//if(consoleInput.hasNext()) {
-				String s = consoleInput.nextLine();
-				if(s.equals("")){
-					//do nothing
-				}
-				else if( s.equals( "quit" ) ) {
-					m_Quit = true;
-				} else  {
-					m_Server.sendData( s );
-					s = m_Server.getData();
-					System.out.println(s);
-				}
-			//}
-
-//			if( m_Server.hasData() ) {
-//				System.out.println(m_Server.getData());
-//			}
+			
+			if( !input.equals("") ) {
+				output.println( input );
+				output.flush();
+			}
 		}
-		
-		consoleInput.close();
-		
-		
 	}
+	
+	public void RunThings() {
+		(this.new Reader()).start();
+	}
+	
 
 }
