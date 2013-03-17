@@ -18,6 +18,7 @@ public class GamePlayer {
 	private int[] m_Resources = new int[GameResources.values().length];
 	private GamePlayerStates m_State;
 
+	//Constructors and administrative methods
 	public GamePlayer( GameInstance g, ClientAccount acc ) {
 		m_Game = g;
 		m_PlayerAccount = acc;
@@ -27,9 +28,37 @@ public class GamePlayer {
 		m_State = GamePlayerStates.WAITING;
 	}
 	public void SwitchAccountInstance( ClientAccount acc ) { m_PlayerAccount = acc; }
+	public void LoadDeck( String deckList ) {
+		if( m_PlayerDeck == null ) {
+			CardList newDeck = new CardList( this, GameZones.DECK );
+			
+			String[] cards = deckList.split("\\|");
+			for( String s : cards ) {
+				String[] values = s.split(",");
+				for( int i = 0; i < Integer.valueOf(values[1]); i++ ) {
+					ServerCardInstance toAdd = new ServerCardInstance( m_Game, this, Integer.valueOf(values[0]) );
+					newDeck.AddCard(toAdd);
+				}
+			}
+			
+			newDeck.Shuffle();
+			
+			if( newDeck.Validate() ) {
+				m_PlayerDeck = newDeck;
+				m_Ready = true;
+				m_Game.Ready();
+			} 
+		}
+	}
+
+	//Data getters
+	public ClientAccount getAccount() { return m_PlayerAccount; }
+	public boolean isReady() { return m_Ready; }
 	public ClientAccount getClient() { return m_PlayerAccount; }
 	public GamePlayerStates getState() { return m_State; }
+	public int GetPlayerID() { return m_PlayerAccount.getUserID(); }
 	
+	//Game play methods
 	public void DrawCards( int number ) {
 		//Draw the cards from the deck and place them in hand.
 		for( int i = 0; i < number; i++ ) {
@@ -53,39 +82,9 @@ public class GamePlayer {
 											GameZones.HAND.name(),
 											"" + m_PlayerHand.DeckCount());
 	}
-	
-	public boolean isReady() { return m_Ready; }
-
-	public ClientAccount getAccount() { return m_PlayerAccount; }
-	
 	public void AddResource( GameResources res, int value ) {
 		m_Resources[ res.ordinal() ] += value;
 		m_Game.SendMessageToAllPlayers( ClientMessages.UPDATE_PLAYER, res.name(), "" + m_Resources[ res.ordinal() ] );
 	}
-	
-	public void LoadDeck( String deckList ) {
-		if( m_PlayerDeck == null ) {
-			CardList newDeck = new CardList( this, GameZones.DECK );
-			
-			String[] cards = deckList.split("\\|");
-			for( String s : cards ) {
-				String[] values = s.split(",");
-				for( int i = 0; i < Integer.valueOf(values[1]); i++ ) {
-					ServerCardInstance toAdd = new ServerCardInstance( m_Game, this, Integer.valueOf(values[0]) );
-					newDeck.AddCard(toAdd);
-				}
-			}
-			
-			newDeck.Shuffle();
-			
-			if( newDeck.Validate() ) {
-				m_PlayerDeck = newDeck;
-				m_Ready = true;
-				m_Game.Ready();
-			} 
-		}
-	}
-	
-	public int GetPlayerID() { return m_PlayerAccount.getUserID(); }
 	public void Pass() { m_State = GamePlayerStates.WAITING; }
 }
