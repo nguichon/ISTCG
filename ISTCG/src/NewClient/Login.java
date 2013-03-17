@@ -7,6 +7,8 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 
@@ -15,6 +17,7 @@ public class Login extends Composite {
 	private Text text_1;
 	private Label label;
 	Button btnLogin;
+	boolean server = true;
 	final ClientMain m_Host;
 	/**
 	 * Create the composite.
@@ -25,9 +28,31 @@ public class Login extends Composite {
 		super(parent, style);
 		m_Host = main;
 		text = new Text(this, SWT.BORDER);
+		text.addKeyListener( new KeyListener() {
+			@Override
+			public void keyPressed(KeyEvent arg0) { /*DO NOTHING*/ }
+			@Override
+			public void keyReleased(KeyEvent arg0) {
+				if( arg0.character == SWT.CR && server) {
+					Event e = new Event();
+					btnLogin.notifyListeners( SWT.Selection, e );
+				}
+			}
+		});
 		text.setBounds(174, 85, 152, 31);
 		
 		text_1 = new Text( this, SWT.BORDER|SWT.PASSWORD );
+		text_1.addKeyListener( new KeyListener() {
+			@Override
+			public void keyPressed(KeyEvent arg0) { /*DO NOTHING*/ }
+			@Override
+			public void keyReleased(KeyEvent arg0) {
+				if( arg0.character == SWT.CR && server) {
+					Event e = new Event();
+					btnLogin.notifyListeners( SWT.Selection, e );
+				}
+			}
+		});
 		text_1.setBounds(174, 128, 152, 31);
 		
 		final Label lblUsername = new Label(this, SWT.NONE);
@@ -84,5 +109,6 @@ public class Login extends Composite {
 	}
 	public void disableLogin(){
 		btnLogin.setEnabled(false);
+		server=false;
 	}
 }

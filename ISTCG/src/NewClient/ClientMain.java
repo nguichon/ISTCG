@@ -87,8 +87,8 @@ public class ClientMain {
 		text.replace(";", ":");
 		String s = "";
 		try {
-			s = text.substring(0, 6);
-			s = s.substring(0,5);
+			if(text.length()>=5)
+			s = text.substring(0,5);
 			if(s.equals("/tell")){
 				m_Server.sendData( "TELL;" + text.substring(6) );
 			} else if(s.equals("/chal")){
