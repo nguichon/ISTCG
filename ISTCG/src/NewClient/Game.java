@@ -7,6 +7,8 @@ import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.swt.widgets.Button;
 
 import Shared.GameZones;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 
 public class Game extends Composite {
 
@@ -55,6 +57,12 @@ public class Game extends Composite {
 		btnPass.setText("PASS");
 		
 		btnEnd = new Button(this, SWT.NONE);
+		btnEnd.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent arg0) {
+				main.sendData("END;"+getID());
+			}
+		});
 		btnEnd.setBounds(10, 43, 94, 28);
 		btnEnd.setText("END");
 		
