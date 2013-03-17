@@ -6,5 +6,6 @@
 	<classpathentry kind="lib" path="C:/Users/Nick/Downloads/keyczar-0.71f-060112.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
 	<classpathentry kind="lib" path="C:/Users/Nick/Downloads/swt.jar"/>
+	<classpathentry kind="lib" path="C:/Users/daniel/workspace/org.eclipse.swt/swt.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

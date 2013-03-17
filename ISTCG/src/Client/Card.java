@@ -32,6 +32,8 @@ public class Card implements NetworkObject {
     private  Shell shell = null;
     private  Canvas canvas = null;
     private GC gc = null;
+    
+    
 
     public Card(Display display,int cardID, String cardname, String cardtext,
             StatBlock... stuff) {
