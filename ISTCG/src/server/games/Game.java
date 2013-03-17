@@ -126,6 +126,8 @@ public class Game {
 	 * Starts this game, drawing each player's initial hand and picking a random starting player.
 	 */
 	private void StartGame() {
+		m_Started = true;
+		
 		for( GamePlayer gp : m_Players ) {
 			gp.DrawCards( STARTING_HAND_SIZE );
 		}
@@ -164,7 +166,7 @@ public class Game {
 	/**
 	 * Ran by GamePlayers. If run, and all players are ready: the game starts.
 	 */
-	public void Ready() {
+	public synchronized void Ready() {
 		boolean start = true;
 		for( GamePlayer gp : m_Players ) {
 			if( !gp.isReady() ) {

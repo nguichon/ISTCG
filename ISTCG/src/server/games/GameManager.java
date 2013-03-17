@@ -42,7 +42,7 @@ public class GameManager {
 	}
 	
 	public void RemoveGame( Game g ) {
-		RemoveGame( g.GetID() );
+		RemoveGame( g.GetGameID() );
 	}
 	
 	public void SendMessageToGame( int game_id, int origin, String[] message ) {
