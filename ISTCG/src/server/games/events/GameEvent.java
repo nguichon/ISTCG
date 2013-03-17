@@ -1,5 +1,7 @@
-package server.games;
+package server.games.events;
 
+import server.games.Game;
+import server.games.GamePlayer;
 import server.games.cards.CardInstance;
 
 public class GameEvent {

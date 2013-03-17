@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Random;
+import java.util.Stack;
 
 import server.games.cards.CardInstance;
 import server.network.ClientAccount;
@@ -15,6 +16,7 @@ import server.network.ClientResponses;
  * @author Nicholas Guichon
  */
 public class Game {
+	
 	//GAME CONSTANTS
 	private static int STARTING_HAND_SIZE = 7;
 	
@@ -24,13 +26,21 @@ public class Game {
 	private boolean m_Started;
 	
 	//Game turn variables
-	private Iterator<GamePlayer> m_PlayerIterator;
 	private GamePlayer m_CurrentPlayer;
+	private int m_CurrentPlayerIndex;
 	
 	//Game object variables
 	private HashMap<Integer, CardInstance> m_CardsInPlay = new HashMap<Integer, CardInstance>();
+	private Stack<CardInstance> m_CardsOnStack = new Stack<CardInstance>();
 	private int m_CardsCreated = 0;
 	
+	
+	/**
+	 * Gets a number to use for a unique card identifier.
+	 * 
+	 * @return
+	 * 		An integer, unique to this instance of Game
+	 */
 	public synchronized int getNewCardID() {
 		return m_CardsCreated++;
 	}
@@ -52,14 +62,17 @@ public class Game {
 	
 	/**
 	 * Adds a new player to the game.
+	 * 
 	 * @param ca 
 	 * 		The ClientAccount/Socket connection for this new player
 	 */
 	private void AddToGame( ClientAccount ca ) {
-		ca.SendMessage( ClientMessages.JOIN, "" + m_GameID );
-		SendMessageToAllPlayers( ClientMessages.PLAYER_JOINED, "" + m_GameID,  ca.getUserName(), "" + ca.getUserID() );
-		for( GamePlayer gp : m_Players ) { ca.SendMessage( ClientMessages.PLAYER_JOINED, "" + m_GameID,  gp.getAccount().getUserName(), "" + gp.GetPlayerID() ); }
-		m_Players.add( new GamePlayer( this, ca ));
+		if( !m_Started ) {
+			ca.SendMessage( ClientMessages.JOIN, "" + m_GameID );
+			SendMessageToAllPlayers( ClientMessages.PLAYER_JOINED, "" + m_GameID,  ca.getUserName(), "" + ca.getUserID() );
+			for( GamePlayer gp : m_Players ) { ca.SendMessage( ClientMessages.PLAYER_JOINED, "" + m_GameID,  gp.getAccount().getUserName(), "" + gp.GetPlayerID() ); }
+			m_Players.add( new GamePlayer( this, ca ));
+		}
 	}
 
 	/**
@@ -70,20 +83,24 @@ public class Game {
 	 * 		The actual message sent by the ClientAccount, split on ';'
 	 */
 	public synchronized void HandleMessage( int origin, String[] message ) {
-		switch(ClientResponses.valueOf( message[0].toUpperCase() )) {
-		case END:
-			//TODO needs to check that "stack" is empty
-			if( m_Started && m_CurrentPlayer.GetPlayerID() == origin ) { EndTurn(); }
-			break;
-		case DECKLIST:
-			for( GamePlayer gp : m_Players ) { 
-				if(gp.GetPlayerID() == Integer.valueOf(origin)) {
-					gp.LoadDeck( message[2] );
-				}
+		try {
+			switch(ClientResponses.valueOf( message[0].toUpperCase() )) {
+				case END:
+					//TODO needs to check that "stack" is empty
+					if( m_Started && m_CurrentPlayer.GetPlayerID() == origin ) { EndTurn(); }
+					break;
+				case DECKLIST:
+					for( GamePlayer gp : m_Players ) { 
+						if(gp.GetPlayerID() == Integer.valueOf(origin)) {
+							gp.LoadDeck( message[2] );
+						}
+					}
+					break;
+				default:
+					break;
 			}
-			break;
-		default:
-			break;
+		} catch ( Exception e ) {
+			e.printStackTrace();
 		}
 	}
 	
@@ -93,9 +110,7 @@ public class Game {
 	 * 		Message that will be sent to users
 	 */
 	public void SendMessageToAllPlayers( ClientMessages messageType, String ... parameters ) {
-		for( GamePlayer gp : m_Players ) {
-			gp.getClient().SendMessage( messageType, parameters );
-		}
+		for( GamePlayer gp : m_Players ) { gp.getClient().SendMessage( messageType, parameters ); }
 	}
 	
 	/**
@@ -103,7 +118,7 @@ public class Game {
 	 * @return
 	 * 		The database ID number of this game, this ID number should be unique unless constructed illegally.
 	 */
-	public int GetID() {
+	public int GetGameID() {
 		return m_GameID;
 	}
 	
@@ -115,11 +130,8 @@ public class Game {
 			gp.DrawCards( STARTING_HAND_SIZE );
 		}
 		
-		m_PlayerIterator = m_Players.iterator();
-		int firstPlayer = new Random().nextInt( m_Players.size() );
-		for( int i = 0; i <= firstPlayer; i++ ) {
-			NextPlayer();
-		}
+		m_CurrentPlayerIndex = new Random().nextInt( m_Players.size() );
+		m_CurrentPlayer = m_Players.get( m_CurrentPlayerIndex );
 		
 		StartTurn();
 	}
@@ -145,8 +157,8 @@ public class Game {
 	 * The iterator is reset before getting a player (aka gets the first player in the list)
 	 */
 	private void NextPlayer() {
-		if( !m_PlayerIterator.hasNext() ) { m_PlayerIterator = m_Players.iterator(); }
-		m_CurrentPlayer = m_PlayerIterator.next();
+		if( m_CurrentPlayerIndex++ >= m_Players.size() ) { m_CurrentPlayerIndex = 0; }
+		m_CurrentPlayer = m_Players.get( m_CurrentPlayerIndex );
 	}
 
 	/**

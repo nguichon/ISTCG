@@ -9,12 +9,13 @@ import Shared.GameResources;
 import Shared.GameZones;
 
 public class GamePlayer {
-	Game m_Game;
-	ClientAccount m_PlayerAccount;
-	Deck m_PlayerDeck;
-	Deck m_PlayerHand;
-	boolean m_Ready;
-	int[] m_Resources = new int[GameResources.values().length];
+	private Game m_Game;
+	private ClientAccount m_PlayerAccount;
+	private Deck m_PlayerDeck;
+	private Deck m_PlayerHand;
+	private boolean m_Ready;
+	private int[] m_Resources = new int[GameResources.values().length];
+	private GamePlayerStates m_State;
 
 	public GamePlayer( Game g, ClientAccount acc ) {
 		m_Game = g;
@@ -22,13 +23,11 @@ public class GamePlayer {
 		m_Ready = false;
 		
 		m_PlayerHand = new Deck();
+		m_State = GamePlayerStates.WAITING;
 	}
-	public void SwitchAccountInstance( ClientAccount acc ) {
-		m_PlayerAccount = acc;
-	}
-	public ClientAccount getClient() {
-		return m_PlayerAccount;
-	}
+	public void SwitchAccountInstance( ClientAccount acc ) { m_PlayerAccount = acc; }
+	public ClientAccount getClient() { return m_PlayerAccount; }
+	public GamePlayerStates getState() { return m_State; }
 	
 	public void DrawCards( int number ) {
 		//Draw the cards from the deck and place them in hand.
@@ -36,7 +35,7 @@ public class GamePlayer {
 			ServerCardTemplate cardDrawn = m_PlayerDeck.DrawCard();
 			m_PlayerHand.AddCard( cardDrawn );
 	        m_PlayerAccount.SendMessage( ClientMessages.CREATE_TEMPLATE,
-					"" + m_Game.GetID(),
+					"" + m_Game.GetGameID(),
 					"" + m_PlayerAccount.getUserID(),
 					GameZones.HAND.name(),
 					"" + cardDrawn.getCardTemplateID() );
@@ -44,12 +43,12 @@ public class GamePlayer {
 		
 		//Notify clients
 		m_Game.SendMessageToAllPlayers( ClientMessages.UPDATE_ZONE,
-											"" + m_Game.GetID(), 
+											"" + m_Game.GetGameID(), 
 											"" + m_PlayerAccount.getUserID(), 
 											GameZones.DECK.name(),
 											"" + m_PlayerDeck.DeckCount());
 		m_Game.SendMessageToAllPlayers( ClientMessages.UPDATE_ZONE,
-											"" + m_Game.GetID(),
+											"" + m_Game.GetGameID(),
 											"" + m_PlayerAccount.getUserID(),
 											GameZones.HAND.name(),
 											"" + m_PlayerHand.DeckCount());

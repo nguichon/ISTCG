@@ -5,9 +5,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
 
-import server.games.AttackEvent;
-import server.games.DamageEvent;
-import server.games.GameEvent;
+import server.games.events.AttackEvent;
+import server.games.events.DamageEvent;
+import server.games.events.GameEvent;
 
 import Shared.CardTypes;
 import Shared.GameResources;
