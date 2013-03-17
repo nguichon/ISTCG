@@ -6,7 +6,8 @@ import java.util.Iterator;
 import java.util.Random;
 import java.util.Stack;
 
-import server.games.cards.CardInstance;
+import server.games.cards.ServerCardInstance;
+import server.games.cards.CardTemplateManager;
 import server.network.ClientAccount;
 import server.network.ClientMessages;
 import server.network.ClientResponses;
@@ -15,14 +16,15 @@ import server.network.ClientResponses;
  * This is a specific game. I'll write more documentation later...
  * @author Nicholas Guichon
  */
-public class Game {
+public class GameInstance {
 	
 	//GAME CONSTANTS
 	private static int STARTING_HAND_SIZE = 7;
 	
 	//Game setup variables
 	private int m_GameID;
-	private ArrayList<GamePlayer> m_Players;
+	private HashMap< Integer, GamePlayer > m_Players;
+	private ArrayList< Integer > m_PlayerList;
 	private boolean m_Started;
 	
 	//Game turn variables
@@ -30,8 +32,8 @@ public class Game {
 	private int m_CurrentPlayerIndex;
 	
 	//Game object variables
-	private HashMap<Integer, CardInstance> m_CardsInPlay = new HashMap<Integer, CardInstance>();
-	private Stack<CardInstance> m_CardsOnStack = new Stack<CardInstance>();
+	private HashMap<Integer, ServerCardInstance> m_CardsInPlay = new HashMap<Integer, ServerCardInstance>();
+	private Stack<ServerCardInstance> m_CardsOnStack = new Stack<ServerCardInstance>();
 	private int m_CardsCreated = 0;
 	
 	
@@ -41,7 +43,7 @@ public class Game {
 	 * @return
 	 * 		An integer, unique to this instance of Game
 	 */
-	public synchronized int getNewCardID() {
+	public synchronized int CreateNewCardID() {
 		return m_CardsCreated++;
 	}
 	
@@ -53,10 +55,11 @@ public class Game {
 	 * @param players 
 	 * 		List of players that will be in this game.
 	 */
-	public Game(int id, ClientAccount[] players) {
+	public GameInstance(int id, ClientAccount[] players) {
 		m_GameID = id;
 		m_Started = false;
-		m_Players = new ArrayList<GamePlayer>();
+		m_Players = new HashMap< Integer, GamePlayer >();
+		m_PlayerList = new ArrayList< Integer >();
 		for(ClientAccount ca : players) { AddToGame( ca ); }
 	}
 	
@@ -66,12 +69,22 @@ public class Game {
 	 * @param ca 
 	 * 		The ClientAccount/Socket connection for this new player
 	 */
-	private void AddToGame( ClientAccount ca ) {
-		if( !m_Started ) {
-			ca.SendMessage( ClientMessages.JOIN, "" + m_GameID );
-			SendMessageToAllPlayers( ClientMessages.PLAYER_JOINED, "" + m_GameID,  ca.getUserName(), "" + ca.getUserID() );
-			for( GamePlayer gp : m_Players ) { ca.SendMessage( ClientMessages.PLAYER_JOINED, "" + m_GameID,  gp.getAccount().getUserName(), "" + gp.GetPlayerID() ); }
-			m_Players.add( new GamePlayer( this, ca ));
+	private void AddToGame( ClientAccount clientToAdd ) {
+		if( !m_Started && !m_Players.containsKey( clientToAdd.getUserID() ) ) {
+			clientToAdd.SendMessage( ClientMessages.JOIN, "" + m_GameID );
+			
+			SendMessageToAllPlayers( ClientMessages.PLAYER_JOINED, "" + m_GameID,  clientToAdd.getUserName(), "" + clientToAdd.getUserID() );
+			
+			for( Integer i : m_PlayerList ) { 
+				GamePlayer player = m_Players.get(i);
+				clientToAdd.SendMessage( 
+						ClientMessages.PLAYER_JOINED, 
+						m_GameID + "",  
+						player.getAccount().getUserName(), 
+						player.GetPlayerID() + ""); 
+			}
+			
+			m_Players.put( clientToAdd.getUserID(), new GamePlayer( this, clientToAdd ) );
 		}
 	}
 
@@ -86,15 +99,19 @@ public class Game {
 		try {
 			switch(ClientResponses.valueOf( message[0].toUpperCase() )) {
 				case END:
-					//TODO needs to check that "stack" is empty
-					if( m_Started && m_CurrentPlayer.GetPlayerID() == origin ) { EndTurn(); }
-					break;
-				case DECKLIST:
-					for( GamePlayer gp : m_Players ) { 
-						if(gp.GetPlayerID() == Integer.valueOf(origin)) {
-							gp.LoadDeck( message[2] );
+					if( m_CardsOnStack.empty() ) {
+						if( m_Started && m_CurrentPlayer.GetPlayerID() == origin ) { 
+							EndTurn(); 
 						}
 					}
+					break;
+				case DECKLIST:
+					m_Players.get( origin ).LoadDeck( message[2] );
+					break;
+				case PASS:
+					m_Players.get( origin ).Pass();
+					break;
+				case PLAY:
 					break;
 				default:
 					break;
@@ -104,13 +121,20 @@ public class Game {
 		}
 	}
 	
+	private void PlayCard(int origin, int card_template_id) {
+		//m_CardsOnStack.add( new CardInstance( this, origin, CardTemplateManager.get().GetCardTemplate( card_template_id )  ) );
+	}
+
 	/**
 	 * Iterates through the list of GamePlayers, sending the same message to each of them
 	 * @param message
 	 * 		Message that will be sent to users
 	 */
 	public void SendMessageToAllPlayers( ClientMessages messageType, String ... parameters ) {
-		for( GamePlayer gp : m_Players ) { gp.getClient().SendMessage( messageType, parameters ); }
+		for( Integer i : m_PlayerList ) { 
+			GamePlayer player = m_Players.get(i);
+			player.getClient().SendMessage( messageType, parameters ); 
+		}
 	}
 	
 	/**
@@ -126,12 +150,13 @@ public class Game {
 	 * Starts this game, drawing each player's initial hand and picking a random starting player.
 	 */
 	private void StartGame() {
-		for( GamePlayer gp : m_Players ) {
-			gp.DrawCards( STARTING_HAND_SIZE );
+		for( Integer i : m_PlayerList ) { 
+			GamePlayer player = m_Players.get(i);
+			player.DrawCards( STARTING_HAND_SIZE );
 		}
 		
 		m_CurrentPlayerIndex = new Random().nextInt( m_Players.size() );
-		m_CurrentPlayer = m_Players.get( m_CurrentPlayerIndex );
+		m_CurrentPlayer = m_Players.get( m_PlayerList.get( m_CurrentPlayerIndex ) );
 		
 		StartTurn();
 	}
@@ -158,21 +183,22 @@ public class Game {
 	 */
 	private void NextPlayer() {
 		if( m_CurrentPlayerIndex++ >= m_Players.size() ) { m_CurrentPlayerIndex = 0; }
-		m_CurrentPlayer = m_Players.get( m_CurrentPlayerIndex );
+		m_CurrentPlayer = m_Players.get( m_PlayerList.get( m_CurrentPlayerIndex ) );
 	}
 
 	/**
 	 * Ran by GamePlayers. If run, and all players are ready: the game starts.
 	 */
 	public void Ready() {
-		boolean start = true;
-		for( GamePlayer gp : m_Players ) {
-			if( !gp.isReady() ) {
-				start = false;
+		boolean start_the_game = true;
+		for( Integer i : m_PlayerList ) { 
+			GamePlayer player = m_Players.get(i);
+			if( !player.isReady() ) {
+				start_the_game = false;
 			}
 		}
 		
-		if( start ) {
+		if( start_the_game ) {
 			StartGame();
 		}
 	}

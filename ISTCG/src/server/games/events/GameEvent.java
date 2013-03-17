@@ -1,21 +1,21 @@
 package server.games.events;
 
-import server.games.Game;
+import server.games.GameInstance;
 import server.games.GamePlayer;
-import server.games.cards.CardInstance;
+import server.games.cards.ServerCardInstance;
 
 public class GameEvent {
-	private Game m_HostGame;
+	private GameInstance m_HostGame;
 	
 	private GamePlayer m_SourcePlayer;
-	private CardInstance m_SourceCard;
+	private ServerCardInstance m_SourceCard;
 	
 	private GamePlayer m_TargetPlayer;
-	private CardInstance m_TargetCard;
+	private ServerCardInstance m_TargetCard;
 	
 	private String m_EventString;
 	
 	public GamePlayer getSourcePlayer() { return m_SourcePlayer; }
-	public CardInstance getSourceCard() { return m_SourceCard; }
-	public Game getHostGame() { return m_HostGame; }
+	public ServerCardInstance getSourceCard() { return m_SourceCard; }
+	public GameInstance getHostGame() { return m_HostGame; }
 }

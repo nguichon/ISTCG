@@ -3,20 +3,29 @@ package server.games.cards;
 import java.util.ArrayList;
 import java.util.Collections;
 
+import server.games.GamePlayer;
+
+import Shared.GameZones;
+
 /**
  * A collection of cards. Can be randomly reordered and freely searched, drawn
  * from, added to.
  * 
  * @author nguichon
  */
-public class Deck {
-	private ArrayList<ServerCardTemplate> m_CardsInDeck;
+public class CardList {
+	private ArrayList<ServerCardInstance> m_CardsInDeck;
+	private GamePlayer m_Owner;
+	private GameZones m_ListLocation;
 
 	/**
 	 * Default constructor, only initializes ArrayList collection
+	 * @param gamePlayer 
 	 */
-	public Deck() {
-		m_CardsInDeck = new ArrayList<ServerCardTemplate>();
+	public CardList( GamePlayer owner, GameZones location ) {
+		m_ListLocation = location;
+		m_Owner = owner;
+		m_CardsInDeck = new ArrayList<ServerCardInstance>();
 	}
 
 	/**
@@ -35,7 +44,8 @@ public class Deck {
 	 *            The cardBase to add, there can be multiple of the same
 	 *            cardBase in a deck. e.g. multiple copies of the same card
 	 */
-	public void AddCard(ServerCardTemplate toAdd) {
+	public void AddCard(ServerCardInstance toAdd) {
+		toAdd.SetLocation( m_ListLocation );
 		m_CardsInDeck.add(toAdd);
 	}
 
@@ -45,8 +55,14 @@ public class Deck {
 	 * @return The first card in order, e.g. the card added the earliest through
 	 *         AddCard, unless shuffled of course
 	 */
-	public ServerCardTemplate DrawCard() {
-		return m_CardsInDeck.remove(0);
+	public ServerCardInstance DrawCard() {
+		if( !m_CardsInDeck.isEmpty() ) {
+			ServerCardInstance toReturn = m_CardsInDeck.remove(0);
+			toReturn.SetLocation( GameZones.UNKNOWN );
+			return toReturn;
+		}
+		
+		return null;
 	}
 
 	/**

@@ -11,7 +11,7 @@ import server.network.ClientAccount;
 
 
 public class GameManager {
-	private Map<Integer, Game> m_ActiveGames;
+	private Map<Integer, GameInstance> m_ActiveGames;
 	
 	private int GetNewGameNumber() {
 		ResultSet rs = Database.get().quickQuery("INSERT INTO GAMES DEFAULT VALUES RETURNING id;");
@@ -30,7 +30,7 @@ public class GameManager {
 	public int CreateGame( ClientAccount... players ) {
 		int gameNumber = GetNewGameNumber();
 		synchronized( m_ActiveGames ) {
-			m_ActiveGames.put( gameNumber , new Game(gameNumber, players) );
+			m_ActiveGames.put( gameNumber , new GameInstance(gameNumber, players) );
 		}
 		return gameNumber;
 	}
@@ -41,8 +41,8 @@ public class GameManager {
 		}
 	}
 	
-	public void RemoveGame( Game g ) {
-		RemoveGame( g.GetID() );
+	public void RemoveGame( GameInstance g ) {
+		RemoveGame( g.GetGameID() );
 	}
 	
 	public void SendMessageToGame( int game_id, int origin, String[] message ) {
@@ -54,7 +54,7 @@ public class GameManager {
 	//=====
 	private static GameManager m_Instance;
 	private GameManager() {
-		m_ActiveGames = new HashMap<Integer, Game>();
+		m_ActiveGames = new HashMap<Integer, GameInstance>();
 	}
 	public static GameManager get() {
 		if( m_Instance == null ) { m_Instance = new GameManager(); }
