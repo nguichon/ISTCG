@@ -1,4 +1,4 @@
-package server.network;
+package Shared;
 
 public enum ClientResponses {
 		CHALLENGE, RTC, END, DECKLIST, 

@@ -6,11 +6,12 @@ import java.util.Iterator;
 import java.util.Random;
 import java.util.Stack;
 
+import Shared.ClientMessages;
+import Shared.ClientResponses;
+
 import server.games.cards.ServerCardInstance;
 import server.games.cards.CardTemplateManager;
 import server.network.ClientAccount;
-import server.network.ClientMessages;
-import server.network.ClientResponses;
 
 /**
  * This is a specific game. I'll write more documentation later...
@@ -85,6 +86,7 @@ public class GameInstance {
 			}
 			
 			m_Players.put( clientToAdd.getUserID(), new GamePlayer( this, clientToAdd ) );
+			m_PlayerList.add( clientToAdd.getUserID() );
 		}
 	}
 

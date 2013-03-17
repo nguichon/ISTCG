@@ -5,9 +5,9 @@ import java.util.HashMap;
 
 import server.games.GameInstance;
 import server.games.GamePlayer;
-import server.network.ClientMessages;
 
 
+import Shared.ClientMessages;
 import Shared.GameZones;
 import Shared.StatBlock;
 
@@ -51,6 +51,12 @@ public class ServerCardInstance {
 					m_Host.GetGameID() + "", 
 					m_UID + "", 
 					m_Template.getCardTemplateID() + "" );
+		} else {
+			requester.getAccount().SendMessage( 
+					ClientMessages.CARD_INFO, 
+					m_Host.GetGameID() + "", 
+					m_UID + "", 
+					"-1" );
 		}
 	}
 	

@@ -1,4 +1,4 @@
-package server.network;
+package Shared;
 
 public enum ClientMessages {
 	JOIN, PLAYER_JOINED, UPDATE_ZONE, PRIVATE_MESSAGE, 

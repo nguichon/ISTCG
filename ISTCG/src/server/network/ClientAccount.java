@@ -13,6 +13,9 @@ import javax.crypto.spec.PBEKeySpec;
 
 import org.postgresql.util.Base64;
 
+import Shared.ClientMessages;
+import Shared.ClientResponses;
+
 import server.Database;
 import server.LobbyManager;
 import server.ServerMain;

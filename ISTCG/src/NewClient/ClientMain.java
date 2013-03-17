@@ -9,6 +9,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
+
 import Client.GameUI;
 import Client.LoginUI;
 import Client.ClientMain.GameState;
@@ -67,7 +68,6 @@ public class ClientMain {
 		return shell.getBounds();
 	}
 	private ThreadedConnectionDevice m_Server;
-	public enum MessageType { JOIN,PLAYER_JOINED,UPDATE_ZONE,CREATE_TEMPLATE,REMOVE_TEMPLATE,CREATE_INSTANCE,UPDATE_INSTANCE,DELETE_INSTANCE,PRIVATE_MESSAGE,MESSAGE,LOGIN_FAILED,LOGIN_SUCCESS,USER_LOGGED_IN,SERVER,PLAYER_TURN }
 	
 	private boolean MakeConnection() {
 		int port = 4567;
@@ -118,7 +118,7 @@ public class ClientMain {
 	public void ParseMessage( String input ) {
 		//System.out.println(input);
 		String[] inputs = input.split(";");
-		switch( MessageType.valueOf(inputs[0].toUpperCase()) ) {
+		switch( Shared.ClientMessages.valueOf(inputs[0].toUpperCase()) ) {
 		case MESSAGE:
 			if(composite instanceof Lobby){
 			((Lobby)(composite)).addMessageBox(inputs[1]+": "+inputs[2]);
@@ -164,7 +164,7 @@ public class ClientMain {
 					//Wut
 				}
 			break;
-		case CREATE_TEMPLATE:
+		/*case CREATE_TEMPLATE:
 			//WAITING ON DAN
 			break;
 		case REMOVE_TEMPLATE:
@@ -178,7 +178,7 @@ public class ClientMain {
 			break;
 		case DELETE_INSTANCE:
 			//WAITING ON DAN
-			break;
+			break;*/
 		case PRIVATE_MESSAGE:
 			if(composite instanceof Lobby){
 				((Lobby)(composite)).addMessageBox(inputs[1]+": "+inputs[2]);

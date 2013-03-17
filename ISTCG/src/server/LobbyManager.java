@@ -1,7 +1,7 @@
 package server;
 
+import Shared.ClientMessages;
 import server.network.ClientAccount;
-import server.network.ClientMessages;
 import server.network.ConnectionsHandler;
 
 public class LobbyManager {

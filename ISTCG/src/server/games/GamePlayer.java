@@ -5,7 +5,7 @@ import server.games.cards.CardList;
 import server.games.cards.ServerCardInstance;
 import server.games.cards.ServerCardTemplate;
 import server.network.ClientAccount;
-import server.network.ClientMessages;
+import Shared.ClientMessages;
 import Shared.GameResources;
 import Shared.GameZones;
 
