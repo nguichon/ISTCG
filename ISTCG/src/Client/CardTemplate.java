@@ -163,11 +163,11 @@ public class CardTemplate {
 
 	@XmlElementWrapper(name = "statList")
 	@XmlElement(name = "stat")
-	public void setStats(ArrayList<StatBlock> stats) {
+	public void setStats(StatBlock... stats) {
 		this.m_Stats = stats;
 	}
 
-	public ArrayList<StatBlock> getStats() {
+	public StatBlock[] getStats() {
 		return m_Stats;
 	}
 }

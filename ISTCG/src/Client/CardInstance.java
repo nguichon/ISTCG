@@ -47,7 +47,7 @@ public class CardInstance implements NetworkObject {
         for (int i = 0; i < len; i++) {
             m_Stats[i] = stuff[i];
         }
-        SetCanvas();
+        //SetCanvas();
 
     }
 
@@ -105,7 +105,7 @@ public class CardInstance implements NetworkObject {
 				@Override
 				public void mouseDoubleClick(MouseEvent arg0) {
 					// TODO Auto-generated method stub
-					.Render(targetGC, m_CurrentSize, overwriteStats);
+					//.Render(targetGC, m_CurrentSize, overwriteStats);
 				}
 			});
     		

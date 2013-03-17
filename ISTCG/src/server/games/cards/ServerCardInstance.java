@@ -3,7 +3,6 @@ package server.games.cards;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import server.games.Game;
 import server.games.GameInstance;
 import server.games.GamePlayer;
 import server.network.ClientMessages;
