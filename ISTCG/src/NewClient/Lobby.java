@@ -3,6 +3,7 @@ package NewClient;
 import java.util.ArrayList;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -15,7 +16,7 @@ import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.swt.widgets.Text;
 
 public class Lobby extends Composite {
-	private Text text;
+	private StyledText text;
 	private Text text_1;
 	private TabFolder tabFolder;
 
@@ -31,7 +32,7 @@ public class Lobby extends Composite {
 		super(parent, style);
 		this.main = main;
 		games = new ArrayList<Game>();
-		text = new Text(this, SWT.BORDER | SWT.READ_ONLY|SWT.WRAP|SWT.MULTI|SWT.V_SCROLL);
+		text = new StyledText(this, SWT.BORDER | SWT.READ_ONLY|SWT.WRAP|SWT.MULTI|SWT.V_SCROLL);
 		text.setBounds(main.getBounds().width-500,main.getBounds().height-800, 250, 700);
 		
 		final Button btnNewButton = new Button(this, SWT.NONE);
@@ -72,7 +73,7 @@ public class Lobby extends Composite {
 	public Text getPlayerMessage() {
 		return text_1;
 	}
-	public Text getMessageBox() {
+	public StyledText getMessageBox() {
 		return text;
 	}
 	public void addMessageBox(String s){
