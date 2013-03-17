@@ -1,4 +1,4 @@
-package Server;
+package server;
 
 import java.io.File;
 import java.sql.ResultSet;
@@ -13,7 +13,11 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 
-import Shared.CardTemplates;
+import server.admin.AdminCommands;
+import server.games.cards.CardTemplateManager;
+import server.network.ClientAccount;
+import server.network.ConnectionsHandler;
+
 import Shared.StatBlock;
 
 /**
@@ -84,62 +88,16 @@ public class ServerMain {
 		System.exit(0);
 	}
 
+	public static void Quit() { m_Quit = true; }
 	
 	public static String RunCommand( String text ) {
 		String[] command = text.split(" ");
-		switch (AdminCommands.valueOf(command[0].toUpperCase())) {
-		case QUIT:
-			m_Quit = true;
-			break;
-		case CREATE_ACCOUNT:
-			try {
-				ClientAccount.NewAccount(command[1], command[2], command[3]);
-				return "User account " + command[1] + " created.";
-			} catch (Exception e1) {
-				e1.printStackTrace();
-				return "Failed to create account";
-			}
-		case SELECT:
-			ResultSet rs = Database.get().quickQuery(text);
-			String toReturn = "";
-			try {
-				ResultSetMetaData rsmd = rs.getMetaData();
-				for (int i = 1; i <= rsmd.getColumnCount(); i++) {
-					if (i != 1) {
-						toReturn += " | ";
-					} else {
-						toReturn += "\n";
-					}
-					toReturn += rsmd.getColumnName(i);
-				}
-				while (rs.next()) {
-					for (int i = 1; i <= rsmd.getColumnCount(); i++) {
-						if (i != 1) {
-							toReturn += " | ";
-						} else {
-							toReturn += "\n";
-						}
-						toReturn += rs.getString(rsmd.getColumnName(i));
-					}
-				}
-				toReturn += "\n";
-				return toReturn;
-			} catch (SQLException e) {
-				toReturn = "Invalid query.";
-				e.printStackTrace();
-				return toReturn;
-			}
-		case GET_USERS:
-			// Lists users currently connected
-			String userList = "";
-			userList += "Currently connected users: \n";
-			return userList;
-		case SHRINK:
-			// TO DO: ADD CODE TO MINIMIZE CLIENTS
-		default:
-			break;
+		
+		try {
+			return AdminCommands.valueOf(command[0].toUpperCase()).Activate(command);
+		} catch (IllegalArgumentException e) {
+			return "Admin command " + command[0].toUpperCase() + " does not exist.";
 		}
-		return "Unknown command \"" + command[0] + "\"";
 	}
 	private static void ParseConsoleCommand(String next) {
 		ConsoleMessage('?',RunCommand(next));

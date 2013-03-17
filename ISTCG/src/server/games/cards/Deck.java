@@ -1,4 +1,4 @@
-package Shared;
+package server.games.cards;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -10,13 +10,13 @@ import java.util.Collections;
  * @author nguichon
  */
 public class Deck {
-	private ArrayList<CardTemplates> m_CardsInDeck;
+	private ArrayList<ServerCardTemplate> m_CardsInDeck;
 
 	/**
 	 * Default constructor, only initializes ArrayList collection
 	 */
 	public Deck() {
-		m_CardsInDeck = new ArrayList<CardTemplates>();
+		m_CardsInDeck = new ArrayList<ServerCardTemplate>();
 	}
 
 	/**
@@ -35,7 +35,7 @@ public class Deck {
 	 *            The cardBase to add, there can be multiple of the same
 	 *            cardBase in a deck. e.g. multiple copies of the same card
 	 */
-	public void AddCard(CardTemplates toAdd) {
+	public void AddCard(ServerCardTemplate toAdd) {
 		m_CardsInDeck.add(toAdd);
 	}
 
@@ -45,7 +45,7 @@ public class Deck {
 	 * @return The first card in order, e.g. the card added the earliest through
 	 *         AddCard, unless shuffled of course
 	 */
-	public CardTemplates DrawCard() {
+	public ServerCardTemplate DrawCard() {
 		return m_CardsInDeck.remove(0);
 	}
 

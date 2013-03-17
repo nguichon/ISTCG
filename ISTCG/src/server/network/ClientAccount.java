@@ -1,4 +1,4 @@
-package Server;
+package server.network;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -12,6 +12,11 @@ import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
 
 import org.postgresql.util.Base64;
+
+import server.Database;
+import server.LobbyManager;
+import server.ServerMain;
+import server.games.GameManager;
 
 /**
  * @author Nicholas Guichon
@@ -79,7 +84,7 @@ public class ClientAccount extends Thread {
 						break;
 					case TELL:
 						if (m_UserID != -1) {
-							LobbyManager.whisper(m_UserName, command[1], command[2]);
+							LobbyManager.whisper( this, command[1], command[2]);
 						}
 						break;
 					case LOGOUT:
