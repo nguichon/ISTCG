@@ -156,7 +156,7 @@ public class Game extends Composite {
 		}
 	}
 	public void setTurn(String player){
-		if(player.equals(ID)){
+		if(player.equals(main.getPID())){
 			btnEnd.setEnabled(true);
 		} else if(player.equals(eID)){
 			btnEnd.setEnabled(false);
