@@ -150,15 +150,19 @@ public class GameInstance {
 	 * Starts this game, drawing each player's initial hand and picking a random starting player.
 	 */
 	private void StartGame() {
-		for( Integer i : m_PlayerList ) { 
-			GamePlayer player = m_Players.get(i);
-			player.DrawCards( STARTING_HAND_SIZE );
+		if( !m_Started ) {
+			m_Started = true;
+			
+			for( Integer i : m_PlayerList ) { 
+				GamePlayer player = m_Players.get(i);
+				player.DrawCards( STARTING_HAND_SIZE );
+			}
+			
+			m_CurrentPlayerIndex = new Random().nextInt( m_Players.size() );
+			m_CurrentPlayer = m_Players.get( m_PlayerList.get( m_CurrentPlayerIndex ) );
+			
+			StartTurn();
 		}
-		
-		m_CurrentPlayerIndex = new Random().nextInt( m_Players.size() );
-		m_CurrentPlayer = m_Players.get( m_PlayerList.get( m_CurrentPlayerIndex ) );
-		
-		StartTurn();
 	}
 	
 	/**

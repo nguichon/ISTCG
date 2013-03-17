@@ -14,6 +14,7 @@ public class Login extends Composite {
 	private Text text;
 	private Text text_1;
 	private Label label;
+	Button btnLogin;
 	final ClientMain m_Host;
 	/**
 	 * Create the composite.
@@ -39,7 +40,7 @@ public class Login extends Composite {
 		label = new Label(this, SWT.NONE);
 		label.setBounds(174, 208, 200, 20);
 		label.setText("Please login");
-		Button btnLogin = new Button(this, SWT.PUSH);
+		btnLogin = new Button(this, SWT.PUSH);
 		btnLogin.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
@@ -80,5 +81,8 @@ public class Login extends Composite {
 	}
 	public void setLabel(String s){
 		this.label.setText(s);
+	}
+	public void disableLogin(){
+		btnLogin.setEnabled(false);
 	}
 }

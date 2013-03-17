@@ -39,14 +39,19 @@ public class ClientMain {
 		this.MakeConnection();
 		while (!shell.isDisposed()) {
 			if (!display.readAndDispatch()) {
-				if(m_Server.hasData()){
+				if(m_Server!=null && m_Server.hasData()){
 					this.ParseMessage(m_Server.getData());
 				}
 				display.sleep();
 			}
 		}
 	}
-	
+	public Composite rShell(){
+		return shell;
+	}
+	public String getPID(){
+		return ID;
+	}
 	public Point getSize(){
 		return display.getActiveShell().getSize();
 	}
@@ -72,6 +77,9 @@ public class ClientMain {
 			m_Server = new ThreadedConnectionDevice( host, port);
 			return true;
 		} catch (IOException e) {
+			if(composite instanceof Login)
+				((Login)composite).setLabel("NO SERVER FOUND");
+				((Login)composite).disableLogin();
 			return false;
 		}
 	}
@@ -94,6 +102,14 @@ public class ClientMain {
 		}
 		
 		
+	}
+	public void sendData(String s){
+		//s.replace(";",":");
+		try{
+			m_Server.sendData(s);
+		} catch(Exception e){
+			
+		}
 	}
 	public void Login( String login, String password ) {
 		if(MakeConnection())
@@ -123,21 +139,45 @@ public class ClientMain {
 			}
 			break;
 		case JOIN:
-			
+			//check the lobby for games
+			if(composite instanceof Lobby)
+				if(((Lobby)composite).findGameById(inputs[1])!=null){
+					//WUT
+				} else {
+					((Lobby)composite).addGame(inputs[1]);
+				}
 			break;
 		case PLAYER_JOINED:
+			if(composite instanceof Lobby)
+			if(((Lobby)composite).findGameById(inputs[1])!=null){
+				((Lobby)composite).findGameById(inputs[1]).setEnemy(inputs[2]);
+				((Lobby)composite).findGameById(inputs[1]).setEnemyID(inputs[3]);
+			} else {
+				//Wut
+			}
 			break;
 		case UPDATE_ZONE:
+			if(composite instanceof Lobby)
+				if(((Lobby)composite).findGameById(inputs[1])!=null){
+					((Lobby)composite).findGameById(inputs[1]).updateZone(inputs[2], inputs[3], inputs[4]);
+				} else {
+					//Wut
+				}
 			break;
 		case CREATE_TEMPLATE:
+			//WAITING ON DAN
 			break;
 		case REMOVE_TEMPLATE:
+			//WAITING ON DAN
 			break;
 		case CREATE_INSTANCE:
+			//WAINTING ON DAN
 			break;
 		case UPDATE_INSTANCE:
+			//WAITING ON DAN
 			break;
 		case DELETE_INSTANCE:
+			//WAITING ON DAN
 			break;
 		case PRIVATE_MESSAGE:
 			if(composite instanceof Lobby){
@@ -152,6 +192,12 @@ public class ClientMain {
 		case SERVER:
 			break;
 		case PLAYER_TURN:
+			if(composite instanceof Lobby)
+				if(((Lobby)composite).findGameById(inputs[1])!=null){
+					((Lobby)composite).findGameById(inputs[1]).setTurn(inputs[2]);
+				} else {
+					//Wut
+				}
 			break;
 		default:
 			break;

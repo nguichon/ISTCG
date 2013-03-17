@@ -1,23 +1,26 @@
 package NewClient;
 
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Text;
+import java.util.ArrayList;
+
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.TabFolder;
-import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.ModifyListener;
-import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.TabFolder;
+import org.eclipse.swt.widgets.TabItem;
+import org.eclipse.swt.widgets.Text;
 
 public class Lobby extends Composite {
 	private Text text;
 	private Text text_1;
+	private TabFolder tabFolder;
 
+	ArrayList<Game> games;
+	ClientMain main;
 	/**
 	 * Create the composite.
 	 * @param parent
@@ -26,7 +29,8 @@ public class Lobby extends Composite {
 	public static String newline = String.valueOf(new char[]{SWT.CR});
 	public Lobby(Composite parent, int style, final ClientMain main) {
 		super(parent, style);
-		
+		this.main = main;
+		games = new ArrayList<Game>();
 		text = new Text(this, SWT.BORDER | SWT.READ_ONLY|SWT.WRAP|SWT.MULTI|SWT.V_SCROLL);
 		text.setBounds(main.getBounds().width-500,main.getBounds().height-800, 250, 700);
 		
@@ -42,8 +46,8 @@ public class Lobby extends Composite {
 		btnNewButton.setBounds(main.getBounds().width-500, main.getBounds().height-100, 235, 45);
 		btnNewButton.setText("Send");
 		
-		TabFolder tabFolder = new TabFolder(this, SWT.NONE);
-		tabFolder.setBounds(10, 10, 807, 630);
+		tabFolder = new TabFolder(this, SWT.NONE);
+		tabFolder.setBounds(10, 10, 916, 682);
 		
 		text_1 = new Text(this, SWT.BORDER);
 		text_1.addKeyListener( new KeyListener() {
@@ -73,5 +77,24 @@ public class Lobby extends Composite {
 	}
 	public void addMessageBox(String s){
 		text.setText(getMessageBox().getText()+"\n"+s);
+	}
+	public void addGame(String gID){
+		//Make a game
+		TabItem t = new TabItem(tabFolder,SWT.NULL);
+		t.setText("Game "+gID);
+		Game g = new Game(t.getParent(), SWT.None,main,t);
+		g.setID(gID);
+		g.loadDeck();
+		games.add(g);
+		t.setControl(g);
+		
+	}
+	public Game findGameById(String gID){
+		for(Game g : games){
+			if(g.getID().equals(gID)){
+				return g;
+			}
+		}
+		return null;
 	}
 }
