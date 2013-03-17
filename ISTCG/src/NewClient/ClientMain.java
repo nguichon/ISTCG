@@ -49,6 +49,9 @@ public class ClientMain {
 	public Composite rShell(){
 		return shell;
 	}
+	public String getPID(){
+		return ID;
+	}
 	public Point getSize(){
 		return display.getActiveShell().getSize();
 	}

@@ -122,7 +122,7 @@ public class Game extends Composite {
 		eID=ID;
 	}
 	public void updateZone(String player, String zone, String val){
-		if(player.equals(ID)){
+		if(player.equals(main.getPID())){
 			//This guy
 			switch(GameZones.valueOf(zone)){
 			case HAND:
