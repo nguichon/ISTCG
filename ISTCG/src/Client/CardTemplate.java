@@ -46,7 +46,7 @@ public class CardTemplate {
     private static Display display = null;
 
     private static final String CARD_BL = "card_border_corner_bottom_left.png";
-    private static Image cardBR = new Image(display,
+   /* private static Image cardBR = new Image(display,
             System.getProperty("user.dir")
                     + "/data/card_border_corner_bottom_right.png");
     private static Image cardTL = new Image(display,
@@ -85,7 +85,7 @@ public class CardTemplate {
     private static Image textB = new Image(display,
             System.getProperty("user.dir") + "/data/text_box_edge_bottom.png");
     private static Image textM = new Image(display,
-            System.getProperty("user.dir") + "/data/text_box_body.png");
+            System.getProperty("user.dir") + "/data/text_box_body.png");*/
 
     /**
      * This method draws a card using the passed GC. It will use the default

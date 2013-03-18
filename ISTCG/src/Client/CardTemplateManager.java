@@ -41,6 +41,7 @@ public class CardTemplateManager {
                         CardTemplate.class).createUnmarshaller();
                 CardTemplate ct = (CardTemplate) reader.unmarshal(new File(
                         DEFAULT_CARD_PATH + id + ".xml"));
+                toReturn = ct;
                 m_LoadedCards.put(ct.getCardID(), ct);
             } catch (JAXBException e) {
                 e.printStackTrace();

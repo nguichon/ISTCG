@@ -1,6 +1,5 @@
 package server.games.cards;
 
-import java.sql.Array;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
@@ -10,7 +9,6 @@ import server.games.events.DamageEvent;
 import server.games.events.GameEvent;
 
 import Shared.CardTypes;
-import Shared.GameResources;
 import Shared.StatBlock;
 
 public abstract class ServerCardTemplate {
@@ -18,7 +16,7 @@ public abstract class ServerCardTemplate {
 	private int m_CardID, m_AbilityCount;
 	private HashMap<StatBlock.StatType, StatBlock> m_Stats;
 	
-	public ServerCardTemplate( ) {  }
+	public ServerCardTemplate( ) { m_Stats = new HashMap<StatBlock.StatType, StatBlock>();  }
 	public void Initialize(ResultSet card) throws SQLException  {
 		setCardTemplateID( card.getInt( "id" ) );
 		setStat( StatBlock.StatType.ATTACK, card.getInt( "attack" ) );

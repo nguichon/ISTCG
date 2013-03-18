@@ -8,6 +8,7 @@ import java.util.Stack;
 
 import Shared.ClientMessages;
 import Shared.ClientResponses;
+import Shared.GameZones;
 
 import server.games.cards.ServerCardInstance;
 import server.games.cards.ServerCardTemplateManager;
@@ -114,6 +115,7 @@ public class GameInstance {
 					m_Players.get( origin ).Pass();
 					break;
 				case PLAY:
+					m_Players.get( origin ).PlayCard( new Integer(message[1]) );
 					break;
 				default:
 					break;
@@ -207,5 +209,43 @@ public class GameInstance {
 		if( start_the_game ) {
 			StartGame();
 		}
+	}
+
+	public void AddToStack(ServerCardInstance cardPlayed) {
+		cardPlayed.SetLocation( GameZones.STACK );
+		m_CardsOnStack.add( cardPlayed );
+		
+		SendMessageToAllPlayers( 
+        		ClientMessages.MOVE,
+				GetGameID() + "",
+				cardPlayed.GetCardUID() + "",
+				GameZones.STACK.name() );
+		
+	}
+
+	public boolean GameStackStep() {
+		int initial_player = m_CurrentPlayerIndex;
+		int current_player = initial_player;
+		
+		while( m_Players.get( m_PlayerList.get( current_player ) ).getState() == GamePlayerStates.DONE ) {
+			current_player++;
+			if( current_player >= m_PlayerList.size() ) {
+				current_player = 0;
+			}
+			
+			if( current_player == initial_player ) {
+				return false;
+			}
+		}
+		
+		m_Players.get( m_PlayerList.get( current_player ) ).getAccount().SendMessage( ClientMessages.PRIORITY );
+		
+		return true;
+	}
+	public void MakeAllPlayersActive() {
+		for( Integer i : m_PlayerList ) { 
+			GamePlayer player = m_Players.get(i);
+			player.SetState( GamePlayerStates.ACTIVE );
+		}		
 	}
 }

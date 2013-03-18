@@ -25,9 +25,6 @@ public class ClientMain {
 	private String ID = "";
 	public ClientMain(){
 		CardTemplateManager.get().Initialize();
-		
-		
-		CardTemplateManager.get().GetCardTemplate( 2 );
 		display = Display.getDefault();
 		ImageManager.get().Initialize(display);
 		shell = new Shell();

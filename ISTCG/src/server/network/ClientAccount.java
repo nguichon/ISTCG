@@ -107,7 +107,14 @@ public class ClientAccount extends Thread {
 						if (m_AdminAccount) {
 							SendMessage(ClientMessages.SERVER, ServerMain.RunCommand(command[1]));
 						}
+					case GETCOLLECTION:
+						SendPlayerCollection();
+						break;
 					case DECKLIST:
+						// Drop through
+					case PLAY:
+						// Drop through
+					case GETCARDINFO:
 						// Drop through
 					case END:
 						GameManager.get().SendMessageToGame(
@@ -123,6 +130,21 @@ public class ClientAccount extends Thread {
 				DisconnectMe();
 			}
 		}
+	}
+
+	private void SendPlayerCollection() {
+		ResultSet rs = Database.get().quickQuery("SELECT COLLECTIONS.count, COLLECTIONS.card_id FROM COLLECTIONS WHERE owner_id = " + this.getUserID() + ";");
+		String toSend = "";
+		try {
+			while( rs.next() ) {
+				toSend += rs.getInt( "card_id" ) + "," + rs.getInt( "count" ) + "|";
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		SendMessage( ClientMessages.COLLECTION, toSend );
 	}
 
 	public void DisconnectMe() {
