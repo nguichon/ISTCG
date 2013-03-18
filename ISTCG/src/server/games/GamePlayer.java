@@ -6,6 +6,7 @@ import server.games.cards.ServerCardInstance;
 import server.games.cards.ServerCardTemplate;
 import server.network.ClientAccount;
 import Shared.ClientMessages;
+import Shared.ClientResponses;
 import Shared.GameResources;
 import Shared.GameZones;
 
@@ -22,6 +23,8 @@ public class GamePlayer {
 	public GamePlayer( GameInstance g, ClientAccount acc ) {
 		m_Game = g;
 		m_PlayerAccount = acc;
+		
+		//As a newly created GamePlayer, he or she is NOT ready. They need to load a deck!
 		m_Ready = false;
 		
 		m_PlayerHand = new CardList( this, GameZones.HAND );
@@ -47,7 +50,13 @@ public class GamePlayer {
 				m_PlayerDeck = newDeck;
 				m_Ready = true;
 				m_Game.Ready();
-			} 
+			} else {
+				m_PlayerAccount.SendMessage( 
+						ClientMessages.GAME_ERROR, 
+						m_Game.GetGameID() + "", 
+						ClientResponses.DECKLIST.name(), 
+						"Invalid deck list." );
+			}
 		}
 	}
 
