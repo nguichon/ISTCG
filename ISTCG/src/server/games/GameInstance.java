@@ -188,7 +188,7 @@ public class GameInstance {
 	 * The iterator is reset before getting a player (aka gets the first player in the list)
 	 */
 	private void NextPlayer() {
-		if( m_CurrentPlayerIndex++ >= m_Players.size() ) { m_CurrentPlayerIndex = 0; }
+		if( ++m_CurrentPlayerIndex >= m_Players.size() ) { m_CurrentPlayerIndex = 0; }
 		m_CurrentPlayer = m_Players.get( m_PlayerList.get( m_CurrentPlayerIndex ) );
 	}
 

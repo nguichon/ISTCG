@@ -84,6 +84,10 @@ public class CardList {
 	public boolean Validate() {
 		// There are not requirements for deck construction at 
 		// this time! Yay! Your deck is legal!
+		
+		//CORRECTION THERE IS ONE REQUIREMENT: At least 60 cards.
+		if( m_CardsInDeck.size() < 60 ) { return false; }
+		
 		return true;
 	}
 }
