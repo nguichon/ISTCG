@@ -53,6 +53,13 @@ public class Game extends Composite {
 		lblEhandsize.setText("EHANDSIZE");
 		
 		btnPass = new Button(this, SWT.NONE);
+		btnPass.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent arg0) {
+				main.sendData("PASS;"+getID());
+				disablePass();
+			}
+		});
 		btnPass.setBounds(10, 10, 94, 28);
 		btnPass.setText("PASS");
 		
@@ -90,6 +97,7 @@ public class Game extends Composite {
 		 * Finally start game stuff
 		 */
 		//this.loadDeck();
+		this.disablePass();
 	}
 
 	@Override
@@ -161,6 +169,13 @@ public class Game extends Composite {
 		} else if(player.equals(eID)){
 			btnEnd.setEnabled(false);
 		}
+	}
+	
+	public void enablePass(){
+		btnPass.setEnabled(true);
+	}
+	public void disablePass() {
+		btnPass.setEnabled(false);
 	}
 	//3,100
 	public void loadDeck(){

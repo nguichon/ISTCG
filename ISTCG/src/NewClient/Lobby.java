@@ -83,7 +83,8 @@ public class Lobby extends Composite {
 	public void addDeckEditor(){
 		TabItem t = new TabItem(tabFolder, SWT.NULL);
 		t.setText("Deck Editor");
-		DeckEditor d;
+		DeckEditor d = new DeckEditor(t.getParent(),SWT.None,main,t);
+		t.setControl(d);
 	}
 	public void addGame(String gID){
 		//Make a game

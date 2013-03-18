@@ -88,6 +88,11 @@ public class DeckEditor extends Composite {
 		}
 		if(!confirm)
 			return;
+		//add the card to list_1
+		list_1.add(s);
+	}
+	public void writeDeck(){
+		//Deck writer method
 		
 	}
 }

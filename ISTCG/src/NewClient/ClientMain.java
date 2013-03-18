@@ -9,6 +9,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
+import Client.ImageManager;
 import Shared.ThreadedConnectionDevice;
 
 public class ClientMain {
@@ -22,6 +23,7 @@ public class ClientMain {
 	public ClientMain(){
 		
 		display = Display.getDefault();
+		ImageManager.get().Initialize(display);
 		shell = new Shell();
 		shell.setSize(450, 300);
 		shell.setText("SWT Application");
@@ -124,6 +126,7 @@ public class ClientMain {
 			composite.dispose();
 			shell.setBounds(display.getPrimaryMonitor().getBounds());
 			composite = new Lobby(shell, SWT.NONE,this);
+			((Lobby)composite).addDeckEditor();
 			Rectangle r = shell.getBounds();
 			composite.setBounds(r);
 			break;
@@ -159,21 +162,6 @@ public class ClientMain {
 					//Wut
 				}
 			break;
-		/*case CREATE_TEMPLATE:
-			//WAITING ON DAN
-			break;
-		case REMOVE_TEMPLATE:
-			//WAITING ON DAN
-			break;
-		case CREATE_INSTANCE:
-			//WAINTING ON DAN
-			break;
-		case UPDATE_INSTANCE:
-			//WAITING ON DAN
-			break;
-		case DELETE_INSTANCE:
-			//WAITING ON DAN
-			break;*/
 		case PRIVATE_MESSAGE:
 			if(composite instanceof Lobby){
 				((Lobby)(composite)).addMessageBox(inputs[1]+": "+inputs[2]);
@@ -194,6 +182,12 @@ public class ClientMain {
 					//Wut
 				}
 			break;
+		case WAITING:
+			if(composite instanceof Lobby){
+				if(((Lobby)composite).findGameById(inputs[1])!=null){
+					((Lobby)composite).findGameById(inputs[1]).enablePass();
+				}
+			}
 		default:
 			break;
 		}
