@@ -29,7 +29,7 @@ public class ServerCardInstance {
 		m_UID = m_Host.CreateNewCardID();
 		m_Location = GameZones.UNKNOWN;
 		
-		m_Template = CardTemplateManager.get().GetCardTemplate( template_id );
+		m_Template = ServerCardTemplateManager.get().GetCardTemplate( template_id );
 	}
 	
 	public void SetLocation( GameZones location ) { m_Location = location; }

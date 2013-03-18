@@ -12,7 +12,7 @@ public class CardTemplateManager {
 	//=========
 	//CONSTANTS
 	//=========
-	private static String DEFAULT_CARD_PATH = System.getProperty("user.dir") + "/data/cards/";
+	private static String DEFAULT_CARD_PATH = System.getProperty("user.dir") + "/data/cards/card_";
 	
 	//CardTemplate collection variables
 	private HashMap<Integer, CardTemplate> m_LoadedCards;
@@ -39,7 +39,7 @@ public class CardTemplateManager {
 				final Unmarshaller reader = JAXBContext.newInstance(
 						CardTemplate.class).createUnmarshaller();
 
-				CardTemplate ct = (CardTemplate)reader.unmarshal(new File(DEFAULT_CARD_PATH + id + ".ccf"));
+				CardTemplate ct = (CardTemplate)reader.unmarshal(new File(DEFAULT_CARD_PATH + id + ".xml"));
 				m_LoadedCards.put( ct.getCardID(), ct );
 			} catch (JAXBException e) {
 				e.printStackTrace();

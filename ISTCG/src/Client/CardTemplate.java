@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
+import javax.xml.bind.annotation.XmlRootElement;
 
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
@@ -13,6 +14,7 @@ import org.eclipse.swt.events.MouseEvent;
 import Shared.CardTypes;
 import Shared.StatBlock;
 
+@XmlRootElement(namespace = "card template")
 public class CardTemplate {
 	private String m_BGImage;
 	private CardTypes m_CardType;
@@ -20,7 +22,7 @@ public class CardTemplate {
 	//private ArrayList<StatBlock> m_Stats;
 	private String m_CardName;
 	private String m_CardFlavor;
-	private StatBlock m_Stats[];
+	private ArrayList<StatBlock> m_Stats;
 	
 	private Display display = null;
 	
@@ -148,7 +150,7 @@ public class CardTemplate {
 		return m_CardName;
 	}
 
-	public void setCardType(String name) {
+	public void setCardName(String name) {
 		m_CardName = name;
 	}
 
@@ -163,11 +165,11 @@ public class CardTemplate {
 
 	@XmlElementWrapper(name = "statList")
 	@XmlElement(name = "stat")
-	public void setStats(StatBlock... stats) {
+	public void setStats(ArrayList<StatBlock> stats) {
 		this.m_Stats = stats;
 	}
 
-	public StatBlock[] getStats() {
+	public ArrayList<StatBlock> getStats() {
 		return m_Stats;
 	}
 }
