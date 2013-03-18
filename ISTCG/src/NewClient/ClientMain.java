@@ -9,6 +9,9 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
+import server.games.cards.ServerCardTemplateManager;
+
+import Client.CardTemplateManager;
 import Client.ImageManager;
 import Shared.ThreadedConnectionDevice;
 
@@ -21,7 +24,10 @@ public class ClientMain {
 	private Composite composite = null;
 	private String ID = "";
 	public ClientMain(){
+		CardTemplateManager.get().Initialize();
 		
+		
+		CardTemplateManager.get().GetCardTemplate( 2 );
 		display = Display.getDefault();
 		ImageManager.get().Initialize(display);
 		shell = new Shell();
