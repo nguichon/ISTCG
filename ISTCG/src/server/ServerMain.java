@@ -14,7 +14,7 @@ import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 
 import server.admin.AdminCommands;
-import server.games.cards.CardTemplateManager;
+import server.games.cards.ServerCardTemplateManager;
 import server.network.ClientAccount;
 import server.network.ConnectionsHandler;
 
@@ -56,7 +56,7 @@ public class ServerMain {
 		// Initialize Card Templates
 		ConsoleMessage('-', "Initalizing cards...");
 
-		CardTemplateManager.get().Initialize();
+		ServerCardTemplateManager.get().Initialize();
 
 		ConsoleMessage('-', "Finished intializing cards...");
 

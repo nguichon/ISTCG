@@ -10,7 +10,7 @@ import Shared.ClientMessages;
 import Shared.ClientResponses;
 
 import server.games.cards.ServerCardInstance;
-import server.games.cards.CardTemplateManager;
+import server.games.cards.ServerCardTemplateManager;
 import server.network.ClientAccount;
 
 /**

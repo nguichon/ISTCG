@@ -4,16 +4,38 @@ import java.util.ArrayList;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
+import javax.xml.bind.annotation.XmlRootElement;
 
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;
 
-import Client.ImageManager;
 import Shared.CardTypes;
 import Shared.StatBlock;
 
+@XmlRootElement(namespace = "card template")
 public class CardTemplate {
+
+    public enum CardRenderSize {
+    TINY(9, 12), SMALL(30, 40), MEDIUM(90, 120), LARGE(300, 400);
+
+    private int m_SizeX;
+    private int m_SizeY;
+
+    private CardRenderSize(int x, int y) {
+        m_SizeX = x;
+        m_SizeY = y;
+    }
+
+    public int getWidth() {
+        return m_SizeX;
+    }
+
+    public int getHeight() {
+        return m_SizeY;
+    }
+    }
+
     private String m_BGImage;
     private CardTypes m_CardType;
     private int m_CardID;
@@ -64,26 +86,6 @@ public class CardTemplate {
             System.getProperty("user.dir") + "/data/text_box_edge_bottom.png");
     private static Image textM = new Image(display,
             System.getProperty("user.dir") + "/data/text_box_body.png");
-
-    public enum CardRenderSize {
-    TINY(9, 12), SMALL(30, 40), MEDIUM(90, 120), LARGE(300, 400);
-
-    private int m_SizeX;
-    private int m_SizeY;
-
-    private CardRenderSize(int x, int y) {
-        m_SizeX = x;
-        m_SizeY = y;
-    }
-
-    public int getWidth() {
-        return m_SizeX;
-    }
-
-    public int getHeight() {
-        return m_SizeY;
-    }
-    }
 
     /**
      * This method draws a card using the passed GC. It will use the default
@@ -160,6 +162,10 @@ public class CardTemplate {
     @XmlElement(name = "cardID")
     public int getCardID() {
         return m_CardID;
+    }
+
+    public void setCardName(String name) {
+        m_CardName = name;
     }
 
     public void setCardID(int id) {

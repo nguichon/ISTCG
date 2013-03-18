@@ -23,9 +23,9 @@ public abstract class ServerCardTemplate {
 		setCardTemplateID( card.getInt( "id" ) );
 		setStat( StatBlock.StatType.ATTACK, card.getInt( "attack" ) );
 		setStat( StatBlock.StatType.DEFENSE,  card.getInt( "defense" ) );
-		setStat( StatBlock.StatType.DAMAGE,  card.getInt( "power" ) );
+		setStat( StatBlock.StatType.POWER,  card.getInt( "power" ) );
 		setStat( StatBlock.StatType.STRUCTURE,  card.getInt( "structure" ) );
-		setStat( StatBlock.StatType.GEAR_POINTS,  card.getInt( "hard_points" ) );
+		setStat( StatBlock.StatType.HARD_POINTS,  card.getInt( "hard_points" ) );
 		setStat( StatBlock.StatType.DELAY,  card.getInt( "delay" ) );
 		setStat( StatBlock.StatType.METAL,  card.getInt( "metal" ) );
 		setStat( StatBlock.StatType.ENERGY,  card.getInt( "energy" ) );

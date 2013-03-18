@@ -1,6 +1,6 @@
 package server.games;
 
-import server.games.cards.CardTemplateManager;
+import server.games.cards.ServerCardTemplateManager;
 import server.games.cards.CardList;
 import server.games.cards.ServerCardInstance;
 import server.games.cards.ServerCardTemplate;

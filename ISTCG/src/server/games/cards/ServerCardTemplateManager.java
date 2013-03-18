@@ -16,7 +16,7 @@ import server.Database;
 import server.ServerMain;
 
 
-public class CardTemplateManager {
+public class ServerCardTemplateManager {
 	//=========
 	//CONSTANTS
 	//=========
@@ -110,12 +110,12 @@ public class CardTemplateManager {
 	//=====
 	//Singleton methods
 	//=====
-	private static CardTemplateManager m_Instance;
-	private CardTemplateManager() {
+	private static ServerCardTemplateManager m_Instance;
+	private ServerCardTemplateManager() {
 		
 	}
-	public static CardTemplateManager get() {
-		if( m_Instance == null ) { m_Instance = new CardTemplateManager(); }
+	public static ServerCardTemplateManager get() {
+		if( m_Instance == null ) { m_Instance = new ServerCardTemplateManager(); }
 		return m_Instance;
 	}
 }
