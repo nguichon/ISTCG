@@ -151,6 +151,7 @@ public class Game extends Composite {
 		 */
 		//this.loadDeck();
 		this.disablePass();
+		cards = new ArrayList<CardInstance>();
 	}
 
 	@Override
@@ -270,7 +271,9 @@ public class Game extends Composite {
 		}
 		return null;
 	}
-	
+	public GameZones getPosition(String cardID){
+		return null;
+	}
 	public void moveCard(String cardID, String zone){
 		if(hasCardLoaded(cardID)){
 			switch(GameZones.valueOf(zone)){
