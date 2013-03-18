@@ -10,10 +10,9 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 
+import NewClient.ClientCardTemplate;
 import Shared.StatBlock;
 import Shared.StatBlock.StatType;
-
-import Client.CardTemplate;
 
 import server.Database;
 import server.ServerMain;
@@ -44,10 +43,11 @@ public class DatabaseToXMLDump {
 	}
 	
 	public static void CreateCard( ResultSet rs ) throws SQLException {
-		CardTemplate nct = new CardTemplate();
-		nct.setBGImage( rs.getString( "name") );
+		ClientCardTemplate nct = new ClientCardTemplate();
+		nct.setBGImage( rs.getString( "name") + ".png" );
 		nct.setCardName( rs.getString( "name") );
 		nct.setCardFlavor( rs.getString( "flavor_text" ) );
+		nct.setCardText( rs.getString( "description" ) );
 		nct.setCardType( Shared.CardTypes.valueOf(rs.getString( "type" )) );
 		nct.setCardID( rs.getInt( "id" ) );
 		
@@ -68,7 +68,7 @@ public class DatabaseToXMLDump {
 		Marshaller writer;
 		try {
 			writer = JAXBContext.newInstance(
-					CardTemplate.class).createMarshaller();
+					ClientCardTemplate.class).createMarshaller();
 			writer.marshal( nct, new File(DEFAULT_CARD_PATH + nct.getCardID() + ".xml" ) );
 		} catch (JAXBException e) {
 			// TODO Auto-generated catch block

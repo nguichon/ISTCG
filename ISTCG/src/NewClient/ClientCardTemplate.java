@@ -6,7 +6,9 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.GC;
+import org.eclipse.swt.graphics.Image;
 
 import Client.ImageManager;
 import Shared.CardTypes;
@@ -15,7 +17,7 @@ import Shared.StatBlock;
 @XmlRootElement(namespace = "card template")
 public class ClientCardTemplate {
     public enum CardRenderSize {
-	    TINY(9, 12), SMALL(30, 40), MEDIUM(90, 120), LARGE(300, 400);
+	    TINY(30, 40), SMALL(90, 120), MEDIUM(180, 240), LARGE(300, 400);
 	
 	    private int m_SizeX;
 	    private int m_SizeY;
@@ -57,6 +59,7 @@ public class ClientCardTemplate {
     private ArrayList<StatBlock> m_Stats;
     private String m_CardName;
     private String m_CardFlavor;
+    private String m_CardText;
 
     // private static Display display = null;
     
@@ -73,7 +76,11 @@ public class ClientCardTemplate {
      *            unknown StatBlocks.
      */
     public void Render(GC targetGC, CardRenderSize size, ArrayList<StatBlock> stats) {
-        
+    	Image toDraw = ImageManager.get().GetImage( m_BGImage );
+        targetGC.drawImage( toDraw, 
+        		0, 0, toDraw.getBounds().width, toDraw.getBounds().height,
+        		0, 0, size.getWidth(), size.getHeight());
+        targetGC.drawText( m_CardName, 0, 0, SWT.NONE);//SWT.DRAW_TRANSPARENT);
     }
 
     /**
@@ -87,7 +94,9 @@ public class ClientCardTemplate {
      */
     public String getCardTextCopy(StatBlock... overwriteStats) {
         return 
-        		m_CardName + "\n" + m_CardType.toString();
+        		m_CardName + "\n" + 
+        		m_CardType.toString() + "\n" + 
+        		m_CardText;
     }
     
     public String getStat( String statType ) {
@@ -133,6 +142,15 @@ public class ClientCardTemplate {
 
     public void setBGImage(String path) {
         m_BGImage = path;
+    }
+    
+    @XmlElement(name = "cardText")
+    public String getCardText() {
+        return m_CardText;
+    }
+
+    public void setCardText(String text) {
+        m_CardText = text;
     }
 
     @XmlElement(name = "cardName")
