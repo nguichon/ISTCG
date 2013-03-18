@@ -226,6 +226,8 @@ public class Game extends Composite {
 		}
 	}
 	public void addToStack(String cardID){
+		if(!hasCardLoaded(cardID))
+			createCard(cardID);
 		Canvas c = new Canvas(this, SWT.NONE);
 		GC gc = new GC( c );
 		//c.setSize(new Point(64,64));
@@ -246,6 +248,8 @@ public class Game extends Composite {
 	}
 
 	public void addToHand(String cardID){
+		if(!hasCardLoaded(cardID))
+			createCard(cardID);
 		Canvas c = new Canvas(this, SWT.NONE);
 		Button b = new Button( this, SWT.NONE );
 		GC gc = new GC( c );
@@ -256,12 +260,15 @@ public class Game extends Composite {
 		
 		//findCardById(cardID).RenderCard(gc, CardRenderSize.SMALL, null);
 		handPos.x+=64;
+		
 	}
 	
 	public boolean hasCardLoaded(String id){
 		return (findCardById(id)!=null);
 	}
 	public void addToField(String cardID){
+		if(!hasCardLoaded(cardID))
+			createCard(cardID);
 		Canvas c = new Canvas(this, SWT.NONE);
 		GC gc = new GC( c );
 		//c.setSize(new Point(64,64));
@@ -280,8 +287,9 @@ public class Game extends Composite {
 		return null;
 	}
 	public void moveCard(String cardID, String zone){
-		if(hasCardLoaded(cardID)){
-			switch(GameZones.valueOf(zone)){
+		if(!hasCardLoaded(cardID))
+			main.sendData("GETCARDINFO;"+this.getID()+";"+cardID);
+		switch(GameZones.valueOf(zone)){
 			case HAND:
 				addToHand(cardID); break;
 			case FIELD:
@@ -291,18 +299,21 @@ public class Game extends Composite {
 				addToStack(cardID); break;
 			default: 
 				break;
-			}
-		} else {
-			main.sendData("GETCARDINFO;"+this.getID()+";"+cardID);
 		}
 	}
 	
 	
-	public void createCard(String templateID, String cardID){
-		CardTemplate template = CardTemplateManager.get().GetCardTemplate(Integer.valueOf(templateID));
+	public void createCard(String cardID){
+		//CardTemplate template = CardTemplateManager.get().GetCardTemplate(Integer.valueOf(templateID));
 		CardInstance card = new CardInstance(this, Integer.valueOf(cardID));
-		card.SetTemplate(Integer.valueOf(templateID));
+		//card.SetTemplate(Integer.valueOf(templateID));
 		cards.add(card);
+	}
+	public void setCard(String templateID, String cardID){
+		if(hasCardLoaded(cardID)){
+			//CardTemplateManager.get().GetCardTemplate(Integer.valueOf(templateID));
+			findCardById(cardID).SetTemplate(Integer.valueOf(templateID));
+		}
 	}
 	
 	public void setResource(String player, String res, String val) {
