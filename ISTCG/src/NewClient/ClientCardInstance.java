@@ -36,6 +36,7 @@ public class ClientCardInstance extends Canvas {
 	}
 	public void setTemplate(String ID){
 		template = ClientCardTemplateManager.get().GetClientCardTemplate(Integer.valueOf(ID));
+		this.redraw();
 	}
 	public ArrayList<String> getStats(){
 		return stats;
