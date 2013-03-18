@@ -9,7 +9,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
-import server.games.cards.ServerCardTemplateManager;
+//import server.games.cards.ServerCardTemplateManager;
 
 import Client.CardTemplateManager;
 import Client.ImageManager;
@@ -19,7 +19,7 @@ public class ClientMain {
 
 	private Display display = null;
 	private Login Login = null;
-	private Lobby Lobby = null;
+	//private Lobby Lobby = null;
 	private Shell shell = null;
 	private Composite composite = null;
 	private String ID = "";
@@ -34,7 +34,7 @@ public class ClientMain {
 		shell.setSize(450, 300);
 		shell.setText("SWT Application");
 		Login = new Login(shell, SWT.NONE,this );
-		Lobby = new Lobby(shell, SWT.NONE,this);
+		//Lobby = new Lobby(shell, SWT.NONE,this);
 		composite = Login;
 		composite.setBounds(shell.getBounds());
 		shell.pack();
@@ -195,12 +195,16 @@ public class ClientMain {
 				}
 			}
 		case UPDATE_PLAYER:
-//			if(composite instanceof Lobby){
-//				if(((Lobby)composite).findGameById(inputs[1])!=null){
-//					((Lobby)composite).findGameById(inputs[1]).setResource(inputs[2],inputs[3],inputs[4]);
-//				}
-//			}
+			if(composite instanceof Lobby){
+				if(((Lobby)composite).findGameById(inputs[1])!=null){
+					((Lobby)composite).findGameById(inputs[1]).setResource(inputs[2],inputs[3],inputs[4]);
+				}
+			}
 			break;
+		case MOVE:
+			if(composite instanceof Lobby){
+				((Lobby)composite).findGameById(inputs[1]).moveCard(inputs[2], inputs[3]);
+			}
 		default:
 			break;
 		}
