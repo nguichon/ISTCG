@@ -47,7 +47,7 @@ public class Game extends Composite {
 	Point handPos;
 	Point fieldPos;
 	Point stackPos;
-	ArrayList<CardInstance> cards;
+	ArrayList<ClientCardInstance> cards;
 	Label lblStack;
 	/**
 	 * Create the composite.
@@ -151,7 +151,7 @@ public class Game extends Composite {
 		 */
 		//this.loadDeck();
 		this.disablePass();
-		cards = new ArrayList<CardInstance>();
+		cards = new ArrayList<ClientCardInstance>();
 	}
 
 	@Override
@@ -225,12 +225,8 @@ public class Game extends Composite {
 		}
 	}
 	public void addToStack(String cardID){
-		Canvas c = new Canvas(this, SWT.NONE);
-		GC gc = new GC( c );
-		//c.setSize(new Point(64,64));
-		c.setBounds(stackPos.x, stackPos.y, 64, 64);
-		findCardById(cardID).RenderCard(gc, CardRenderSize.SMALL, null);
-		stackPos.y+=64;
+		if(!hasCardLoaded(cardID))
+			createCard(cardID);
 	}
 	public void enablePass(){
 		btnPass.setEnabled(true);
@@ -247,17 +243,8 @@ public class Game extends Composite {
 	public void addToHand(String cardID){
 		if(!hasCardLoaded(cardID))
 			createCard(cardID);
-		Canvas c = new Canvas(this, SWT.NONE);
-		Button b = new Button( this, SWT.NONE );
-		GC gc = new GC( c );
-		b.setBounds( 0, 0, 500, 500 );
-		//c.setSize(new Point(64,64));
-		c.setBounds(handPos.x, handPos.y, 500, 500);
-		gc.fillRectangle( 0, 0, 64, 64 );
-		
-		//findCardById(cardID).RenderCard(gc, CardRenderSize.SMALL, null);
+		findCardById(cardID).setBounds(handPos.x, handPos.y, ClientCardTemplate.CardRenderSize.SMALL.getWidth(), ClientCardTemplate.CardRenderSize.SMALL.getHeight());
 		handPos.x+=64;
-		
 	}
 	
 	public boolean hasCardLoaded(String id){
@@ -265,16 +252,13 @@ public class Game extends Composite {
 	}
 	CardInstance tmp = null;
 	public void addToField(String cardID){
-		Canvas c = new Canvas(this, SWT.NONE);
-		GC gc = new GC( c );
-		//c.setSize(new Point(64,64));
-		c.setBounds(fieldPos.x, fieldPos.y, 64, 64);
+		if(!hasCardLoaded(cardID))
+			createCard(cardID);
 		
-		fieldPos.x+=64;
 	}
-	public CardInstance findCardById(String id){
-		for(CardInstance c:cards){
-			if(id.equals(String.valueOf(c.GetNetworkID())))
+	public ClientCardInstance findCardById(String id){
+		for(ClientCardInstance c:cards){
+			if(id.equals(String.valueOf(c.getID())))
 					return c;
 		}
 		return null;
@@ -301,14 +285,14 @@ public class Game extends Composite {
 	
 	public void createCard(String cardID){
 		//CardTemplate template = CardTemplateManager.get().GetCardTemplate(Integer.valueOf(templateID));
-		CardInstance card = new CardInstance(this, Integer.valueOf(cardID));
+		ClientCardInstance card = new ClientCardInstance(this, Integer.valueOf(cardID), main, cardID);
 		//card.SetTemplate(Integer.valueOf(templateID));
 		cards.add(card);
 	}
 	public void setCard(String templateID, String cardID){
 		if(hasCardLoaded(cardID)){
 			//CardTemplateManager.get().GetCardTemplate(Integer.valueOf(templateID));
-			findCardById(cardID).SetTemplate(Integer.valueOf(templateID));
+			findCardById(cardID).setTemplate(templateID);
 		}
 	}
 	
