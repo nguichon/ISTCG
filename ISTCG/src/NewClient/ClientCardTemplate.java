@@ -85,14 +85,15 @@ public class ClientCardTemplate {
      * @return Returns a String containing all the card information,
      *         Name/Type/Cost/Abilities/Flavor etc.
      */
-    public String GetCardTextCopy(StatBlock... overwriteStats) {
-        return "";
+    public String getCardTextCopy(StatBlock... overwriteStats) {
+        return 
+        		m_CardName + "\n" + m_CardType.toString();
     }
     
-    public String GetStat( String statType ) {
-    	return GetStat( StatBlock.StatType.valueOf( statType ) );
+    public String getStat( String statType ) {
+    	return getStat( StatBlock.StatType.valueOf( statType ) );
     }
-    public String GetStat( StatBlock.StatType statType ) {
+    public String getStat( StatBlock.StatType statType ) {
     	for( StatBlock sb : m_Stats ) {
     		if ( sb.m_Type == statType ) { return String.valueOf( sb.m_Value ); }
     	}
