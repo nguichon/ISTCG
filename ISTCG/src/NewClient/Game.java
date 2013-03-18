@@ -6,6 +6,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.swt.widgets.Button;
 
+import Shared.GameResources;
 import Shared.GameZones;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -27,6 +28,12 @@ public class Game extends Composite {
 	Label lblGravesize;
 	Label lblEdecksize;
 	Label lblEgravesize;
+	Label lblEmetal;
+	Label lblEenergy;
+	Label lblEtech;
+	Label lblMetal;
+	Label lblEnergy;
+	Label lblTech;
 	/**
 	 * Create the composite.
 	 * @param parent
@@ -92,6 +99,30 @@ public class Game extends Composite {
 		lblEgravesize = new Label(this, SWT.NONE);
 		lblEgravesize.setBounds(675, 115, 59, 14);
 		lblEgravesize.setText("EGRAVESIZE");
+		
+		lblEmetal = new Label(this, SWT.NONE);
+		lblEmetal.setBounds(675, 137, 59, 14);
+		lblEmetal.setText("EMETAL");
+		
+		lblEenergy = new Label(this, SWT.NONE);
+		lblEenergy.setBounds(675, 157, 59, 14);
+		lblEenergy.setText("EENERGY");
+		
+		lblEtech = new Label(this, SWT.NONE);
+		lblEtech.setBounds(675, 180, 59, 14);
+		lblEtech.setText("ETECH");
+		
+		lblMetal = new Label(this, SWT.NONE);
+		lblMetal.setBounds(675, 439, 59, 14);
+		lblMetal.setText("METAL");
+		
+		lblEnergy = new Label(this, SWT.NONE);
+		lblEnergy.setBounds(675, 465, 59, 14);
+		lblEnergy.setText("ENERGY");
+		
+		lblTech = new Label(this, SWT.NONE);
+		lblTech.setBounds(675, 486, 59, 14);
+		lblTech.setText("TECH");
 
 		/*
 		 * Finally start game stuff
@@ -181,5 +212,36 @@ public class Game extends Composite {
 	public void loadDeck(){
 		//default for now
 		main.sendData("DECKLIST;"+this.getID()+";3,100");
+	}
+
+	public void setResource(String player, String res, String val) {
+		if(player.equals(main.getPID())){
+			switch(GameResources.valueOf(res)){
+			case METAL:
+				lblMetal.setText(val);
+				break;
+			case ENERGY:
+				lblEnergy.setText(val);
+				break;
+			case TECH:
+				lblTech.setText(val);
+				break;
+			default: break;
+			}
+		} else if(player.equals(eID)){
+			switch(GameResources.valueOf(res)){
+			case METAL:
+				lblEmetal.setText(val);
+				break;
+			case ENERGY:
+				lblEenergy.setText(val);
+				break;
+			case TECH:
+				lblEtech.setText(val);
+				break;
+			default: break;
+			}
+		}
+		
 	}
 }

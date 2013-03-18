@@ -188,6 +188,13 @@ public class ClientMain {
 					((Lobby)composite).findGameById(inputs[1]).enablePass();
 				}
 			}
+		case UPDATE_PLAYER:
+//			if(composite instanceof Lobby){
+//				if(((Lobby)composite).findGameById(inputs[1])!=null){
+//					((Lobby)composite).findGameById(inputs[1]).setResource(inputs[2],inputs[3],inputs[4]);
+//				}
+//			}
+			break;
 		default:
 			break;
 		}
