@@ -93,7 +93,12 @@ public class GamePlayer {
 	}
 	public void AddResource( GameResources res, int value ) {
 		m_Resources[ res.ordinal() ] += value;
-		m_Game.SendMessageToAllPlayers( ClientMessages.UPDATE_PLAYER, res.name(), "" + m_Resources[ res.ordinal() ] );
+		m_Game.SendMessageToAllPlayers( 
+				ClientMessages.UPDATE_PLAYER, 
+				m_Game.GetGameID() + "", 
+				m_PlayerAccount.getUserID() + "", 
+				res.name(), 
+				m_Resources[ res.ordinal() ] + "" );
 	}
 	public void Pass() { m_State = GamePlayerStates.WAITING; }
 	public void PlayCard( int card_id ) { 
@@ -102,11 +107,8 @@ public class GamePlayer {
 		//TODO check if card can be paid for.
 		
 		if( cardPlayed != null ) {
-			m_Game.SendMessageToAllPlayers( 
-	        		ClientMessages.MOVE,
-					m_Game.GetGameID() + "",
-					cardPlayed.GetCardUID() + "",
-					GameZones.STACK.name() );
+			m_Game.MakeAllPlayersActive();
+			m_Game.AddToStack( cardPlayed );
 			
 			m_Game.SendMessageToAllPlayers( 
 					ClientMessages.UPDATE_ZONE,
@@ -120,5 +122,8 @@ public class GamePlayer {
 					m_Game.GetGameID() + "",
 					"Card is not in hand, cannot be played" );
 		}
+	}
+	public void SetState(GamePlayerStates state) {
+		m_State = state;
 	}
 }

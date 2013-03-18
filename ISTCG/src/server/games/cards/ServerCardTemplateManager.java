@@ -1,16 +1,11 @@
 package server.games.cards;
 
-import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
-
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Unmarshaller;
 
 import server.Database;
 import server.ServerMain;
@@ -64,7 +59,7 @@ public class ServerCardTemplateManager {
 			ClassLoader templateLoader = ServerCardTemplate.class.getClassLoader();
 			URL uri = null;
 			try {
-				uri = new URL(  "file://" + System.getProperty("user.dir") + "/data/cards/" );
+				uri = new URL(  "file://" + DEFAULT_CARD_PATH );
 			} catch (MalformedURLException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

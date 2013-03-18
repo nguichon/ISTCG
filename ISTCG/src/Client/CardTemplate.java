@@ -41,7 +41,6 @@ public class CardTemplate {
     private String m_CardFlavor;
 
     // private static Display display = null;
-
     private static final String cardBL = "card_border_corner_bottom_left.png";
     private static final String cardBR = "card_border_corner_bottom_right.png";
     private static final String cardTL = "card_border_corner_top_left.png";

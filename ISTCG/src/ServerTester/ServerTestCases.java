@@ -10,8 +10,8 @@ import org.junit.Test;
 
 
 public class ServerTestCases {
-	private static int m_Port = 4567;
-	private static String m_Host = "127.0.0.1";
+	private static final int m_Port = 4567;
+	private static final String m_Host = "127.0.0.1";
 	private static String m_User = "Grogian";
 	private static String m_Pass = "password";
 	private static String m_User2 = "TestUser";
