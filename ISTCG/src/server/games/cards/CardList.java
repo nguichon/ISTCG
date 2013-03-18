@@ -14,7 +14,7 @@ import Shared.GameZones;
  * @author nguichon
  */
 public class CardList {
-	private ArrayList<ServerCardInstance> m_CardsInDeck;
+	private ArrayList<ServerCardInstance> m_CardsInList;
 	private GamePlayer m_Owner;
 	private GameZones m_ListLocation;
 
@@ -25,14 +25,14 @@ public class CardList {
 	public CardList( GamePlayer owner, GameZones location ) {
 		m_ListLocation = location;
 		m_Owner = owner;
-		m_CardsInDeck = new ArrayList<ServerCardInstance>();
+		m_CardsInList = new ArrayList<ServerCardInstance>();
 	}
 
 	/**
-	 * Randomly reorders the ArrayList m_CardsInDeck.
+	 * Randomly reorders the ArrayList m_CardsInList.
 	 */
 	public void Shuffle() {
-		Collections.shuffle(m_CardsInDeck);
+		Collections.shuffle(m_CardsInList);
 	}
 
 	/**
@@ -46,7 +46,7 @@ public class CardList {
 	 */
 	public void AddCard(ServerCardInstance toAdd) {
 		toAdd.SetLocation( m_ListLocation );
-		m_CardsInDeck.add(toAdd);
+		m_CardsInList.add(toAdd);
 	}
 
 	/**
@@ -56,10 +56,22 @@ public class CardList {
 	 *         AddCard, unless shuffled of course
 	 */
 	public ServerCardInstance DrawCard() {
-		if( !m_CardsInDeck.isEmpty() ) {
-			ServerCardInstance toReturn = m_CardsInDeck.remove(0);
+		if( !m_CardsInList.isEmpty() ) {
+			ServerCardInstance toReturn = m_CardsInList.remove(0);
 			toReturn.SetLocation( GameZones.UNKNOWN );
 			return toReturn;
+		}
+		
+		return null;
+	}
+	
+	public ServerCardInstance FindAndGetCard( int id ) {
+		for( ServerCardInstance i : m_CardsInList ) {
+			if( i.GetCardUID() == id ) { 
+				m_CardsInList.remove( i );
+				i.SetLocation( GameZones.UNKNOWN );
+				return i; 
+			}
 		}
 		
 		return null;
@@ -71,14 +83,14 @@ public class CardList {
 	 * @return Number of cards in the deck.
 	 */
 	public int DeckCount() {
-		return m_CardsInDeck.size();
+		return m_CardsInList.size();
 	}
 
 	/**
 	 * Removes all cards from collection.
 	 */
 	public void Clear() {
-		m_CardsInDeck.clear();
+		m_CardsInList.clear();
 	}
 	
 	public boolean Validate() {
@@ -86,7 +98,7 @@ public class CardList {
 		// this time! Yay! Your deck is legal!
 		
 		//CORRECTION THERE IS ONE REQUIREMENT: At least 60 cards.
-		if( m_CardsInDeck.size() < 60 ) { return false; }
+		if( m_CardsInList.size() < 60 ) { return false; }
 		
 		return true;
 	}

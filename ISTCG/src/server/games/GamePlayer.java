@@ -96,4 +96,29 @@ public class GamePlayer {
 		m_Game.SendMessageToAllPlayers( ClientMessages.UPDATE_PLAYER, res.name(), "" + m_Resources[ res.ordinal() ] );
 	}
 	public void Pass() { m_State = GamePlayerStates.WAITING; }
+	public void PlayCard( int card_id ) { 
+		ServerCardInstance cardPlayed = m_PlayerHand.FindAndGetCard( card_id );
+		
+		//TODO check if card can be paid for.
+		
+		if( cardPlayed != null ) {
+			m_Game.SendMessageToAllPlayers( 
+	        		ClientMessages.MOVE,
+					m_Game.GetGameID() + "",
+					cardPlayed.GetCardUID() + "",
+					GameZones.STACK.name() );
+			
+			m_Game.SendMessageToAllPlayers( 
+					ClientMessages.UPDATE_ZONE,
+					"" + m_Game.GetGameID(),
+					"" + m_PlayerAccount.getUserID(),
+					GameZones.HAND.name(),
+					"" + m_PlayerHand.DeckCount()); 
+		} else {
+	        m_PlayerAccount.SendMessage( 
+	        		ClientMessages.GAME_ERROR,
+					m_Game.GetGameID() + "",
+					"Card is not in hand, cannot be played" );
+		}
+	}
 }
