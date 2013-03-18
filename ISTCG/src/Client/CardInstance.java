@@ -86,11 +86,10 @@ public class CardInstance implements NetworkObject {
                 // TODO Auto-generated method stub
                 switch (m_CurrentSize) {
                 default:
-                    RenderCard(gc, CardRenderSize.LARGE,
-                            (StatBlock[]) m_Stats.toArray());
+                    RenderCard(gc, CardRenderSize.LARGE, m_Stats);
                     break;
                 case LARGE:
-                    RenderCard(gc, m_LastSize, (StatBlock[]) m_Stats.toArray());
+                    RenderCard(gc, m_LastSize, m_Stats);
                     break;
                 }
             }
@@ -131,12 +130,14 @@ public class CardInstance implements NetworkObject {
     }
 
     // Renders Card
-    public void RenderCard(GC targetGC, CardRenderSize size, StatBlock... stats) {
+    public void RenderCard(GC targetGC, CardRenderSize size,
+            ArrayList<StatBlock> stats) {
 
         this.Render(targetGC, size, stats);
     }
 
-    private void Render(GC targetGC, CardRenderSize size, StatBlock... stats) {
+    private void Render(GC targetGC, CardRenderSize size,
+            ArrayList<StatBlock> stats) {
 
         Label m_BGButton = new Label(canvas, 0);
         gc = targetGC;
@@ -158,16 +159,15 @@ public class CardInstance implements NetworkObject {
 
         case LARGE:
             // creates name box
-            gc.drawImage(textL, 10, 10);
-            gc.drawImage(textBL, 10, 31);
-            for (int i = 31; i < 300; i += 21) {
-                gc.drawImage(textM, i, 10);
-                gc.drawImage(textB, i, 31);
-
-            }
-            gc.drawText(name, 25, 20);
-
-            break;
+            /*
+             * gc.drawImage(textL, 10, 10); gc.drawImage(textBL, 10, 31); for
+             * (int i = 31; i < 300; i += 21) { gc.drawImage(textM, i, 10);
+             * gc.drawImage(textB, i, 31);
+             * 
+             * } gc.drawText(name, 25, 20);
+             * 
+             * break;
+             */
         }
     }
 

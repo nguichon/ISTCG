@@ -91,11 +91,12 @@ public class CardTemplate {
      * 
      * @param targetGC
      *            GC to use when drawing this card.
-     * @param m_Stats2
+     * @param stats
      *            StatBlocks to overwrite, can be empty or have previously
      *            unknown StatBlocks.
      */
-    public void Render(GC targetGC, CardRenderSize size, StatBlock... m_Stats2) {
+    public void Render(GC targetGC, CardRenderSize size,
+            ArrayList<StatBlock> stats) {
         double factor = 1;
         // targetGC.drawRectangle(0, 0, size.getWidth(), size.getHeight() );
         // need a display to load images
