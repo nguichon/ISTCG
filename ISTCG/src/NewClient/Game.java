@@ -1,14 +1,24 @@
 package NewClient;
 
+import java.util.ArrayList;
+
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.GC;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.TabItem;
-import org.eclipse.swt.widgets.Button;
 
+import Client.CardInstance;
+import Client.CardTemplate;
+import Client.CardTemplate.CardRenderSize;
+import Client.CardTemplateManager;
+import Shared.GameResources;
 import Shared.GameZones;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 
 public class Game extends Composite {
 
@@ -27,6 +37,18 @@ public class Game extends Composite {
 	Label lblGravesize;
 	Label lblEdecksize;
 	Label lblEgravesize;
+	Label lblEmetal;
+	Label lblEenergy;
+	Label lblEtech;
+	Label lblMetal;
+	Label lblEnergy;
+	Label lblTech;
+	//start at 100 x 465
+	Point handPos;
+	Point fieldPos;
+	Point stackPos;
+	ArrayList<CardInstance> cards;
+	Label lblStack;
 	/**
 	 * Create the composite.
 	 * @param parent
@@ -36,6 +58,9 @@ public class Game extends Composite {
 		super(parent, style);
 		this.main=main;
 		this.tab=tab;
+		handPos = new Point(100,465);
+		fieldPos = new Point(100, 365);
+		stackPos = new Point(10,33);
 		lblUsername = new Label(this, SWT.NONE);
 		lblUsername.setBounds(10, 451, 59, 14);
 		lblUsername.setText("USERNAME");
@@ -92,6 +117,34 @@ public class Game extends Composite {
 		lblEgravesize = new Label(this, SWT.NONE);
 		lblEgravesize.setBounds(675, 115, 59, 14);
 		lblEgravesize.setText("EGRAVESIZE");
+		
+		lblEmetal = new Label(this, SWT.NONE);
+		lblEmetal.setBounds(675, 137, 59, 14);
+		lblEmetal.setText("EMETAL");
+		
+		lblEenergy = new Label(this, SWT.NONE);
+		lblEenergy.setBounds(675, 157, 59, 14);
+		lblEenergy.setText("EENERGY");
+		
+		lblEtech = new Label(this, SWT.NONE);
+		lblEtech.setBounds(675, 180, 59, 14);
+		lblEtech.setText("ETECH");
+		
+		lblMetal = new Label(this, SWT.NONE);
+		lblMetal.setBounds(675, 439, 59, 14);
+		lblMetal.setText("METAL");
+		
+		lblEnergy = new Label(this, SWT.NONE);
+		lblEnergy.setBounds(675, 465, 59, 14);
+		lblEnergy.setText("ENERGY");
+		
+		lblTech = new Label(this, SWT.NONE);
+		lblTech.setBounds(675, 486, 59, 14);
+		lblTech.setText("TECH");
+		
+		lblStack = new Label(this, SWT.NONE);
+		lblStack.setBounds(10, 77, 59, 14);
+		lblStack.setText("STACK");
 
 		/*
 		 * Finally start game stuff
@@ -170,7 +223,14 @@ public class Game extends Composite {
 			btnEnd.setEnabled(false);
 		}
 	}
-	
+	public void addToStack(String cardID){
+		Canvas c = new Canvas(this, SWT.NONE);
+		GC gc = new GC( c );
+		//c.setSize(new Point(64,64));
+		c.setBounds(stackPos.x, stackPos.y, 64, 64);
+		findCardById(cardID).RenderCard(gc, CardRenderSize.SMALL, null);
+		stackPos.y+=64;
+	}
 	public void enablePass(){
 		btnPass.setEnabled(true);
 	}
@@ -181,5 +241,89 @@ public class Game extends Composite {
 	public void loadDeck(){
 		//default for now
 		main.sendData("DECKLIST;"+this.getID()+";3,100");
+	}
+
+	public void addToHand(String cardID){
+		Canvas c = new Canvas(this, SWT.NONE);
+		GC gc = new GC( c );
+		//c.setSize(new Point(64,64));
+		c.setBounds(handPos.x, handPos.y, 64, 64);
+		findCardById(cardID).RenderCard(gc, CardRenderSize.SMALL, null);
+		handPos.x+=64;
+	}
+	
+	public boolean hasCardLoaded(String id){
+		return (findCardById(id)!=null);
+	}
+	public void addToField(String cardID){
+		Canvas c = new Canvas(this, SWT.NONE);
+		GC gc = new GC( c );
+		//c.setSize(new Point(64,64));
+		c.setBounds(fieldPos.x, fieldPos.y, 64, 64);
+		findCardById(cardID).RenderCard(gc, CardRenderSize.MEDIUM, null);
+		fieldPos.x+=64;
+	}
+	public CardInstance findCardById(String id){
+		for(CardInstance c:cards){
+			if(id.equals(String.valueOf(c.GetNetworkID())))
+					return c;
+		}
+		return null;
+	}
+	
+	public void moveCard(String cardID, String zone){
+		if(hasCardLoaded(cardID)){
+			switch(GameZones.valueOf(zone)){
+			case HAND:
+				addToHand(cardID); break;
+			case FIELD:
+				addToField(cardID);
+				break;
+			case STACK:
+				addToStack(cardID); break;
+			default: break;
+			}
+		} else {
+			main.sendData("GETCARDINFO;"+this.getID()+";"+cardID);
+		}
+	}
+	
+	
+	public void createCard(String templateID, String cardID){
+		CardTemplate template = CardTemplateManager.get().GetCardTemplate(Integer.valueOf(templateID));
+		CardInstance card = new CardInstance(this, Integer.valueOf(cardID));
+		card.SetTemplate(Integer.valueOf(templateID));
+		cards.add(card);
+	}
+	
+	public void setResource(String player, String res, String val) {
+		if(player.equals(main.getPID())){
+			switch(GameResources.valueOf(res)){
+			case METAL:
+				lblMetal.setText(val);
+				break;
+			case ENERGY:
+				lblEnergy.setText(val);
+				break;
+			case TECH:
+				lblTech.setText(val);
+				break;
+			default: break;
+			}
+		} else if(player.equals(eID)){
+			switch(GameResources.valueOf(res)){
+			case METAL:
+				lblEmetal.setText(val);
+				break;
+			case ENERGY:
+				lblEenergy.setText(val);
+				break;
+			case TECH:
+				lblEtech.setText(val);
+				break;
+			default: break;
+			}
+		}
+		
 	}
 }

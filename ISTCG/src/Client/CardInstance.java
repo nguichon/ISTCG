@@ -13,9 +13,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 
-import Client.CardTemplate;
 import Client.CardTemplate.CardRenderSize;
-import Client.CardTemplateManager;
 import Shared.NetworkObject;
 import Shared.StatBlock;
 
@@ -65,12 +63,19 @@ public class CardInstance implements NetworkObject {
                 switch (m_CurrentSize) {
                 default:
                     RenderCard(gc, m_CurrentSize, m_Stats);
-                    // potentialy render surrounding cards to stack accordingly
+                    // Potentially render surrounding cards to stack accordingly
                     break;
                 case LARGE:
                     Point p = Display.getCurrent().getCursorLocation();
-                    int i = -1;
-                    i = getWhat(p);
+                    if (225 < p.y && p.y < 267) {
+                        if (10 <= p.x && p.x < 55) {
+
+                        }
+                        else if (55 <= p.x && p.x < 90) {
+
+                        }
+                    }
+
                     break;
                 }
             }
@@ -97,11 +102,13 @@ public class CardInstance implements NetworkObject {
 
     }
 
-    private int getWhat(Point p) {
-        // TODO stuffs
-        return -1;
-
-    }
+    /*
+     * private int getMouseX(Point p) { // TODO stuffs return p.x;
+     * 
+     * } private int getMouseY(Point p) { // TODO stuffs return -1;
+     * 
+     * }
+     */
 
     @Override
     public int compareTo(NetworkObject arg0) {
