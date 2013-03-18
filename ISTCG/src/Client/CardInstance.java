@@ -1,17 +1,21 @@
 package Client;
 
+import java.util.ArrayList;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.graphics.GC;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Canvas;
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 
+import Client.CardTemplate;
 import Client.CardTemplate.CardRenderSize;
+import Client.CardTemplateManager;
 import Shared.NetworkObject;
 import Shared.StatBlock;
 
@@ -20,34 +24,83 @@ public class CardInstance implements NetworkObject {
 
     private String m_CardName;
     private String m_CardText;
-    private StatBlock m_Stats[];
-    private CardRenderSize m_CurrentSize;
+    private ArrayList<StatBlock> m_Stats;
+    private CardRenderSize m_CurrentSize = CardRenderSize.TINY;
     private CardRenderSize m_LastSize;
-    
+
     private Display display = null;
-    private  Shell shell = null;
-    private  Canvas canvas = null;
+    private Shell shell = null;
+    private Canvas canvas = null;
     private GC gc = null;
     private CardTemplate m_CardTemplate = null;
-    //private B
-    
-    
 
-    public CardInstance(Display display,int cardID, String cardname, String cardtext,
-            StatBlock... stuff) {
-    	this.display=display;
-        shell = new Shell(display);
-        canvas = new Canvas(shell, 0);
+    // private B
+
+    public void SetTemplate(int template_id) {
+        m_CardTemplate = CardTemplateManager.get().GetCardTemplate(template_id);
+    }
+
+    public CardInstance(Composite game, int cardID) {
+        // this.display=display;
+        // shell = new Shell(display);
+        // canvas = new Canvas(shell, 0);
+        Canvas canvas = new Canvas(game, SWT.NONE);
         gc = new GC(canvas);
         SetNetworkID(cardID);
-        SetCardName(cardname);
-        SetCardText(cardtext);
-        int len = stuff.length;
-        m_Stats = new StatBlock[len];
-        for (int i = 0; i < len; i++) {
-            m_Stats[i] = stuff[i];
-        }
-        //SetCanvas();
+        // SetCardName(cardname);
+        // SetCardText(cardtext);
+        /*
+         * int len = stuff.length; m_Stats = new StatBlock[len]; for (int i = 0;
+         * i < len; i++) { m_Stats[i] = stuff[i]; }
+         */
+
+        // render
+        RenderCard(gc, CardRenderSize.LARGE, m_Stats);
+
+        canvas.addMouseListener(new MouseListener() {
+
+            @Override
+            public void mouseUp(MouseEvent arg0) {
+                // TODO Auto-generated method stub
+                switch (m_CurrentSize) {
+                default:
+                    RenderCard(gc, m_CurrentSize, m_Stats);
+                    // potentialy render surrounding cards to stack accordingly
+                    break;
+                case LARGE:
+                    Point p = Display.getCurrent().getCursorLocation();
+                    int i = -1;
+                    i = getWhat(p);
+                    break;
+                }
+            }
+
+            @Override
+            public void mouseDown(MouseEvent arg0) {
+                // TODO Auto-generated method stub
+
+            }
+
+            @Override
+            public void mouseDoubleClick(MouseEvent arg0) {
+                // TODO Auto-generated method stub
+                switch (m_CurrentSize) {
+                default:
+                    RenderCard(gc, CardRenderSize.LARGE,
+                            (StatBlock[]) m_Stats.toArray());
+                    break;
+                case LARGE:
+                    RenderCard(gc, m_LastSize, (StatBlock[]) m_Stats.toArray());
+                    break;
+                }
+            }
+        });
+
+    }
+
+    private int getWhat(Point p) {
+        // TODO stuffs
+        return -1;
 
     }
 
@@ -76,204 +129,107 @@ public class CardInstance implements NetworkObject {
     public boolean ParseMessage(String s) {
         return false;
     }
-    
-    //Renders Card
-    public void Render( GC targetGC, CardRenderSize size, StatBlock...overwriteStats ){
-    	Label m_BGButton = new Label(canvas, 0);
-    	
-    	if (m_CurrentSize!=size){
-    		m_CardTemplate.Render(targetGC, size, overwriteStats);
-    		m_LastSize = m_CurrentSize;
-    		m_CurrentSize = size;
-    	}
-    	switch(size){
-    	default:
-    		m_BGButton.addMouseListener(new MouseListener() {
-				
-				@Override
-				public void mouseUp(MouseEvent arg0) {
-					// TODO Auto-generated method stub
-					
-				}
-				
-				@Override
-				public void mouseDown(MouseEvent arg0) {
-					// TODO Auto-generated method stub
-					
-				}
-				
-				@Override
-				public void mouseDoubleClick(MouseEvent arg0) {
-					// TODO Auto-generated method stub
-					//.Render(targetGC, m_CurrentSize, overwriteStats);
-				}
-			});
-    		
-    	case TINY:
-    		m_BGButton.addMouseListener(new MouseListener() {
-				
-				@Override
-				public void mouseUp(MouseEvent arg0) {
-					// TODO Auto-generated method stub
-					
-				}
-				
-				@Override
-				public void mouseDown(MouseEvent arg0) {
-					// TODO Auto-generated method stub
-					
-				}
-				
-				@Override
-				public void mouseDoubleClick(MouseEvent arg0) {
-					// TODO Auto-generated method stub
-					
-				}
-			});
-    		break;
-    		
-    	case SMALL:
-    		m_BGButton.addMouseListener(new MouseListener() {
-				
-				@Override
-				public void mouseUp(MouseEvent arg0) {
-					// TODO Auto-generated method stub
-					
-				}
-				
-				@Override
-				public void mouseDown(MouseEvent arg0) {
-					// TODO Auto-generated method stub
-					
-				}
-				
-				@Override
-				public void mouseDoubleClick(MouseEvent arg0) {
-					// TODO Auto-generated method stub
-					
-				}
-			});
-    		break;
-    		
-    	case MEDIUM:
-    		m_BGButton.addMouseListener(new MouseListener() {
-				
-				@Override
-				public void mouseUp(MouseEvent arg0) {
-					// TODO Auto-generated method stub
-					
-				}
-				
-				@Override
-				public void mouseDown(MouseEvent arg0) {
-					// TODO Auto-generated method stub
-					
-				}
-				
-				@Override
-				public void mouseDoubleClick(MouseEvent arg0) {
-					// TODO Auto-generated method stub
-					
-				}
-			});
-    		
-    		break;
-    		
-    	case LARGE:
-    		m_BGButton.addMouseListener(new MouseListener() {
-				
-				@Override
-				public void mouseUp(MouseEvent arg0) {
-					// TODO Auto-generated method stub
-					
-				}
-				
-				@Override
-				public void mouseDown(MouseEvent arg0) {
-					// TODO Auto-generated method stub
-					
-				}
-				
-				@Override
-				public void mouseDoubleClick(MouseEvent arg0) {
-					// TODO Auto-generated method stub
-					
-				}
-			});
-    		
-    		break;
-    	}
+
+    // Renders Card
+    public void RenderCard(GC targetGC, CardRenderSize size, StatBlock... stats) {
+
+        this.Render(targetGC, size, stats);
     }
-    //OLD RENDERER
-    /*
-    public void SetCanvas() {
-        // loading images
-        Image cardBL = new Image(display, System.getProperty("user.dir") + "/data/card_border_corner_bottom_left.png");
-        Image cardBR = new Image(display, System.getProperty("user.dir") + "/data/card_border_corner_bottom_right.png");
-        Image cardTL = new Image(display, System.getProperty("user.dir") + "/data/card_border_corner_top_left.png");
-        Image cardTR = new Image(display, System.getProperty("user.dir") + "/data/card_border_corner_top_right.png");
-        Image cardL = new Image(display, System.getProperty("user.dir") + "/data/card_border_edge_left.png");
-        Image cardR = new Image(display, System.getProperty("user.dir") + "/data/card_border_edge_right.png");
-        Image cardT = new Image(display, System.getProperty("user.dir") + "/data/card_border_edge_top.png");
-        Image cardB = new Image(display, System.getProperty("user.dir") + "/data/card_border_edge_bottom.png");
-        Image textBL = new Image(display, System.getProperty("user.dir") + "/data/text_box_corner_bottom_left.png");
-        Image textBR = new Image(display, System.getProperty("user.dir") + "/data/text_box_corner_bottom_right.png");
-        Image textTL = new Image(display, System.getProperty("user.dir") + "/data/text_box_corner_top_left.png");
-        Image textTR = new Image(display, System.getProperty("user.dir") + "/data/text_box_corner_top_right.png");
-        Image textL = new Image(display, System.getProperty("user.dir") + "/data/text_box_edge_left.png");
-        Image textR = new Image(display, System.getProperty("user.dir") + "/data/text_box_edge_righ.png");
-        Image textT = new Image(display, System.getProperty("user.dir") + "/data/text_box_edge_top.png");
-        Image textB = new Image(display, System.getProperty("user.dir") + "/data/text_box_edge_bottom.png");
-        Image textM = new Image(display, System.getProperty("user.dir") + "/data/text_box_body.png");
-        // the Image back was intended as the background image, not the textbox body. 
-        // the text box body is Image textM (i would have used textB, but that is the bottom of the text box)
-        String png = System.getProperty("user.dir") + "/data/"+"text_box_body" + ".png";
-        Image back = new Image(display, png);
-        
 
-        // prepare canvas
-        canvas.setSize(300, 400);
-        gc.drawImage(back, 0, 0);
-        // creates name box
-        gc.drawImage(textL, 10, 10);
-        gc.drawImage(textBL, 10, 31);
-        for (int i = 31; i < 300; i += 21) {
-            gc.drawImage(textM, i, 10);
-            gc.drawImage(textB, i, 31);
+    private void Render(GC targetGC, CardRenderSize size, StatBlock... stats) {
 
-        }
-        gc.drawText(m_CardName, 25, 20);
-
-        // creates text box bg
-        gc.drawImage(textTL, 10, 250);
-        for (int i = 31; i < 300; i += 21) {
-            gc.drawImage(textT, i, 250);
-        }
-        for (int i = 271; i < 400; i += 21) {
-            gc.drawImage(textL, 10, i);
-            for (int j = 31; j < 300; j += 21) {
-                gc.drawImage(textM, j, i);
+        Label m_BGButton = new Label(canvas, 0);
+        gc = targetGC;
+        if (m_CurrentSize != size) {
+            if (!(m_CardTemplate == null)) {
+                m_CardTemplate.Render(targetGC, size, stats);
             }
+            else {
+                int width = size.getWidth();
+                int height = size.getHeight();
+                targetGC.fillRectangle(0, 0, width, height);
+            }
+            m_LastSize = m_CurrentSize;
+            m_CurrentSize = size;
         }
-        Label cardInfoWrap = new Label(canvas, SWT.WRAP);
-        cardInfoWrap.setText(m_CardText);
-        cardInfoWrap.setBounds(31, 271, 250, 110);
+        switch (size) {
+        default:
+            break;
 
-        // draws main card outline
-        gc.drawImage(cardTL, 0, 0);
-        gc.drawImage(cardTR, 275, 0);
-        gc.drawImage(cardBL, 0, 375);
-        gc.drawImage(cardBR, 275, 375);
-        for (int i = 25; i <= 274; i += 25) {
-            gc.drawImage(cardT, i, 0);
-            gc.drawImage(cardB, i, 375);
-        }
-        for (int i = 25; i <= 374; i += 25) {
-            gc.drawImage(cardL, 0, i);
-            gc.drawImage(cardR, 275, i);
+        case LARGE:
+            // creates name box
+            gc.drawImage(textL, 10, 10);
+            gc.drawImage(textBL, 10, 31);
+            for (int i = 31; i < 300; i += 21) {
+                gc.drawImage(textM, i, 10);
+                gc.drawImage(textB, i, 31);
+
+            }
+            gc.drawText(name, 25, 20);
+
+            break;
         }
     }
-    */
+
+    // OLD RENDERER
+    /*
+     * public void SetCanvas() { // loading images Image cardBL = new
+     * Image(display, System.getProperty("user.dir") +
+     * "/data/card_border_corner_bottom_left.png"); Image cardBR = new
+     * Image(display, System.getProperty("user.dir") +
+     * "/data/card_border_corner_bottom_right.png"); Image cardTL = new
+     * Image(display, System.getProperty("user.dir") +
+     * "/data/card_border_corner_top_left.png"); Image cardTR = new
+     * Image(display, System.getProperty("user.dir") +
+     * "/data/card_border_corner_top_right.png"); Image cardL = new
+     * Image(display, System.getProperty("user.dir") +
+     * "/data/card_border_edge_left.png"); Image cardR = new Image(display,
+     * System.getProperty("user.dir") + "/data/card_border_edge_right.png");
+     * Image cardT = new Image(display, System.getProperty("user.dir") +
+     * "/data/card_border_edge_top.png"); Image cardB = new Image(display,
+     * System.getProperty("user.dir") + "/data/card_border_edge_bottom.png");
+     * Image textBL = new Image(display, System.getProperty("user.dir") +
+     * "/data/text_box_corner_bottom_left.png"); Image textBR = new
+     * Image(display, System.getProperty("user.dir") +
+     * "/data/text_box_corner_bottom_right.png"); Image textTL = new
+     * Image(display, System.getProperty("user.dir") +
+     * "/data/text_box_corner_top_left.png"); Image textTR = new Image(display,
+     * System.getProperty("user.dir") + "/data/text_box_corner_top_right.png");
+     * Image textL = new Image(display, System.getProperty("user.dir") +
+     * "/data/text_box_edge_left.png"); Image textR = new Image(display,
+     * System.getProperty("user.dir") + "/data/text_box_edge_righ.png"); Image
+     * textT = new Image(display, System.getProperty("user.dir") +
+     * "/data/text_box_edge_top.png"); Image textB = new Image(display,
+     * System.getProperty("user.dir") + "/data/text_box_edge_bottom.png"); Image
+     * textM = new Image(display, System.getProperty("user.dir") +
+     * "/data/text_box_body.png"); // the Image back was intended as the
+     * background image, not the textbox body. // the text box body is Image
+     * textM (i would have used textB, but that is the bottom of the text box)
+     * String png = System.getProperty("user.dir") + "/data/"+"text_box_body" +
+     * ".png"; Image back = new Image(display, png);
+     * 
+     * 
+     * // prepare canvas canvas.setSize(300, 400); gc.drawImage(back, 0, 0); //
+     * creates name box gc.drawImage(textL, 10, 10); gc.drawImage(textBL, 10,
+     * 31); for (int i = 31; i < 300; i += 21) { gc.drawImage(textM, i, 10);
+     * gc.drawImage(textB, i, 31);
+     * 
+     * } gc.drawText(m_CardName, 25, 20);
+     * 
+     * // creates text box bg gc.drawImage(textTL, 10, 250); for (int i = 31; i
+     * < 300; i += 21) { gc.drawImage(textT, i, 250); } for (int i = 271; i <
+     * 400; i += 21) { gc.drawImage(textL, 10, i); for (int j = 31; j < 300; j
+     * += 21) { gc.drawImage(textM, j, i); } } Label cardInfoWrap = new
+     * Label(canvas, SWT.WRAP); cardInfoWrap.setText(m_CardText);
+     * cardInfoWrap.setBounds(31, 271, 250, 110);
+     * 
+     * // draws main card outline gc.drawImage(cardTL, 0, 0);
+     * gc.drawImage(cardTR, 275, 0); gc.drawImage(cardBL, 0, 375);
+     * gc.drawImage(cardBR, 275, 375); for (int i = 25; i <= 274; i += 25) {
+     * gc.drawImage(cardT, i, 0); gc.drawImage(cardB, i, 375); } for (int i =
+     * 25; i <= 374; i += 25) { gc.drawImage(cardL, 0, i); gc.drawImage(cardR,
+     * 275, i); } }
+     */
 
     public Canvas Draw() {
         return canvas;
@@ -300,11 +256,11 @@ public class CardInstance implements NetworkObject {
 
     // m_Stats
     public StatBlock GetStat(int i) {
-        return m_Stats[i];
+        return m_Stats.get(i);
     }
 
     public void SetStat(StatBlock st, int i) {
-        m_Stats[i] = st;
+        m_Stats.set(i, st);
     }
 
     // // Attack
