@@ -3,9 +3,10 @@ package NewClient;
 import java.util.ArrayList;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.PaintEvent;
+import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Button;
@@ -15,9 +16,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.TabItem;
 
 import Client.CardInstance;
-import Client.CardTemplate;
 import Client.CardTemplate.CardRenderSize;
-import Client.CardTemplateManager;
 import Shared.GameResources;
 import Shared.GameZones;
 
@@ -226,8 +225,6 @@ public class Game extends Composite {
 		}
 	}
 	public void addToStack(String cardID){
-		if(!hasCardLoaded(cardID))
-			createCard(cardID);
 		Canvas c = new Canvas(this, SWT.NONE);
 		GC gc = new GC( c );
 		//c.setSize(new Point(64,64));
@@ -266,14 +263,13 @@ public class Game extends Composite {
 	public boolean hasCardLoaded(String id){
 		return (findCardById(id)!=null);
 	}
+	CardInstance tmp = null;
 	public void addToField(String cardID){
-		if(!hasCardLoaded(cardID))
-			createCard(cardID);
 		Canvas c = new Canvas(this, SWT.NONE);
 		GC gc = new GC( c );
 		//c.setSize(new Point(64,64));
 		c.setBounds(fieldPos.x, fieldPos.y, 64, 64);
-		findCardById(cardID).RenderCard(gc, CardRenderSize.MEDIUM, null);
+		
 		fieldPos.x+=64;
 	}
 	public CardInstance findCardById(String id){
