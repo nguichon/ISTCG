@@ -202,10 +202,12 @@ public class ClientMain {
 			if(composite instanceof Lobby){
 				((Lobby)composite).findGameById(inputs[1]).moveCard(inputs[2], inputs[3]);
 			}
+			break;
 		case CARD_INFO:
 			if(composite instanceof Lobby){
 				((Lobby)composite).findGameById(inputs[1]).createCard(inputs[3], inputs[2]);
 			}
+			break;
 		default:
 			break;
 		}
