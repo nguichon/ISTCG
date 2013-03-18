@@ -7,8 +7,6 @@ import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.eclipse.swt.graphics.GC;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.widgets.Display;
 
 import Shared.CardTypes;
 import Shared.StatBlock;
@@ -36,56 +34,32 @@ public class CardTemplate {
     }
     }
 
-    private String m_BGImage;
     private CardTypes m_CardType;
     private int m_CardID;
     private ArrayList<StatBlock> m_Stats;
     private String m_CardName;
     private String m_CardFlavor;
 
-    private static Display display = null;
+    // private static Display display = null;
 
-    private static final String CARD_BL = "card_border_corner_bottom_left.png";
-    private static Image cardBR = new Image(display,
-            System.getProperty("user.dir")
-                    + "/data/card_border_corner_bottom_right.png");
-    private static Image cardTL = new Image(display,
-            System.getProperty("user.dir")
-                    + "/data/card_border_corner_top_left.png");
-    private static Image cardTR = new Image(display,
-            System.getProperty("user.dir")
-                    + "/data/card_border_corner_top_right.png");
-    private static Image cardL = new Image(display,
-            System.getProperty("user.dir") + "/data/card_border_edge_left.png");
-    private static Image cardR = new Image(display,
-            System.getProperty("user.dir") + "/data/card_border_edge_right.png");
-    private static Image cardT = new Image(display,
-            System.getProperty("user.dir") + "/data/card_border_edge_top.png");
-    private static Image cardB = new Image(display,
-            System.getProperty("user.dir")
-                    + "/data/card_border_edge_bottom.png");
-    private static Image textBL = new Image(display,
-            System.getProperty("user.dir")
-                    + "/data/text_box_corner_bottom_left.png");
-    private static Image textBR = new Image(display,
-            System.getProperty("user.dir")
-                    + "/data/text_box_corner_bottom_right.png");
-    private static Image textTL = new Image(display,
-            System.getProperty("user.dir")
-                    + "/data/text_box_corner_top_left.png");
-    private static Image textTR = new Image(display,
-            System.getProperty("user.dir")
-                    + "/data/text_box_corner_top_right.png");
-    private static Image textL = new Image(display,
-            System.getProperty("user.dir") + "/data/text_box_edge_left.png");
-    private static Image textR = new Image(display,
-            System.getProperty("user.dir") + "/data/text_box_edge_righ.png");
-    private static Image textT = new Image(display,
-            System.getProperty("user.dir") + "/data/text_box_edge_top.png");
-    private static Image textB = new Image(display,
-            System.getProperty("user.dir") + "/data/text_box_edge_bottom.png");
-    private static Image textM = new Image(display,
-            System.getProperty("user.dir") + "/data/text_box_body.png");
+    private static final String cardBL = "card_border_corner_bottom_left.png";
+    private static final String cardBR = "card_border_corner_bottom_right.png";
+    private static final String cardTL = "card_border_corner_top_left.png";
+    private static final String cardTR = "card_border_corner_top_right.png";
+    private static final String cardL = "card_border_edge_left.png";
+    private static final String cardR = "card_border_edge_right.png";
+    private static final String cardT = "card_border_edge_top.png";
+    private static final String cardB = "card_border_edge_bottom.png";
+    private static final String textBL = "text_box_corner_bottom_left.png";
+    private static final String textBR = "text_box_corner_bottom_right.png";
+    private static final String textTL = "text_box_corner_top_left.png";
+    private static final String textTR = "text_box_corner_top_right.png";
+    private static final String textL = "text_box_edge_left.png";
+    private static final String textR = "text_box_edge_righ.png";
+    private static final String textT = "text_box_edge_top.png";
+    private static final String textB = "text_box_edge_bottom.png";
+    private static final String textM = "text_box_body.png";
+    private String m_BGImage;
 
     /**
      * This method draws a card using the passed GC. It will use the default
@@ -103,41 +77,90 @@ public class CardTemplate {
         // targetGC.drawRectangle(0, 0, size.getWidth(), size.getHeight() );
         // need a display to load images
 
-        String png = System.getProperty("user.dir") + "/data/"
-                + "text_box_body" + ".png";
-        Image back = new Image(display, png);
+        /*
+         * String png = System.getProperty("user.dir") + "/data/" +
+         * "text_box_body" + ".png"; Image back = new Image(display, png);
+         */
 
-        ImageManager.get().GetImage(CARD_BL);
+        // targetGC.drawImage(ImageManager.get().GetImage(m_BGImage), 0, 0);
+        // ImageManager.get().GetImage(cardBL);
 
         switch (size) {
         case TINY:
             factor = .03;
-            Image backT = new Image(display, back.getImageData().scaledTo(
-                    (int) (300 * factor), (int) (400 * factor)));
-            // targetGC.addMouseListener(new MouseListener);
-            targetGC.drawImage(backT, 0, 0);
+            /*
+             * Image backT = new Image(display, back.getImageData().scaledTo(
+             * (int) (300 * factor), (int) (400 * factor)));
+             * targetGC.addMouseListener(new MouseListener);
+             */
+            targetGC.drawImage(ImageManager.get().GetImage(m_BGImage), 0, 0,
+                    300, 400, 0, 0, (int) (300 * factor), (int) (400 * factor));
             // TODO stuff here
             break;
         case SMALL:
             factor = .1;
-            Image backS = new Image(display, back.getImageData().scaledTo(
-                    (int) (300 * factor), (int) (400 * factor)));
-            targetGC.drawImage(backS, 0, 0);
+            targetGC.drawImage(ImageManager.get().GetImage(m_BGImage), 0, 0,
+                    300, 400, 0, 0, (int) (300 * factor), (int) (400 * factor));
+            /*
+             * Image backS = new Image(display, back.getImageData().scaledTo(
+             * (int) (300 * factor), (int) (400 * factor)));
+             * targetGC.drawImage(backS, 0, 0);
+             */
             // TODO stuff here
             break;
         case MEDIUM:
             factor = .3;
-            Image backM = new Image(display, back.getImageData().scaledTo(
-                    (int) (300 * factor), (int) (400 * factor)));
-            targetGC.drawImage(backM, 0, 0);
+            targetGC.drawImage(ImageManager.get().GetImage(m_BGImage), 0, 0,
+                    300, 400, 0, 0, (int) (300 * factor), (int) (400 * factor));
+            /*
+             * Image backM = new Image(display, back.getImageData().scaledTo(
+             * (int) (300 * factor), (int) (400 * factor)));
+             * targetGC.drawImage(backM, 0, 0);
+             */
             // TODO stuff here
             break;
         case LARGE:
-            // Loading Images needed
-            for (int i = 0; i < m_Stats.size() - 1; i++) {
-                int x = 10;
-                int y = 225;
+
+            // BG image
+            factor = 1;
+            targetGC.drawImage(ImageManager.get().GetImage(m_BGImage), 0, 0,
+                    300, 400, 0, 0, (int) (300 * factor), (int) (400 * factor));
+            // Name box
+            targetGC.drawImage(ImageManager.get().GetImage(textL), 10, 10);
+            targetGC.drawImage(ImageManager.get().GetImage(textBL), 10, 31);
+            for (int i = 31; i < 300; i += 21) {
+                targetGC.drawImage(ImageManager.get().GetImage(textM), i, 10);
+                targetGC.drawImage(ImageManager.get().GetImage(textB), i, 31);
             }
+            targetGC.drawText(m_CardName, 25, 20, true);
+            // Stat boxes (empty)
+            for (int i = 0; i < m_Stats.size() - 1; i++) {
+                int x = i * 45 + 10;
+                int y = 225;
+                targetGC.drawImage(ImageManager.get().GetImage(textTL), x, y);
+                targetGC.drawImage(ImageManager.get().GetImage(textT), x + 21,
+                        y);
+                targetGC.drawImage(ImageManager.get().GetImage(textTR), x + 42,
+                        y);
+                targetGC.drawImage(ImageManager.get().GetImage(textBL), x,
+                        y + 21);
+                targetGC.drawImage(ImageManager.get().GetImage(textB), x + 21,
+                        y + 21);
+                targetGC.drawImage(ImageManager.get().GetImage(textBR), x + 42,
+                        y + 21);
+            }
+            // Text box
+            targetGC.drawImage(ImageManager.get().GetImage(textTL), 10, 250);
+            for (int i = 31; i < 300; i += 21) {
+                targetGC.drawImage(ImageManager.get().GetImage(textT), i, 250);
+            }
+            for (int i = 271; i < 400; i += 21) {
+                targetGC.drawImage(ImageManager.get().GetImage(textL), 10, i);
+                for (int j = 31; j < 300; j += 21) {
+                    targetGC.drawImage(ImageManager.get().GetImage(textM), j, i);
+                }
+            }
+            // TODO Border
             // TODO stuff here
             break;
         }
