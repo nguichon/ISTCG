@@ -9,11 +9,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
-
-import Client.GameUI;
-import Client.LoginUI;
-import Client.ClientMain.GameState;
-import Client.ClientMain.MessageType;
 import Shared.ThreadedConnectionDevice;
 
 public class ClientMain {
