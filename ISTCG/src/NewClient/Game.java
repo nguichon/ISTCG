@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Button;
@@ -58,7 +59,7 @@ public class Game extends Composite {
 		super(parent, style);
 		this.main=main;
 		this.tab=tab;
-		handPos = new Point(100,465);
+		handPos = new Point(0,0);
 		fieldPos = new Point(100, 365);
 		stackPos = new Point(10,33);
 		lblUsername = new Label(this, SWT.NONE);
@@ -246,10 +247,14 @@ public class Game extends Composite {
 
 	public void addToHand(String cardID){
 		Canvas c = new Canvas(this, SWT.NONE);
+		Button b = new Button( this, SWT.NONE );
 		GC gc = new GC( c );
+		b.setBounds( 0, 0, 500, 500 );
 		//c.setSize(new Point(64,64));
-		c.setBounds(handPos.x, handPos.y, 64, 64);
-		findCardById(cardID).RenderCard(gc, CardRenderSize.SMALL, null);
+		c.setBounds(handPos.x, handPos.y, 500, 500);
+		gc.fillRectangle( 0, 0, 64, 64 );
+		
+		//findCardById(cardID).RenderCard(gc, CardRenderSize.SMALL, null);
 		handPos.x+=64;
 	}
 	
@@ -284,7 +289,8 @@ public class Game extends Composite {
 				break;
 			case STACK:
 				addToStack(cardID); break;
-			default: break;
+			default: 
+				break;
 			}
 		} else {
 			main.sendData("GETCARDINFO;"+this.getID()+";"+cardID);
