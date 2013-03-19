@@ -48,6 +48,9 @@ public class Game extends Composite {
 	Point fieldPos;
 	Point stackPos;
 	ArrayList<ClientCardInstance> cards;
+	ArrayList<String> hand;
+	ArrayList<String> field;
+	ArrayList<String> stack;
 	Label lblStack;
 	/**
 	 * Create the composite.
@@ -152,6 +155,8 @@ public class Game extends Composite {
 		//this.loadDeck();
 		this.disablePass();
 		cards = new ArrayList<ClientCardInstance>();
+		hand = new ArrayList<String>();
+		field = new ArrayList<String>();
 	}
 
 	@Override
@@ -224,10 +229,6 @@ public class Game extends Composite {
 			btnEnd.setEnabled(false);
 		}
 	}
-	public void addToStack(String cardID){
-		if(!hasCardLoaded(cardID))
-			createCard(cardID);
-	}
 	public void enablePass(){
 		btnPass.setEnabled(true);
 	}
@@ -240,21 +241,84 @@ public class Game extends Composite {
 		main.sendData("DECKLIST;"+this.getID()+";3,30|2,30");
 	}
 
+	public void addToStack(String cardID){
+		if(!hasCardLoaded(cardID))
+			createCard(cardID);
+		findCardById(cardID).setBounds(stackPos.x, stackPos.y, ClientCardTemplate.CardRenderSize.SMALL.getWidth(), ClientCardTemplate.CardRenderSize.SMALL.getHeight());
+		stack.add(cardID);
+		manageStack();
+		//handPos.x+=64;
+	}
+	
+	public void Stack(String cardID){
+		if(hasCardLoaded(cardID)){
+			stack.remove(cardID);
+		}
+	}
+	
 	public void addToHand(String cardID){
 		if(!hasCardLoaded(cardID))
 			createCard(cardID);
 		findCardById(cardID).setBounds(handPos.x, handPos.y, ClientCardTemplate.CardRenderSize.SMALL.getWidth(), ClientCardTemplate.CardRenderSize.SMALL.getHeight());
-		handPos.x+=64;
+		hand.add(cardID);
+		manageHand();
+		//handPos.x+=64;
+	}
+	public void removeFromHand(String cardID){
+		if(hasCardLoaded(cardID)){
+			hand.remove(cardID);
+		}
+	}
+	
+	public void addToField(String cardID){
+		if(!hasCardLoaded(cardID))
+			createCard(cardID);
+		findCardById(cardID).setBounds(fieldPos.x,fieldPos.y,ClientCardTemplate.CardRenderSize.MEDIUM.getWidth(),ClientCardTemplate.CardRenderSize.MEDIUM.getHeight());
+		field.add(cardID);
+		manageField();
+	}
+	public void removeFromField(String cardID){
+		if(hasCardLoaded(cardID))
+			field.remove(cardID);
+	}
+	public void manageField(){
+		for(int i=0;i<field.size()-1;i++){
+			ClientCardInstance card1 = findCardById(field.get(i));
+			ClientCardInstance card2 = findCardById(field.get(i+1));
+			while(card1.getBounds().intersects(card2.getBounds())){
+				card2.getBounds().x+=2;
+				card2.getBounds().y-=2;
+			}
+		}
+	}
+	public void manageHand(){
+		//Try to beautify the shit out of dis hand
+		for(int i=0;i<hand.size()-1;i++){
+			ClientCardInstance card1 = findCardById(hand.get(i));
+			ClientCardInstance card2 = findCardById(hand.get(i+1));
+			while(card1.getBounds().intersects(card2.getBounds())){
+				card2.getBounds().x+=5;
+			}
+		}
+		
+	}
+	public void manageStack(){
+		for(int i=0;i<stack.size()-1;i++){
+			ClientCardInstance card1 = findCardById(stack.get(i));
+			ClientCardInstance card2 = findCardById(stack.get(i+1));
+			while(card1.getBounds().intersects(card2.getBounds())){
+				card2.getBounds().y+=2;
+			}
+		}
+	}
+	
+	public void disposeCard(String cardID){
+		findCardById(cardID).dispose();
+		cards.remove(findCardById(cardID));
 	}
 	
 	public boolean hasCardLoaded(String id){
 		return (findCardById(id)!=null);
-	}
-	CardInstance tmp = null;
-	public void addToField(String cardID){
-		if(!hasCardLoaded(cardID))
-			createCard(cardID);
-		
 	}
 	public ClientCardInstance findCardById(String id){
 		for(ClientCardInstance c:cards){
