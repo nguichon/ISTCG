@@ -7,7 +7,10 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
+import org.omg.PortableInterceptor.SYSTEM_EXCEPTION;
 
 //import server.games.cards.ServerCardTemplateManager;
 
@@ -31,10 +34,18 @@ public class ClientMain {
 		shell = new Shell();
 		shell.setSize(450, 300);
 		shell.setText("Unnamed TCG");
-		Login = new Login(shell, SWT.NONE,this );
+		Login = new Login(shell, SWT.NONE, this );
 		//Lobby = new Lobby(shell, SWT.NONE,this);
 		composite = Login;
-		composite.setBounds(shell.getBounds());
+		composite.setBounds(shell.getClientArea());
+		shell.addListener( SWT.Resize, new Listener() {
+
+			@Override
+			public void handleEvent(Event event) {
+				composite.setBounds(shell.getClientArea());
+			}
+			
+		});
 		shell.pack();
 		shell.open();
 		shell.layout();
@@ -134,7 +145,11 @@ public class ClientMain {
 		case LOGIN_SUCCESS:
 			this.ID=inputs[1];
 			composite.dispose();
-			shell.setBounds(display.getPrimaryMonitor().getBounds());
+			Rectangle shell_size = new Rectangle(50, 50, -100, -100);
+			Rectangle window_size = display.getPrimaryMonitor().getBounds();
+			shell_size.width += window_size.width;
+			shell_size.height += window_size.height;
+			shell.setBounds( shell_size );
 			composite = new Lobby(shell, SWT.NONE,this);
 			((Lobby)composite).addDeckEditor();
 			Rectangle r = shell.getBounds();
@@ -143,7 +158,7 @@ public class ClientMain {
 		case LOGIN_FAILED:
 			//ERROR
 			if(composite instanceof Login){
-				((Login)(composite)).setLabel("LOGIN FAILED");
+				((Login)(composite)).setLabel("LOGIN FAILED: " + inputs[1]);
 			}
 			break;
 		case JOIN:
