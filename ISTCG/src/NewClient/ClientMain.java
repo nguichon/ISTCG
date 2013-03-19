@@ -35,7 +35,7 @@ public class ClientMain {
 		display = Display.getDefault();
 		ImageManager.get().Initialize(display);
 		ClientCardTemplateManager.get().Initialize();
-		shell = new Shell();
+		shell = new Shell( SWT.NO_REDRAW_RESIZE | SWT.NO_BACKGROUND | SWT.SHELL_TRIM );
 		shell.setSize(450, 300);
 		shell.setText("Unnamed TCG");
 		shell.setBackgroundImage( ImageManager.get().GetImage( "Client_BG.png" ) );
