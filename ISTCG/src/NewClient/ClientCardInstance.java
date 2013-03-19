@@ -24,6 +24,7 @@ public class ClientCardInstance extends Canvas {
 		super(parent, style);
 		this.main=main;
 		this.id=ID;
+		size = CardRenderSize.MEDIUM;
 		this.addPaintListener(new PaintListener(){
 
 			@Override
@@ -42,7 +43,7 @@ public class ClientCardInstance extends Canvas {
 		return stats;
 	}
 	public String getStat(String stat){
-		switch(StatBlock.StatType.valueOf(stat)){
+		/*switch(StatBlock.StatType.valueOf(stat)){
 		case ATTACK:
 			return (stats.get(StatBlock.StatType.ATTACK.ordinal())!=null?stats.get(StatBlock.StatType.ATTACK.ordinal()):template.getStat("ATTACK")); 
 		case DEFENSE:
@@ -62,11 +63,15 @@ public class ClientCardInstance extends Canvas {
 		case TECH:
 			return (stats.get(StatBlock.StatType.TECH.ordinal())!=null?stats.get(StatBlock.StatType.TECH.ordinal()):template.getStat("TECH"));
 		default: return null;
-		}
+		}*/
+		return "1";
 	}
 	public void Render(GC gc){
-		if(template!=null)
+		if(template!=null) {
 			template.Render(gc, size, getStatBlock());
+		} else {
+			ClientCardTemplate.RenderBlack( gc, size, getStatBlock());
+		}
 	}
 	public ArrayList<StatBlock> getStatBlock(){
 		ArrayList<StatBlock> tmp = new ArrayList<StatBlock>();

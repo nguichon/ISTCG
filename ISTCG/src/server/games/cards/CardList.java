@@ -2,6 +2,7 @@ package server.games.cards;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Random;
 
 import server.games.GamePlayer;
 
@@ -32,7 +33,7 @@ public class CardList {
 	 * Randomly reorders the ArrayList m_CardsInList.
 	 */
 	public void Shuffle() {
-		Collections.shuffle(m_CardsInList);
+		Collections.shuffle(m_CardsInList, new Random());
 	}
 
 	/**

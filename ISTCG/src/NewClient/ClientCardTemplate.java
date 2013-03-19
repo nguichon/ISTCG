@@ -7,6 +7,7 @@ import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 
@@ -81,6 +82,12 @@ public class ClientCardTemplate {
         		0, 0, toDraw.getBounds().width, toDraw.getBounds().height,
         		0, 0, size.getWidth(), size.getHeight());
         targetGC.drawText( m_CardName, 0, 0, SWT.NONE);//SWT.DRAW_TRANSPARENT);
+    }
+    public static void RenderBlack(GC targetGC, CardRenderSize size, ArrayList<StatBlock> stats) {
+    	final Color black = new Color(targetGC.getDevice(), SWT.COLOR_BLACK, 0, 0);
+    	targetGC.setForeground( black );
+    	targetGC.setBackground( black );
+    	targetGC.fillRectangle( 0, 0, size.getWidth(), size.getHeight() );
     }
 
     /**

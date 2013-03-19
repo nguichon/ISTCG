@@ -27,6 +27,7 @@ public class ClientMain {
 		CardTemplateManager.get().Initialize();
 		display = Display.getDefault();
 		ImageManager.get().Initialize(display);
+		ClientCardTemplateManager.get().Initialize();
 		shell = new Shell();
 		shell.setSize(450, 300);
 		shell.setText("SWT Application");
@@ -204,6 +205,7 @@ public class ClientMain {
 			}
 			break;
 		case CARD_INFO:
+			System.out.println("noooo");
 			if(composite instanceof Lobby){
 				((Lobby)composite).findGameById(inputs[1]).setCard(inputs[3], inputs[2]);
 			}

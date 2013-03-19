@@ -30,6 +30,8 @@ public class ServerCardInstance {
 		m_Location = GameZones.UNKNOWN;
 		
 		m_Template = ServerCardTemplateManager.get().GetCardTemplate( template_id );
+		
+		host.AddToDirectory( this );
 	}
 	
 	public void SetLocation( GameZones location ) { m_Location = location; }
@@ -45,6 +47,7 @@ public class ServerCardInstance {
 	 * 		GamePlayer to send the information to.
 	 */
 	public void SendCardInformation( GamePlayer requester ) {
+		System.out.println("ejaklfjw");
 		if( requester == m_Controller || !m_Location.isHiddenZone() ) {
 			requester.getAccount().SendMessage( 
 					ClientMessages.CARD_INFO, 

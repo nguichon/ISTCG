@@ -5,7 +5,10 @@ import java.util.Vector;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
+import org.eclipse.swt.events.PaintEvent;
+import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
@@ -15,6 +18,8 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
 import Client.ClientMain.MessageType;
+import NewClient.ClientCardTemplate;
+import NewClient.ClientCardTemplateManager;
 
 public class LoginUI extends GameStateUI {
 	Label m_Error;
@@ -22,6 +27,18 @@ public class LoginUI extends GameStateUI {
 	public LoginUI( Shell client, ClientMain main ) {
 		m_Host = main;
 		m_UIObjects = new Vector<Control>();
+
+		ImageManager.get().Initialize( client.getDisplay() );
+		ClientCardTemplateManager.get().Initialize();
+		client.addPaintListener( new PaintListener() {
+
+			@Override
+			public void paintControl(PaintEvent e) {
+				ClientCardTemplateManager.get().GetClientCardTemplate( 2 ).Render( e.gc, ClientCardTemplate.CardRenderSize.MEDIUM, null );
+				
+			}
+			
+		});
 		
 		final Button loginButton = new Button(client, SWT.PUSH);
 		loginButton.setBounds( 350, 307, 100, 25 );

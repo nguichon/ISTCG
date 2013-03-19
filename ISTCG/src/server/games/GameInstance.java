@@ -26,6 +26,7 @@ public class GameInstance {
 	//Game setup variables
 	private int m_GameID;
 	private HashMap< Integer, GamePlayer > m_Players;
+	private HashMap< Integer, ServerCardInstance > m_Directory = new HashMap< Integer, ServerCardInstance >();
 	private ArrayList< Integer > m_PlayerList;
 	private boolean m_Started;
 	
@@ -47,6 +48,10 @@ public class GameInstance {
 	 */
 	public synchronized int CreateNewCardID() {
 		return m_CardsCreated++;
+	}
+	
+	public void AddToDirectory( ServerCardInstance toAdd ) {
+		m_Directory.put( toAdd.GetCardUID(), toAdd );
 	}
 	
 	/**
@@ -110,6 +115,10 @@ public class GameInstance {
 					break;
 				case DECKLIST:
 					m_Players.get( origin ).LoadDeck( message[2] );
+					break;
+				case GETCARDINFO:
+					System.out.println( message[2] );
+					m_Directory.get( Integer.valueOf(message[2]) ).SendCardInformation( m_Players.get( origin ) );
 					break;
 				case PASS:
 					m_Players.get( origin ).Pass();

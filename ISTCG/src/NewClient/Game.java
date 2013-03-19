@@ -58,7 +58,7 @@ public class Game extends Composite {
 		super(parent, style);
 		this.main=main;
 		this.tab=tab;
-		handPos = new Point(0,0);
+		handPos = new Point(100,465);
 		fieldPos = new Point(100, 365);
 		stackPos = new Point(10,33);
 		lblUsername = new Label(this, SWT.NONE);
@@ -237,7 +237,7 @@ public class Game extends Composite {
 	//3,100
 	public void loadDeck(){
 		//default for now
-		main.sendData("DECKLIST;"+this.getID()+";3,100");
+		main.sendData("DECKLIST;"+this.getID()+";3,30|2,30");
 	}
 
 	public void addToHand(String cardID){
@@ -267,8 +267,10 @@ public class Game extends Composite {
 		return null;
 	}
 	public void moveCard(String cardID, String zone){
-		if(!hasCardLoaded(cardID))
+		if(!hasCardLoaded(cardID)) {
+			System.out.println("KDFj;afj");
 			main.sendData("GETCARDINFO;"+this.getID()+";"+cardID);
+		}
 		switch(GameZones.valueOf(zone)){
 			case HAND:
 				addToHand(cardID); break;
@@ -284,15 +286,18 @@ public class Game extends Composite {
 	
 	
 	public void createCard(String cardID){
+		System.out.println("ke");
 		//CardTemplate template = CardTemplateManager.get().GetCardTemplate(Integer.valueOf(templateID));
 		ClientCardInstance card = new ClientCardInstance(this, Integer.valueOf(cardID), main, cardID);
 		//card.SetTemplate(Integer.valueOf(templateID));
 		cards.add(card);
 	}
 	public void setCard(String templateID, String cardID){
+		System.out.println("hue");
 		if(hasCardLoaded(cardID)){
 			//CardTemplateManager.get().GetCardTemplate(Integer.valueOf(templateID));
 			findCardById(cardID).setTemplate(templateID);
+			findCardById(cardID).redraw();
 		}
 	}
 	
