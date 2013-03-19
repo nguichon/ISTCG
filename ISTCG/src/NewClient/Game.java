@@ -282,6 +282,8 @@ public class Game extends Composite {
 			field.remove(cardID);
 	}
 	public void manageField(){
+		if(!(field.size()>1))
+			return;
 		for(int i=0;i<field.size()-1;i++){
 			ClientCardInstance card1 = findCardById(field.get(i));
 			ClientCardInstance card2 = findCardById(field.get(i+1));
@@ -293,6 +295,8 @@ public class Game extends Composite {
 	}
 	public void manageHand(){
 		//Try to beautify the shit out of dis hand
+		if(!(hand.size()>1))
+			return;
 		for(int i=0;i<hand.size()-1;i++){
 			ClientCardInstance card1 = findCardById(hand.get(i));
 			ClientCardInstance card2 = findCardById(hand.get(i+1));
@@ -303,6 +307,8 @@ public class Game extends Composite {
 		
 	}
 	public void manageStack(){
+		if(!(stack.size()>1))
+			return;
 		for(int i=0;i<stack.size()-1;i++){
 			ClientCardInstance card1 = findCardById(stack.get(i));
 			ClientCardInstance card2 = findCardById(stack.get(i+1));
