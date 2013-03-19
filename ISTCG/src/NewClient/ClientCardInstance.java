@@ -48,6 +48,38 @@ public class ClientCardInstance extends Canvas {
 		}
 		return "-1";
 	}
+	public void setStat(String stat, String val){
+		if(stats!=null){
+			stats.add(StatBlock.StatType.valueOf(stat).ordinal(),val);
+		}
+	}
+	public void setStat(String stat, int val){
+		if(stats!=null){
+			stats.add(StatBlock.StatType.valueOf(stat).ordinal(),String.valueOf(val));
+		}
+	}
+	public void setStat(StatBlock stat, String val){
+		if(stats!=null){
+			stats.add(stat.m_Type.ordinal(),val);
+		}
+	}
+	public void setStat(StatBlock stat, int val){
+		if(stats!=null){
+			stats.add(stat.m_Type.ordinal(),String.valueOf(val));
+		}
+	}
+	public void setStat(StatBlock stat){
+		if(stats!=null){
+			stats.add(stat.m_Type.ordinal(),String.valueOf(stat.m_Value));
+		}
+	}
+	public void setStatBlock(ArrayList<StatBlock> stats){
+		if(stats!=null){
+			for(StatBlock s : stats){
+				setStat(s);
+			}
+		}
+	}
 	public void Render(GC gc){
 		if(template!=null) {
 			template.Render(gc, size, getStatBlock());
