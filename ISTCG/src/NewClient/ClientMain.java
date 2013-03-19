@@ -3,8 +3,12 @@ package NewClient;
 import java.io.IOException;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.GC;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.layout.FillLayout;
+import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
@@ -34,6 +38,8 @@ public class ClientMain {
 		shell = new Shell();
 		shell.setSize(450, 300);
 		shell.setText("Unnamed TCG");
+		shell.setBackgroundImage( ImageManager.get().GetImage( "Client_BG.png" ) );
+		shell.setBackgroundMode( SWT.INHERIT_DEFAULT );
 		Login = new Login(shell, SWT.NONE, this );
 		//Lobby = new Lobby(shell, SWT.NONE,this);
 		composite = Login;
@@ -42,7 +48,43 @@ public class ClientMain {
 
 			@Override
 			public void handleEvent(Event event) {
-				composite.setBounds(shell.getClientArea());
+				Image toDraw = ImageManager.get().GetImage( "Client_BG.png" );
+				Image new_bg = new Image(display, shell.getClientArea().width,  shell.getClientArea().height);
+				GC gc = new GC(new_bg);
+				
+				int sh = new_bg.getBounds().height;
+				int sw = new_bg.getBounds().width;
+				int dh = toDraw.getBounds().height;
+				int dw = toDraw.getBounds().width;
+				
+				int source_x = 0;
+				int source_y = 0;
+				int source_width = sw;
+				int source_height = sh;
+				
+				double aspect_w = (double) dw / sw;
+				double aspect_h = (double) dh / sh;
+
+				double selected_aspect = Math.min( aspect_w, aspect_h );
+				source_x = (int) ((dw - (dw / selected_aspect)) / 2);
+				source_y = (int) ((dh - (dh / selected_aspect)) / 2);
+				
+				
+				gc.drawImage( toDraw,
+								0 + (int)((dw - (source_width * selected_aspect)) / 2),
+								0 + (int)((dh - (source_height * selected_aspect)) / 2),
+								(int)(source_width * selected_aspect),
+								(int)(source_height * selected_aspect),
+								0,
+								0,
+								sw,
+								sh);
+				
+				shell.setBackgroundImage( new_bg );
+				if( !composite.isDisposed() ) {
+					composite.setBounds(shell.getClientArea());
+				}
+				gc.dispose();
 			}
 			
 		});

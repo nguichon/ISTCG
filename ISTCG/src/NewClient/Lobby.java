@@ -8,9 +8,11 @@ import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.swt.widgets.Text;
@@ -64,6 +66,17 @@ public class Lobby extends Composite {
 		});
 		text_1.setBounds(btnNewButton.getBounds().x-200, btnNewButton.getBounds().y, 200, 45);
 
+		
+		this.addListener( SWT.RESIZE, new Listener() {
+
+			@Override
+			public void handleEvent(Event event) {
+				System.out.println("RESIZE");
+				Rectangle new_size = event.getBounds();
+				text_1.setBounds( new_size.x - 100, text_1.getBounds().y, text_1.getBounds().width, text_1.getBounds().height );
+			}
+			
+		});
 	}
 
 	@Override
