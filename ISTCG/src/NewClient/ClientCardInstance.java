@@ -43,28 +43,10 @@ public class ClientCardInstance extends Canvas {
 		return stats;
 	}
 	public String getStat(String stat){
-		/*switch(StatBlock.StatType.valueOf(stat)){
-		case ATTACK:
-			return (stats.get(StatBlock.StatType.ATTACK.ordinal())!=null?stats.get(StatBlock.StatType.ATTACK.ordinal()):template.getStat("ATTACK")); 
-		case DEFENSE:
-			return (stats.get(StatBlock.StatType.DEFENSE.ordinal())!=null?stats.get(StatBlock.StatType.DEFENSE.ordinal()):template.getStat("DEFENSE"));
-		case POWER:
-			return (stats.get(StatBlock.StatType.POWER.ordinal())!=null?stats.get(StatBlock.StatType.POWER.ordinal()):template.getStat("POWER"));
-		case STRUCTURE:
-			return (stats.get(StatBlock.StatType.STRUCTURE.ordinal())!=null?stats.get(StatBlock.StatType.STRUCTURE.ordinal()):template.getStat("STRUCTURE"));
-		case HARD_POINTS:
-			return (stats.get(StatBlock.StatType.HARD_POINTS.ordinal())!=null?stats.get(StatBlock.StatType.HARD_POINTS.ordinal()):template.getStat("HARD_POINTS"));
-		case DELAY:
-			return (stats.get(StatBlock.StatType.DELAY.ordinal())!=null?stats.get(StatBlock.StatType.DELAY.ordinal()):template.getStat("DELAY"));
-		case METAL:
-			return (stats.get(StatBlock.StatType.METAL.ordinal())!=null?stats.get(StatBlock.StatType.METAL.ordinal()):template.getStat("METAL"));
-		case ENERGY:
-			return (stats.get(StatBlock.StatType.ENERGY.ordinal())!=null?stats.get(StatBlock.StatType.ENERGY.ordinal()):template.getStat("ENERGY"));
-		case TECH:
-			return (stats.get(StatBlock.StatType.TECH.ordinal())!=null?stats.get(StatBlock.StatType.TECH.ordinal()):template.getStat("TECH"));
-		default: return null;
-		}*/
-		return "1";
+		if(stats!=null){
+			return (stats.get(StatBlock.StatType.valueOf(stat).ordinal())!=null?stats.get(StatBlock.StatType.valueOf(stat).ordinal()):template.getStat(stat));
+		}
+		return "-1";
 	}
 	public void Render(GC gc){
 		if(template!=null) {
