@@ -1,0 +1,942 @@
+--
+-- PostgreSQL database dump
+--
+
+-- Dumped from database version 9.2.1
+-- Dumped by pg_dump version 9.2.1
+-- Started on 2013-03-19 15:39:51
+
+SET statement_timeout = 0;
+SET client_encoding = 'UTF8';
+SET standard_conforming_strings = on;
+SET check_function_bodies = false;
+SET client_min_messages = warning;
+
+--
+-- TOC entry 194 (class 3079 OID 11727)
+-- Name: plpgsql; Type: EXTENSION; Schema: -; Owner: 
+--
+
+CREATE EXTENSION IF NOT EXISTS plpgsql WITH SCHEMA pg_catalog;
+
+
+--
+-- TOC entry 2090 (class 0 OID 0)
+-- Dependencies: 194
+-- Name: EXTENSION plpgsql; Type: COMMENT; Schema: -; Owner: 
+--
+
+COMMENT ON EXTENSION plpgsql IS 'PL/pgSQL procedural language';
+
+
+SET search_path = public, pg_catalog;
+
+--
+-- TOC entry 208 (class 1255 OID 16416)
+-- Name: insert_event(); Type: FUNCTION; Schema: public; Owner: postgres
+--
+
+CREATE FUNCTION insert_event() RETURNS trigger
+    LANGUAGE plpgsql
+    AS $$BEGIN
+	NEW.created_at = now();
+	NEW.modified_at = now();
+	return NEW;
+END	$$;
+
+
+ALTER FUNCTION public.insert_event() OWNER TO postgres;
+
+--
+-- TOC entry 207 (class 1255 OID 16419)
+-- Name: update_event(); Type: FUNCTION; Schema: public; Owner: postgres
+--
+
+CREATE FUNCTION update_event() RETURNS trigger
+    LANGUAGE plpgsql
+    AS $$BEGIN
+	NEW.modified_at = now();
+	RETURN NEW;
+END$$;
+
+
+ALTER FUNCTION public.update_event() OWNER TO postgres;
+
+--
+-- TOC entry 171 (class 1259 OID 16433)
+-- Name: cards_sequence; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE cards_sequence
+    START WITH 8
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.cards_sequence OWNER TO postgres;
+
+--
+-- TOC entry 2091 (class 0 OID 0)
+-- Dependencies: 171
+-- Name: cards_sequence; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('cards_sequence', 5, true);
+
+
+SET default_tablespace = '';
+
+SET default_with_oids = false;
+
+--
+-- TOC entry 170 (class 1259 OID 16425)
+-- Name: cards; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE cards (
+    id integer DEFAULT nextval('cards_sequence'::regclass) NOT NULL,
+    created_at timestamp without time zone,
+    modified_at timestamp without time zone,
+    name text,
+    description text,
+    flavor_text text,
+    attack integer DEFAULT (-1),
+    power integer DEFAULT (-1),
+    defense integer DEFAULT (-1),
+    structure integer DEFAULT (-1),
+    hard_points integer DEFAULT (-1),
+    delay integer DEFAULT (-1),
+    metal integer DEFAULT (-1),
+    energy integer DEFAULT (-1),
+    tech integer DEFAULT (-1),
+    type text
+);
+
+
+ALTER TABLE public.cards OWNER TO postgres;
+
+--
+-- TOC entry 172 (class 1259 OID 24576)
+-- Name: collections_sequence; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE collections_sequence
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.collections_sequence OWNER TO postgres;
+
+--
+-- TOC entry 2092 (class 0 OID 0)
+-- Dependencies: 172
+-- Name: collections_sequence; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('collections_sequence', 2, true);
+
+
+--
+-- TOC entry 183 (class 1259 OID 24598)
+-- Name: collections; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE collections (
+    id integer DEFAULT nextval('collections_sequence'::regclass) NOT NULL,
+    created_at timestamp without time zone,
+    modified_at timestamp without time zone,
+    card_id integer,
+    owner_id integer,
+    count integer,
+    is_signed boolean,
+    is_foil boolean,
+    set_id integer
+);
+
+
+ALTER TABLE public.collections OWNER TO postgres;
+
+--
+-- TOC entry 179 (class 1259 OID 24590)
+-- Name: format_bans_sequence; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE format_bans_sequence
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.format_bans_sequence OWNER TO postgres;
+
+--
+-- TOC entry 2093 (class 0 OID 0)
+-- Dependencies: 179
+-- Name: format_bans_sequence; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('format_bans_sequence', 1, false);
+
+
+--
+-- TOC entry 190 (class 1259 OID 24654)
+-- Name: format_bans; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE format_bans (
+    id integer DEFAULT nextval('format_bans_sequence'::regclass) NOT NULL,
+    created_at timestamp without time zone,
+    modified_at timestamp without time zone,
+    format_id integer,
+    card_id integer
+);
+
+
+ALTER TABLE public.format_bans OWNER TO postgres;
+
+--
+-- TOC entry 180 (class 1259 OID 24592)
+-- Name: format_sets_sequence; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE format_sets_sequence
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.format_sets_sequence OWNER TO postgres;
+
+--
+-- TOC entry 2094 (class 0 OID 0)
+-- Dependencies: 180
+-- Name: format_sets_sequence; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('format_sets_sequence', 1, false);
+
+
+--
+-- TOC entry 191 (class 1259 OID 24662)
+-- Name: format_sets; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE format_sets (
+    id integer DEFAULT nextval('format_sets_sequence'::regclass) NOT NULL,
+    created_at timestamp without time zone,
+    modified_at timestamp without time zone,
+    format_id integer,
+    set_id integer
+);
+
+
+ALTER TABLE public.format_sets OWNER TO postgres;
+
+--
+-- TOC entry 178 (class 1259 OID 24588)
+-- Name: formats_sequence; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE formats_sequence
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.formats_sequence OWNER TO postgres;
+
+--
+-- TOC entry 2095 (class 0 OID 0)
+-- Dependencies: 178
+-- Name: formats_sequence; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('formats_sequence', 1, false);
+
+
+--
+-- TOC entry 189 (class 1259 OID 24646)
+-- Name: formats; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE formats (
+    id integer DEFAULT nextval('formats_sequence'::regclass) NOT NULL,
+    created_at timestamp without time zone,
+    modified_at timestamp without time zone,
+    duplicate_limit integer,
+    sideboard_size integer
+);
+
+
+ALTER TABLE public.formats OWNER TO postgres;
+
+--
+-- TOC entry 182 (class 1259 OID 24596)
+-- Name: game_players_sequence; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE game_players_sequence
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.game_players_sequence OWNER TO postgres;
+
+--
+-- TOC entry 2096 (class 0 OID 0)
+-- Dependencies: 182
+-- Name: game_players_sequence; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('game_players_sequence', 1, false);
+
+
+--
+-- TOC entry 193 (class 1259 OID 24679)
+-- Name: game_players; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE game_players (
+    id integer DEFAULT nextval('game_players_sequence'::regclass) NOT NULL,
+    created_at timestamp without time zone,
+    modified_at timestamp without time zone,
+    game_id integer,
+    user_id integer
+);
+
+
+ALTER TABLE public.game_players OWNER TO postgres;
+
+--
+-- TOC entry 181 (class 1259 OID 24594)
+-- Name: games_sequence; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE games_sequence
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.games_sequence OWNER TO postgres;
+
+--
+-- TOC entry 2097 (class 0 OID 0)
+-- Dependencies: 181
+-- Name: games_sequence; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('games_sequence', 185, true);
+
+
+--
+-- TOC entry 192 (class 1259 OID 24670)
+-- Name: games; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE games (
+    id integer DEFAULT nextval('games_sequence'::regclass) NOT NULL,
+    created_at timestamp without time zone,
+    modified_at timestamp without time zone,
+    winner_user_id integer,
+    is_ladder_game boolean
+);
+
+
+ALTER TABLE public.games OWNER TO postgres;
+
+--
+-- TOC entry 175 (class 1259 OID 24582)
+-- Name: points_sequence; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE points_sequence
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.points_sequence OWNER TO postgres;
+
+--
+-- TOC entry 2098 (class 0 OID 0)
+-- Dependencies: 175
+-- Name: points_sequence; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('points_sequence', 1, false);
+
+
+--
+-- TOC entry 186 (class 1259 OID 24622)
+-- Name: points; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE points (
+    id integer DEFAULT nextval('points_sequence'::regclass) NOT NULL,
+    created_at timestamp without time zone,
+    modified_at timestamp without time zone,
+    game_id integer,
+    change integer
+);
+
+
+ALTER TABLE public.points OWNER TO postgres;
+
+--
+-- TOC entry 177 (class 1259 OID 24586)
+-- Name: purchase_items_sequence; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE purchase_items_sequence
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.purchase_items_sequence OWNER TO postgres;
+
+--
+-- TOC entry 2099 (class 0 OID 0)
+-- Dependencies: 177
+-- Name: purchase_items_sequence; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('purchase_items_sequence', 1, false);
+
+
+--
+-- TOC entry 188 (class 1259 OID 24638)
+-- Name: purchase_items; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE purchase_items (
+    id integer DEFAULT nextval('purchase_items_sequence'::regclass) NOT NULL,
+    created_at timestamp without time zone,
+    modified_at timestamp without time zone,
+    purchase_id integer,
+    point_cost_per_item integer,
+    item_id integer,
+    count integer
+);
+
+
+ALTER TABLE public.purchase_items OWNER TO postgres;
+
+--
+-- TOC entry 176 (class 1259 OID 24584)
+-- Name: purchases_sequence; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE purchases_sequence
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.purchases_sequence OWNER TO postgres;
+
+--
+-- TOC entry 2100 (class 0 OID 0)
+-- Dependencies: 176
+-- Name: purchases_sequence; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('purchases_sequence', 1, false);
+
+
+--
+-- TOC entry 187 (class 1259 OID 24630)
+-- Name: purchases; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE purchases (
+    id integer DEFAULT nextval('purchases_sequence'::regclass) NOT NULL,
+    created_at timestamp without time zone,
+    modified_at timestamp without time zone
+);
+
+
+ALTER TABLE public.purchases OWNER TO postgres;
+
+--
+-- TOC entry 174 (class 1259 OID 24580)
+-- Name: set_cards_sequence; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE set_cards_sequence
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.set_cards_sequence OWNER TO postgres;
+
+--
+-- TOC entry 2101 (class 0 OID 0)
+-- Dependencies: 174
+-- Name: set_cards_sequence; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('set_cards_sequence', 1, false);
+
+
+--
+-- TOC entry 185 (class 1259 OID 24614)
+-- Name: set_cards; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE set_cards (
+    id integer DEFAULT nextval('set_cards_sequence'::regclass) NOT NULL,
+    created_at timestamp without time zone,
+    modified_at timestamp without time zone,
+    set_id integer,
+    card_id integer,
+    rarity smallint DEFAULT 0
+);
+
+
+ALTER TABLE public.set_cards OWNER TO postgres;
+
+--
+-- TOC entry 2102 (class 0 OID 0)
+-- Dependencies: 185
+-- Name: COLUMN set_cards.rarity; Type: COMMENT; Schema: public; Owner: postgres
+--
+
+COMMENT ON COLUMN set_cards.rarity IS '0 = Non-existant
+1 = Common
+2 = Non-Rare
+3 = Rare';
+
+
+--
+-- TOC entry 173 (class 1259 OID 24578)
+-- Name: sets_sequence; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE sets_sequence
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.sets_sequence OWNER TO postgres;
+
+--
+-- TOC entry 2103 (class 0 OID 0)
+-- Dependencies: 173
+-- Name: sets_sequence; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('sets_sequence', 1, false);
+
+
+--
+-- TOC entry 184 (class 1259 OID 24606)
+-- Name: sets; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE sets (
+    id integer DEFAULT nextval('sets_sequence'::regclass) NOT NULL,
+    created_at timestamp without time zone,
+    modified_at timestamp without time zone,
+    is_available boolean,
+    price_modifier integer DEFAULT 100
+);
+
+
+ALTER TABLE public.sets OWNER TO postgres;
+
+--
+-- TOC entry 2104 (class 0 OID 0)
+-- Dependencies: 184
+-- Name: COLUMN sets.price_modifier; Type: COMMENT; Schema: public; Owner: postgres
+--
+
+COMMENT ON COLUMN sets.price_modifier IS 'Value out of 100%';
+
+
+--
+-- TOC entry 169 (class 1259 OID 16404)
+-- Name: users_sequence; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE users_sequence
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.users_sequence OWNER TO postgres;
+
+--
+-- TOC entry 2105 (class 0 OID 0)
+-- Dependencies: 169
+-- Name: users_sequence; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('users_sequence', 8, true);
+
+
+--
+-- TOC entry 168 (class 1259 OID 16394)
+-- Name: users; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE users (
+    id integer DEFAULT nextval('users_sequence'::regclass) NOT NULL,
+    created_at timestamp without time zone,
+    modified_at timestamp without time zone,
+    user_name text,
+    password text,
+    email text,
+    points integer DEFAULT 0,
+    last_login timestamp without time zone,
+    is_admin boolean DEFAULT false
+);
+
+
+ALTER TABLE public.users OWNER TO postgres;
+
+--
+-- TOC entry 2071 (class 0 OID 16425)
+-- Dependencies: 170
+-- Data for Name: cards; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY cards (id, created_at, modified_at, name, description, flavor_text, attack, power, defense, structure, hard_points, delay, metal, energy, tech, type) FROM stdin;
+2	2013-02-24 23:43:54.237	2013-03-18 10:57:26.731	Scrap Metal	Add 1 Metal to your available resources.		-1	-1	-1	-1	-1	-1	-1	-1	-1	RESOURCE
+3	2013-02-24 23:44:00.97	2013-03-18 10:57:32.3	Power Cell	Add 1 Energy to your available resources.		-1	-1	-1	-1	-1	-1	-1	-1	-1	RESOURCE
+4	2013-02-24 23:44:05.232	2013-03-18 10:57:38.07	Module	Add 1 Tech to your available resources.		-1	-1	-1	-1	-1	-1	-1	-1	-1	RESOURCE
+5	2013-02-24 23:44:10.641	2013-03-18 10:58:56.991	Desert HQ	Activate to add 1 Metal to your available resources.	There are resources left only where none venture.	3	1	8	17	0	-1	-1	-1	-1	COMMAND_UNIT
+\.
+
+
+--
+-- TOC entry 2072 (class 0 OID 24598)
+-- Dependencies: 183
+-- Data for Name: collections; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY collections (id, created_at, modified_at, card_id, owner_id, count, is_signed, is_foil, set_id) FROM stdin;
+1	2013-03-18 12:58:47.11	2013-03-18 12:58:47.11	2	3	7	f	f	-1
+2	2013-03-18 12:58:59.486	2013-03-18 12:58:59.486	3	3	9	f	f	-1
+\.
+
+
+--
+-- TOC entry 2079 (class 0 OID 24654)
+-- Dependencies: 190
+-- Data for Name: format_bans; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY format_bans (id, created_at, modified_at, format_id, card_id) FROM stdin;
+\.
+
+
+--
+-- TOC entry 2080 (class 0 OID 24662)
+-- Dependencies: 191
+-- Data for Name: format_sets; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY format_sets (id, created_at, modified_at, format_id, set_id) FROM stdin;
+\.
+
+
+--
+-- TOC entry 2078 (class 0 OID 24646)
+-- Dependencies: 189
+-- Data for Name: formats; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY formats (id, created_at, modified_at, duplicate_limit, sideboard_size) FROM stdin;
+\.
+
+
+--
+-- TOC entry 2082 (class 0 OID 24679)
+-- Dependencies: 193
+-- Data for Name: game_players; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY game_players (id, created_at, modified_at, game_id, user_id) FROM stdin;
+\.
+
+
+--
+-- TOC entry 2081 (class 0 OID 24670)
+-- Dependencies: 192
+-- Data for Name: games; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY games (id, created_at, modified_at, winner_user_id, is_ladder_game) FROM stdin;
+1	2013-02-23 18:41:20.796	2013-02-23 18:41:20.796	\N	\N
+2	2013-02-23 18:41:38.694	2013-02-23 18:41:38.694	\N	\N
+3	2013-02-23 18:41:40.135	2013-02-23 18:41:40.135	\N	\N
+4	2013-02-23 18:41:40.735	2013-02-23 18:41:40.735	\N	\N
+5	2013-02-23 18:41:41.195	2013-02-23 18:41:41.195	\N	\N
+6	2013-02-23 18:47:56.717	2013-02-23 18:47:56.717	\N	\N
+7	2013-02-23 18:47:56.804	2013-02-23 18:47:56.804	\N	\N
+8	2013-02-23 18:47:56.808	2013-02-23 18:47:56.808	\N	\N
+9	2013-02-23 18:47:56.812	2013-02-23 18:47:56.812	\N	\N
+10	2013-02-23 18:48:35.523	2013-02-23 18:48:35.523	\N	\N
+11	2013-02-23 18:48:35.566	2013-02-23 18:48:35.566	\N	\N
+12	2013-02-23 18:48:35.569	2013-02-23 18:48:35.569	\N	\N
+13	2013-02-23 18:48:35.572	2013-02-23 18:48:35.572	\N	\N
+14	2013-02-23 18:48:42.385	2013-02-23 18:48:42.385	\N	\N
+15	2013-02-23 18:48:42.429	2013-02-23 18:48:42.429	\N	\N
+16	2013-02-23 18:48:42.432	2013-02-23 18:48:42.432	\N	\N
+17	2013-02-23 18:48:42.434	2013-02-23 18:48:42.434	\N	\N
+18	2013-02-25 00:33:44.613	2013-02-25 00:33:44.613	\N	\N
+51	2013-02-25 00:55:07.491	2013-02-25 00:55:07.491	\N	\N
+52	2013-02-25 14:06:04.03	2013-02-25 14:06:04.03	\N	\N
+53	2013-02-25 14:11:25.047	2013-02-25 14:11:25.047	\N	\N
+54	2013-02-25 14:14:52.974	2013-02-25 14:14:52.974	\N	\N
+55	2013-02-25 14:15:14.089	2013-02-25 14:15:14.089	\N	\N
+56	2013-02-25 14:17:52.206	2013-02-25 14:17:52.206	\N	\N
+57	2013-02-25 14:22:46.512	2013-02-25 14:22:46.512	\N	\N
+58	2013-02-25 14:27:12.537	2013-02-25 14:27:12.537	\N	\N
+59	2013-02-25 14:35:19.909	2013-02-25 14:35:19.909	\N	\N
+60	2013-02-25 14:36:52.048	2013-02-25 14:36:52.048	\N	\N
+61	2013-02-25 14:42:00.857	2013-02-25 14:42:00.857	\N	\N
+62	2013-02-25 14:46:41.523	2013-02-25 14:46:41.523	\N	\N
+63	2013-02-25 14:48:43.863	2013-02-25 14:48:43.863	\N	\N
+64	2013-02-25 14:51:56.874	2013-02-25 14:51:56.874	\N	\N
+65	2013-02-25 14:52:42.796	2013-02-25 14:52:42.796	\N	\N
+66	2013-02-25 14:53:00.084	2013-02-25 14:53:00.084	\N	\N
+67	2013-02-25 14:53:24.411	2013-02-25 14:53:24.411	\N	\N
+68	2013-02-25 14:59:54.473	2013-02-25 14:59:54.473	\N	\N
+69	2013-02-25 15:07:32.53	2013-02-25 15:07:32.53	\N	\N
+70	2013-02-25 15:09:00.566	2013-02-25 15:09:00.566	\N	\N
+71	2013-02-25 15:10:24.906	2013-02-25 15:10:24.906	\N	\N
+72	2013-02-25 15:14:49.879	2013-02-25 15:14:49.879	\N	\N
+73	2013-02-25 15:15:47.14	2013-02-25 15:15:47.14	\N	\N
+74	2013-02-25 15:18:41.637	2013-02-25 15:18:41.637	\N	\N
+75	2013-02-25 15:20:26.691	2013-02-25 15:20:26.691	\N	\N
+76	2013-02-25 15:22:11.678	2013-02-25 15:22:11.678	\N	\N
+77	2013-02-25 15:33:37.64	2013-02-25 15:33:37.64	\N	\N
+78	2013-02-25 15:41:49.695	2013-02-25 15:41:49.695	\N	\N
+79	2013-02-25 17:54:04.899	2013-02-25 17:54:04.899	\N	\N
+80	2013-03-04 12:18:08.434	2013-03-04 12:18:08.434	\N	\N
+81	2013-03-04 12:54:01.472	2013-03-04 12:54:01.472	\N	\N
+82	2013-03-04 13:09:40.525	2013-03-04 13:09:40.525	\N	\N
+83	2013-03-04 13:45:31.728	2013-03-04 13:45:31.728	\N	\N
+84	2013-03-04 13:51:34.859	2013-03-04 13:51:34.859	\N	\N
+85	2013-03-04 13:54:07.253	2013-03-04 13:54:07.253	\N	\N
+86	2013-03-04 15:46:09.34	2013-03-04 15:46:09.34	\N	\N
+87	2013-03-04 15:46:09.621	2013-03-04 15:46:09.621	\N	\N
+88	2013-03-04 15:46:45.593	2013-03-04 15:46:45.593	\N	\N
+89	2013-03-04 15:46:58.888	2013-03-04 15:46:58.888	\N	\N
+90	2013-03-04 15:47:11.363	2013-03-04 15:47:11.363	\N	\N
+91	2013-03-04 15:47:11.644	2013-03-04 15:47:11.644	\N	\N
+92	2013-03-04 18:34:47.192	2013-03-04 18:34:47.192	\N	\N
+93	2013-03-04 18:35:18.866	2013-03-04 18:35:18.866	\N	\N
+94	2013-03-04 18:35:19.147	2013-03-04 18:35:19.147	\N	\N
+95	2013-03-04 18:35:59.84	2013-03-04 18:35:59.84	\N	\N
+96	2013-03-04 18:36:00.121	2013-03-04 18:36:00.121	\N	\N
+97	2013-03-04 18:36:12.338	2013-03-04 18:36:12.338	\N	\N
+98	2013-03-04 18:36:12.62	2013-03-04 18:36:12.62	\N	\N
+99	2013-03-04 18:36:30.407	2013-03-04 18:36:30.407	\N	\N
+100	2013-03-04 18:36:31.095	2013-03-04 18:36:31.095	\N	\N
+101	2013-03-04 19:05:09.569	2013-03-04 19:05:09.569	\N	\N
+102	2013-03-04 19:05:10.569	2013-03-04 19:05:10.569	\N	\N
+103	2013-03-04 19:08:06.662	2013-03-04 19:08:06.662	\N	\N
+104	2013-03-04 19:08:06.927	2013-03-04 19:08:06.927	\N	\N
+105	2013-03-04 19:09:21.422	2013-03-04 19:09:21.422	\N	\N
+106	2013-03-04 19:09:22	2013-03-04 19:09:22	\N	\N
+107	2013-03-04 19:10:36.062	2013-03-04 19:10:36.062	\N	\N
+108	2013-03-04 19:10:37.016	2013-03-04 19:10:37.016	\N	\N
+109	2013-03-04 19:10:56.767	2013-03-04 19:10:56.767	\N	\N
+110	2013-03-04 19:10:57.033	2013-03-04 19:10:57.033	\N	\N
+111	2013-03-04 19:11:18.862	2013-03-04 19:11:18.862	\N	\N
+112	2013-03-04 19:11:19.143	2013-03-04 19:11:19.143	\N	\N
+113	2013-03-04 19:13:37.341	2013-03-04 19:13:37.341	\N	\N
+114	2013-03-04 19:13:37.622	2013-03-04 19:13:37.622	\N	\N
+115	2013-03-04 19:43:25.877	2013-03-04 19:43:25.877	\N	\N
+116	2013-03-04 19:43:26.158	2013-03-04 19:43:26.158	\N	\N
+117	2013-03-15 14:41:18.343	2013-03-15 14:41:18.343	\N	\N
+118	2013-03-16 22:31:38.396	2013-03-16 22:31:38.396	\N	\N
+119	2013-03-16 22:35:38.295	2013-03-16 22:35:38.295	\N	\N
+120	2013-03-16 22:41:33.279	2013-03-16 22:41:33.279	\N	\N
+121	2013-03-16 22:43:25.596	2013-03-16 22:43:25.596	\N	\N
+122	2013-03-16 22:50:36.193	2013-03-16 22:50:36.193	\N	\N
+123	2013-03-18 00:15:08.23	2013-03-18 00:15:08.23	\N	\N
+124	2013-03-18 10:22:55.302	2013-03-18 10:22:55.302	\N	\N
+125	2013-03-18 10:23:06.544	2013-03-18 10:23:06.544	\N	\N
+126	2013-03-18 14:29:08.204	2013-03-18 14:29:08.204	\N	\N
+127	2013-03-18 14:30:39.226	2013-03-18 14:30:39.226	\N	\N
+128	2013-03-18 14:46:32.182	2013-03-18 14:46:32.182	\N	\N
+129	2013-03-18 14:50:21.986	2013-03-18 14:50:21.986	\N	\N
+130	2013-03-18 14:51:44.857	2013-03-18 14:51:44.857	\N	\N
+131	2013-03-18 14:53:59.614	2013-03-18 14:53:59.614	\N	\N
+132	2013-03-18 14:59:25.482	2013-03-18 14:59:25.482	\N	\N
+133	2013-03-18 15:03:01.106	2013-03-18 15:03:01.106	\N	\N
+134	2013-03-18 15:06:01.826	2013-03-18 15:06:01.826	\N	\N
+135	2013-03-18 15:06:34.215	2013-03-18 15:06:34.215	\N	\N
+136	2013-03-18 15:07:55.129	2013-03-18 15:07:55.129	\N	\N
+137	2013-03-18 15:10:45.251	2013-03-18 15:10:45.251	\N	\N
+138	2013-03-18 15:13:20.331	2013-03-18 15:13:20.331	\N	\N
+139	2013-03-18 15:17:45.796	2013-03-18 15:17:45.796	\N	\N
+140	2013-03-18 15:19:36.556	2013-03-18 15:19:36.556	\N	\N
+141	2013-03-18 15:20:47.62	2013-03-18 15:20:47.62	\N	\N
+142	2013-03-18 15:23:02.599	2013-03-18 15:23:02.599	\N	\N
+143	2013-03-18 15:24:22.231	2013-03-18 15:24:22.231	\N	\N
+144	2013-03-18 15:26:30.269	2013-03-18 15:26:30.269	\N	\N
+145	2013-03-18 15:37:04.759	2013-03-18 15:37:04.759	\N	\N
+146	2013-03-18 15:38:43.244	2013-03-18 15:38:43.244	\N	\N
+147	2013-03-18 15:41:26.249	2013-03-18 15:41:26.249	\N	\N
+148	2013-03-18 15:43:38.061	2013-03-18 15:43:38.061	\N	\N
+149	2013-03-18 15:46:11.679	2013-03-18 15:46:11.679	\N	\N
+150	2013-03-18 15:47:46.858	2013-03-18 15:47:46.858	\N	\N
+151	2013-03-18 15:49:21.163	2013-03-18 15:49:21.163	\N	\N
+152	2013-03-18 15:52:35.683	2013-03-18 15:52:35.683	\N	\N
+153	2013-03-18 15:53:23.005	2013-03-18 15:53:23.005	\N	\N
+154	2013-03-18 15:56:52.455	2013-03-18 15:56:52.455	\N	\N
+155	2013-03-18 16:00:11.998	2013-03-18 16:00:11.998	\N	\N
+156	2013-03-18 16:01:39.597	2013-03-18 16:01:39.597	\N	\N
+157	2013-03-18 16:04:43.345	2013-03-18 16:04:43.345	\N	\N
+158	2013-03-18 16:05:30.423	2013-03-18 16:05:30.423	\N	\N
+159	2013-03-18 16:06:44.921	2013-03-18 16:06:44.921	\N	\N
+160	2013-03-18 16:13:53.76	2013-03-18 16:13:53.76	\N	\N
+161	2013-03-18 16:16:04.855	2013-03-18 16:16:04.855	\N	\N
+162	2013-03-18 16:17:28.558	2013-03-18 16:17:28.558	\N	\N
+163	2013-03-18 16:18:40.606	2013-03-18 16:18:40.606	\N	\N
+164	2013-03-18 16:21:23.611	2013-03-18 16:21:23.611	\N	\N
+165	2013-03-18 16:23:34.832	2013-03-18 16:23:34.832	\N	\N
+166	2013-03-18 16:33:49.474	2013-03-18 16:33:49.474	\N	\N
+167	2013-03-18 16:34:41.027	2013-03-18 16:34:41.027	\N	\N
+168	2013-03-18 16:56:52.792	2013-03-18 16:56:52.792	\N	\N
+169	2013-03-18 19:33:06.465	2013-03-18 19:33:06.465	\N	\N
+170	2013-03-18 19:35:24.645	2013-03-18 19:35:24.645	\N	\N
+171	2013-03-18 19:40:08.514	2013-03-18 19:40:08.514	\N	\N
+172	2013-03-18 19:51:46.172	2013-03-18 19:51:46.172	\N	\N
+173	2013-03-18 19:55:00.547	2013-03-18 19:55:00.547	\N	\N
+174	2013-03-18 19:59:30.12	2013-03-18 19:59:30.12	\N	\N
+175	2013-03-18 20:00:56.52	2013-03-18 20:00:56.52	\N	\N
+176	2013-03-18 20:02:34.451	2013-03-18 20:02:34.451	\N	\N
+177	2013-03-18 20:30:42.764	2013-03-18 20:30:42.764	\N	\N
+178	2013-03-18 20:35:09.166	2013-03-18 20:35:09.166	\N	\N
+179	2013-03-18 20:37:25.113	2013-03-18 20:37:25.113	\N	\N
+180	2013-03-18 20:44:38.059	2013-03-18 20:44:38.059	\N	\N
+181	2013-03-18 20:52:00.255	2013-03-18 20:52:00.255	\N	\N
+182	2013-03-18 20:59:27.684	2013-03-18 20:59:27.684	\N	\N
+183	2013-03-18 21:20:19.264	2013-03-18 21:20:19.264	\N	\N
+184	2013-03-18 21:28:05.061	2013-03-18 21:28:05.061	\N	\N
+185	2013-03-18 22:15:49.211	2013-03-18 22:15:49.211	\N	\N
+\.
+
+
+--
+-- TOC entry 2075 (class 0 OID 24622)
+-- Dependencies: 186
+-- Data for Name: points; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY points (id, created_at, modified_at, game_id, change) FROM stdin;
+\.
+
+
+--
+-- TOC entry 2077 (class 0 OID 24638)
+-- Dependencies: 188
+-- Data for Name: purchase_items; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY purchase_items (id, created_at, modified_at, purchase_id, point_cost_per_item, item_id, count) FROM stdin;
+\.
+
+
+--
+-- TOC entry 2076 (class 0 OID 24630)
+-- Dependencies: 187
+-- Data for Name: purchases; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY purchases (id, created_at, modified_at) FROM stdin;
+\.
+
+
+--
+-- TOC entry 2074 (class 0 OID 24614)
+-- Dependencies: 185
+-- Data for Name: set_cards; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY set_cards (id, created_at, modified_at, set_id, card_id, rarity) FROM stdin;
+\.
+
+
+--
+-- TOC entry 2073 (class 0 OID 24606)
+-- Dependencies: 184
+-- Data for Name: sets; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY sets (id, created_at, modified_at, is_available, price_modifier) FROM stdin;
+\.
+
+
+--
+-- TOC entry 2070 (class 0 OID 16394)
+-- Dependencies: 168
+-- Data for Name: users; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY users (id, created_at, modified_at, user_name, password, email, points, last_login, is_admin) FROM stdin;
+4	2012-10-21 10:30:13.158	2012-10-21 10:30:13.158	Starfye	58FiEIdOxEv2xgOt7rDHgFecmjXYhqsnkoWl4ZAD4hM=$fVzAA/OxtMhEukUQ1flC6MqykLMtWvV3Zqh2oFsqmP4=	amanda.friedichs.11@cnu.edu	0	\N	f
+6	2013-01-23 15:10:58.468	2013-01-23 15:10:58.468	HerdLiek	Bb1VavDC928dNaCgG8GLqFliCPV807Xk8Ss2DTes/lg=$Uz0vy+Voc1ZATu6v/hLqkBqhdktiJWYdMc1IJG38u9Y=	Jesse.Harrison.10@cnu.edu	0	\N	f
+8	2013-03-15 14:32:31.914	2013-03-18 16:56:03.672	UserZ	EUr3yKG/H0hNCd0PNqlpFdXIG7SFhe11lnGxDR9UH7U=$xahbl+omb4EwQjOqLu83S7y2K0+zWYzMH4X85+bY6Lc=	void@void.com	0	2013-03-18 16:56:03.672	f
+7	2013-03-12 00:11:27.205	2013-03-12 00:11:27.205	UserD	q7hcEb6Wu4WOcfdHg50IyEariu3Q07/mErXCxAk2jsc=$xpUdVPx5Y9QjwJZfrOpNOlwXAQ31epVe0nTuborkYbs=	void@void.com	0	\N	f
+5	2013-01-21 20:23:06.775	2013-03-18 22:15:44.602	TestUser	MaY4zyxFL8cfCjZeyLRhv/E9Cmk1EWIKqsGyJc5axTE=$SDrfWWW7YAzuqV0IfJUV9PJj6wxSm7TJ0J6mFJBzs5s=	nicholas@guichonchi.com	0	2013-03-18 22:15:44.602	f
+3	2012-10-11 19:59:06.515	2013-03-19 14:13:11.868	Grogian	XrUrOQkFUGLdrO44CfHn2aHfHLrVEtPpkAu+VJ5fKpU=$EhRUmmwTGYsrcEjfSvaPapQJ0XqYvlx2swjc67O3vJI=	nicholas.guichon.10@cnu.edu	0	2013-03-19 14:13:11.868	f
+\.
+
+
+--
+-- TOC entry 2089 (class 0 OID 0)
+-- Dependencies: 5
+-- Name: public; Type: ACL; Schema: -; Owner: postgres
+--
+
+REVOKE ALL ON SCHEMA public FROM PUBLIC;
+REVOKE ALL ON SCHEMA public FROM postgres;
+GRANT ALL ON SCHEMA public TO postgres;
+GRANT ALL ON SCHEMA public TO PUBLIC;
+
+
+-- Completed on 2013-03-19 15:39:52
+
+--
+-- PostgreSQL database dump complete
+--
+
