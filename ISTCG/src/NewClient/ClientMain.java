@@ -3,6 +3,8 @@ package NewClient;
 import java.io.IOException;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
@@ -20,6 +22,7 @@ import org.omg.PortableInterceptor.SYSTEM_EXCEPTION;
 
 import Client.CardTemplateManager;
 import Client.ImageManager;
+import Shared.ClientResponses;
 import Shared.ThreadedConnectionDevice;
 
 public class ClientMain {
@@ -44,6 +47,16 @@ public class ClientMain {
 		//Lobby = new Lobby(shell, SWT.NONE,this);
 		composite = Login;
 		composite.setBounds(shell.getClientArea());
+		
+		shell.addDisposeListener( new DisposeListener() {
+
+			@Override
+			public void widgetDisposed(DisposeEvent e) {
+				m_Server.sendData( ClientResponses.LOGOUT.name() );
+				System.exit( 0 );
+			}
+			
+		});
 		shell.addListener( SWT.Resize, new Listener() {
 
 			@Override
