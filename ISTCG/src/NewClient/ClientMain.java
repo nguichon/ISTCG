@@ -30,7 +30,7 @@ public class ClientMain {
 		ClientCardTemplateManager.get().Initialize();
 		shell = new Shell();
 		shell.setSize(450, 300);
-		shell.setText("SWT Application");
+		shell.setText("Unnamed TCG");
 		Login = new Login(shell, SWT.NONE,this );
 		//Lobby = new Lobby(shell, SWT.NONE,this);
 		composite = Login;
@@ -47,6 +47,12 @@ public class ClientMain {
 				display.sleep();
 			}
 		}
+		try {
+			m_Server.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		System.exit(0);
 	}
 	public Composite rShell(){
 		return shell;
