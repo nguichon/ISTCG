@@ -47,7 +47,6 @@ public class ServerCardInstance {
 	 * 		GamePlayer to send the information to.
 	 */
 	public void SendCardInformation( GamePlayer requester ) {
-		System.out.println("ejaklfjw");
 		if( requester == m_Controller || !m_Location.isHiddenZone() ) {
 			requester.getAccount().SendMessage( 
 					ClientMessages.CARD_INFO, 

@@ -117,7 +117,6 @@ public class GameInstance {
 					m_Players.get( origin ).LoadDeck( message[2] );
 					break;
 				case GETCARDINFO:
-					System.out.println( message[2] );
 					m_Directory.get( Integer.valueOf(message[2]) ).SendCardInformation( m_Players.get( origin ) );
 					break;
 				case PASS:

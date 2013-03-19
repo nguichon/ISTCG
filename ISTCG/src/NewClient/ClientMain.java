@@ -38,7 +38,7 @@ public class ClientMain {
 		display = Display.getDefault();
 		ImageManager.get().Initialize(display);
 		ClientCardTemplateManager.get().Initialize();
-		shell = new Shell( SWT.NO_REDRAW_RESIZE | SWT.NO_BACKGROUND | SWT.SHELL_TRIM );
+		shell = new Shell( SWT.NO_REDRAW_RESIZE | SWT.SHELL_TRIM );
 		shell.setSize(450, 300);
 		shell.setText("Unnamed TCG");
 		shell.setBackgroundImage( ImageManager.get().GetImage( "Client_BG.png" ) );
@@ -199,6 +199,7 @@ public class ClientMain {
 			break;
 		case LOGIN_SUCCESS:
 			this.ID=inputs[1];
+			shell.setVisible( false );
 			composite.dispose();
 			Rectangle shell_size = new Rectangle(50, 50, -100, -100);
 			Rectangle window_size = display.getPrimaryMonitor().getBounds();
@@ -209,6 +210,7 @@ public class ClientMain {
 			((Lobby)composite).addDeckEditor();
 			Rectangle r = shell.getBounds();
 			composite.setBounds(r);
+			shell.setVisible( true );
 			break;
 		case LOGIN_FAILED:
 			//ERROR
