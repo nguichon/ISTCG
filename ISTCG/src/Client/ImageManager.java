@@ -6,7 +6,9 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;
 
 public class ImageManager {
-	private static final String DEFAULT_PATH =  System.getProperty("user.dir") + "/data/images/";
+	private static String OS = System.getProperty("os.name").toLowerCase();
+	private static final String DEFAULT_PATH =  System.getProperty("user.dir") + (OS.indexOf("mac")>=0?"/ISTCG/data/images/":"/data/images/");
+	//System.getProperty("user.dir") + (OS.indexOf("mac")>=0?"/ISTCG/data/cards/":"/data/cards/");
 		
 	private HashMap< String, Image > m_LoadedImages = new HashMap< String, Image >();
 	private Display m_Display;
