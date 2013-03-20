@@ -72,9 +72,9 @@ public class ClientAccount extends Thread {
 
 	public void run() {
 		while (m_Connected) {
+			String line = m_Input.nextLine();
 			try {
-				String line = m_Input.nextLine();
-				if (line != null) {
+				if (line != null && !line.isEmpty()) {
 					String command[] = line.split(";");
 					switch (ClientResponses.valueOf(command[0].toUpperCase())) {
 					case LOGIN:
@@ -126,6 +126,7 @@ public class ClientAccount extends Thread {
 					}
 				}
 			} catch (Exception e) {
+				System.out.println( "MESSAGE WAS \"" + line + "\"");
 				e.printStackTrace();
 				DisconnectMe();
 			}

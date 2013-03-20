@@ -1,24 +1,37 @@
 package NewClient;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.PaintEvent;
+import org.eclipse.swt.events.PaintListener;
+import org.eclipse.swt.graphics.GC;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.List;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Spinner;
 import org.eclipse.swt.widgets.TabItem;
 
+import Client.CardTemplate;
+
 public class DeckEditor extends Composite {
-	Spinner spinner;
 
 	ClientMain main;
-	List list;
-	List list_1;
-	Button btnAddCard;
-	Label lblQuantity;
-	Label lblCtotal;
-	Button btnRemoveCard;
+	List m_MyCollectionList;
+	Spinner m_SpinnerToMove;
+	List m_MyDeckList;
+	Button m_AddCardButton;
+	Button m_RemoveCardButton;
+	Label m_LabelDeckCount;
+	Label m_LabelTotalCount;
+	Canvas m_CardPreview;
+	int m_CardPreviewType;
+	
 	TabItem tab;
+	Composite m_Parent;
 	String[][] cards;
 	/**
 	 * Create the composite.
@@ -28,32 +41,56 @@ public class DeckEditor extends Composite {
 	public DeckEditor(Composite parent, int style,final ClientMain main, TabItem t) {
 		super(parent, style);
 		tab = t;
+		m_Parent = parent;
+		
 		this.main=main;
-		list = new List(this, SWT.BORDER);
-		list.setBounds(10, 0, 365, 679);
+		m_MyCollectionList = new List(this, SWT.BORDER);
+		m_MyDeckList = new List(this, SWT.BORDER);
+		m_AddCardButton = new Button(this, SWT.NONE);
+			m_AddCardButton.setText("Add Card");
+		m_RemoveCardButton = new Button(this, SWT.NONE);
+			m_RemoveCardButton.setText("Remove Card");
+		m_LabelDeckCount = new Label(this, SWT.NONE);
+			m_LabelDeckCount.setText("Deck Count");
+		m_LabelTotalCount = new Label(this, SWT.NONE);
+			m_LabelTotalCount.setText("Total Count");
+		m_SpinnerToMove = new Spinner(this, SWT.BORDER);
+		m_CardPreview = new Canvas( this, SWT.BORDER );
+			m_CardPreviewType = 2;
+			m_CardPreview.addPaintListener( new PaintListener() {
+	
+				@Override
+				public void paintControl(PaintEvent e) {
+					if( m_CardPreviewType == -1 ) {
+						ClientCardTemplate.RenderBlack( e.gc, ClientCardTemplate.CardRenderSize.MEDIUM, null );
+					} else {
+						ClientCardTemplateManager.get().GetClientCardTemplate( m_CardPreviewType ).Render( e.gc, ClientCardTemplate.CardRenderSize.MEDIUM, null );
+					}
+				}
+			});
+			
 		
-		list_1 = new List(this, SWT.BORDER);
-		list_1.setBounds(381, 10, 529, 425);
 		
-		btnAddCard = new Button(this, SWT.NONE);
-		btnAddCard.setBounds(381, 445, 94, 28);
-		btnAddCard.setText("Add Card");
 		
-		spinner = new Spinner(this, SWT.BORDER);
-		spinner.setBounds(391, 479, 51, 22);
 		
-		lblQuantity = new Label(this, SWT.NONE);
-		lblQuantity.setAlignment(SWT.CENTER);
-		lblQuantity.setBounds(448, 479, 59, 22);
-		lblQuantity.setText("Quantity");
 		
-		lblCtotal = new Label(this, SWT.NONE);
-		lblCtotal.setBounds(606, 441, 59, 14);
-		lblCtotal.setText("CTOTAL");
-		
-		btnRemoveCard = new Button(this, SWT.NONE);
-		btnRemoveCard.setBounds(477, 445, 103, 28);
-		btnRemoveCard.setText("Remove Card");
+		this.addListener( SWT.Resize, new Listener() {
+
+			@Override
+			public void handleEvent(Event event) {
+				Rectangle new_size = m_Parent.getClientArea();
+				int width_1 = (int)((new_size.width - 5) * 0.5);
+				int width_2 = (int)((new_size.width - 5) * 0.5);
+				
+				m_MyCollectionList.setBounds( 0, 0, width_1, new_size.height );
+				m_MyDeckList.setBounds( new_size.width - width_2, 0, width_2, new_size.height-250 );
+				m_CardPreview.setBounds( new_size.width - 180, new_size.height-240,  180,  240 );
+				m_AddCardButton.setBounds( new_size.width - width_2, new_size.height-240, width_2-230, 22 );
+				m_RemoveCardButton.setBounds( new_size.width - width_2, new_size.height-213, width_2-190, 22 );
+				m_SpinnerToMove.setBounds( new_size.width - 230, new_size.height-240, 40, 22 );
+			}
+			
+		});
 
 	}
 
@@ -62,13 +99,13 @@ public class DeckEditor extends Composite {
 		// Disable the check that prevents subclassing of SWT components
 	}
 	public int getQuantity(){
-		return spinner.getSelection();
+		return m_SpinnerToMove.getSelection();
 	}
 	public String[] getCollectionSelection(){
-		return list.getSelection();
+		return m_MyCollectionList.getSelection();
 	}
 	public String[] getDeckSelection(){
-		return list_1.getSelection();
+		return m_MyDeckList.getSelection();
 	}
 	public void addCollection(String input){
 		String[] cg = input.split("|");
@@ -89,7 +126,7 @@ public class DeckEditor extends Composite {
 		if(!confirm)
 			return;
 		//add the card to list_1
-		list_1.add(s);
+		m_MyDeckList.add(s);
 	}
 	public void writeDeck(){
 		//Deck writer method

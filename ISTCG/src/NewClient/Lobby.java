@@ -18,9 +18,10 @@ import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.swt.widgets.Text;
 
 public class Lobby extends Composite {
-	private StyledText text;
-	private Text text_1;
-	private TabFolder tabFolder;
+	private StyledText m_ReceivedMessagesStyledText;
+	private Text m_SendChatText;
+	private TabFolder m_TabFolder;
+	private Button m_SendChatButton;
 
 	ArrayList<Game> games;
 	ClientMain main;
@@ -34,11 +35,10 @@ public class Lobby extends Composite {
 		super(parent, style);
 		this.main = main;
 		games = new ArrayList<Game>();
-		text = new StyledText(this, SWT.BORDER | SWT.READ_ONLY|SWT.WRAP|SWT.MULTI|SWT.V_SCROLL);
-		text.setBounds(main.getBounds().width-500,main.getBounds().height-800, 250, 700);
+		m_ReceivedMessagesStyledText = new StyledText(this, SWT.BORDER | SWT.READ_ONLY|SWT.WRAP|SWT.MULTI|SWT.V_SCROLL);
 		
-		final Button btnNewButton = new Button(this, SWT.NONE);
-		btnNewButton.addSelectionListener(new SelectionAdapter() {
+		m_SendChatButton = new Button(this, SWT.NONE);
+		m_SendChatButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
 				//onClick
@@ -46,34 +46,36 @@ public class Lobby extends Composite {
 				getPlayerMessage().setText("");
 			}
 		});
-		btnNewButton.setBounds(main.getBounds().width-500, main.getBounds().height-100, 235, 45);
-		btnNewButton.setText("Send");
+		m_SendChatButton.setText("Send");
 		
-		tabFolder = new TabFolder(this, SWT.NONE);
-		tabFolder.setBounds(10, 10, 916, 682);
+		m_TabFolder = new TabFolder(this, SWT.NONE );
 		
-		text_1 = new Text(this, SWT.BORDER);
-		text_1.addKeyListener( new KeyListener() {
+		m_SendChatText = new Text(this, SWT.BORDER | SWT.WRAP );
+		m_SendChatText.addKeyListener( new KeyListener() {
 			@Override
 			public void keyPressed(KeyEvent arg0) { /*DO NOTHING*/ }
 			@Override
 			public void keyReleased(KeyEvent arg0) {
 				if( arg0.character == SWT.CR ) {
 					Event e = new Event();
-					btnNewButton.notifyListeners( SWT.Selection, e );
+					m_SendChatButton.notifyListeners( SWT.Selection, e );
 				}
 			}
 		});
-		text_1.setBounds(btnNewButton.getBounds().x-200, btnNewButton.getBounds().y, 200, 45);
 
 		
-		this.addListener( SWT.RESIZE, new Listener() {
+		this.addListener( SWT.Resize, new Listener() {
 
 			@Override
 			public void handleEvent(Event event) {
-				System.out.println("RESIZE");
-				Rectangle new_size = event.getBounds();
-				text_1.setBounds( new_size.x - 100, text_1.getBounds().y, text_1.getBounds().width, text_1.getBounds().height );
+				Rectangle new_size = main.rShell().getClientArea();
+				int width_1 = (int)((new_size.width - 30) * 0.6);
+				int width_2 = (int)((new_size.width - 30) * 0.4);
+				
+				m_TabFolder.setBounds( 10, 10, width_1, new_size.height - 20);
+				m_ReceivedMessagesStyledText.setBounds( new_size.width - width_2, 10, width_2 - 20, new_size.height - 74);
+				m_SendChatText.setBounds( new_size.width - width_2, new_size.height - 54, width_2 - 105, 44);
+				m_SendChatButton.setBounds( new_size.width - width_2 + (width_2 - 100), new_size.height - 54, 80, 44);
 			}
 			
 		});
@@ -84,24 +86,24 @@ public class Lobby extends Composite {
 		// Disable the check that prevents subclassing of SWT components
 	}
 	public Text getPlayerMessage() {
-		return text_1;
+		return m_SendChatText;
 	}
 	public StyledText getMessageBox() {
-		return text;
+		return m_ReceivedMessagesStyledText;
 	}
 	public void addMessageBox(String s){
-		text.setText(getMessageBox().getText()+"\n"+s);
+		m_ReceivedMessagesStyledText.setText(getMessageBox().getText()+"\n"+s);
 	}
 	//add deck editor
 	public void addDeckEditor(){
-		TabItem t = new TabItem(tabFolder, SWT.NULL);
+		TabItem t = new TabItem(m_TabFolder, SWT.NULL);
 		t.setText("Deck Editor");
 		DeckEditor d = new DeckEditor(t.getParent(),SWT.None,main,t);
 		t.setControl(d);
 	}
 	public void addGame(String gID){
 		//Make a game
-		TabItem t = new TabItem(tabFolder,SWT.NULL);
+		TabItem t = new TabItem(m_TabFolder,SWT.NULL);
 		t.setText("Game "+gID);
 		Game g = new Game(t.getParent(), SWT.None,main,t);
 		g.setID(gID);
