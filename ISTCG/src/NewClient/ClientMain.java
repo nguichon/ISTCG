@@ -208,7 +208,7 @@ public class ClientMain {
 			shell_size.height += window_size.height;
 			shell.setBounds( shell_size );
 			composite = new Lobby(shell, SWT.NONE,this);
-			shell.setBackgroundImage( null );
+			//shell.setBackgroundImage( null );
 			((Lobby)composite).addDeckEditor();
 			Rectangle r = shell.getClientArea();
 			composite.setBounds(r);

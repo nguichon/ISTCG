@@ -14,6 +14,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 
+import Client.CardTemplateManager;
 import NewClient.ClientCardTemplate.CardRenderSize;
 import Shared.StatBlock;
 
@@ -27,11 +28,23 @@ public class ClientCardInstance extends Canvas {
 	ClientCardTemplate template;
 	String id;
 	PaintListener pl;
-	public ClientCardInstance(Composite parent, int style, ClientMain main, String ID) {
+	Rectangle lastBounds;
+	Composite lastParent;
+	Game game;
+	public enum GameZone {
+		HAND,FIELD,STACK,GRAVEYARD,VIEWER,UNKNOWN;
+		
+	}
+	GameZone zone;
+	public ClientCardInstance(Composite parent, int style, ClientMain main, String ID, Game game) {
 		super(parent, style);
 		this.main=main;
 		this.id=ID;
+		this.game=game;
+		this.lastParent=parent;
 		size = CardRenderSize.SMALL;
+		zone = GameZone.UNKNOWN;
+		lastBounds = this.getBounds();
 		pl = new PaintListener(){
 			@Override
 			public void paintControl(PaintEvent e) {
@@ -61,6 +74,17 @@ public class ClientCardInstance extends Canvas {
 		});
 	}
 	
+	public void setZone(String zone){
+		this.zone = GameZone.valueOf(zone);
+	}
+	public void setZone(GameZone zone){
+		this.zone=zone;
+	}
+	
+	public void setLastParent(Composite parent){
+		lastParent=parent;
+	}
+	
 	public void cardDClicked(){
 		switch(size){
 		case SMALL:
@@ -69,10 +93,12 @@ public class ClientCardInstance extends Canvas {
 		case MEDIUM:
 			break;
 		case LARGE:
-			Rectangle curBounds = getBounds();
-			setBounds(curBounds.x,curBounds.y+64,CardRenderSize.SMALL.getWidth(),CardRenderSize.SMALL.getHeight());
-			size = CardRenderSize.SMALL;
-			redraw();
+//			if(zone==GameZone.VIEWER){
+//				setBounds(lastBounds);
+//				size = CardRenderSize.SMALL;
+//				setParent(this.lastParent);
+//				redraw();
+//			}
 			break;
 		default: redraw(); break;
 		}
@@ -83,10 +109,15 @@ public class ClientCardInstance extends Canvas {
 		switch(size){
 		case SMALL:
 			//Enlarge the card
-			Rectangle curBounds = getBounds();
-			setBounds(curBounds.x,curBounds.y-64,CardRenderSize.LARGE.getWidth(),CardRenderSize.LARGE.getHeight());
-			size = CardRenderSize.LARGE;
-			redraw();
+			lastBounds = getBounds();
+			//Rectangle curBounds = getBounds();
+			//setBounds(curBounds.x,curBounds.y-64,CardRenderSize.LARGE.getWidth(),CardRenderSize.LARGE.getHeight());
+//			size = CardRenderSize.LARGE;
+//			setParent(game.group);
+//			game.group.layout();
+//			redraw();
+//			game.group.layout();
+			game.setViewer(this.getID());
 			break;
 			
 		case MEDIUM:

@@ -3,20 +3,24 @@ package NewClient;
 import java.util.ArrayList;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.PaintEvent;
-import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.layout.FillLayout;
+import org.eclipse.swt.layout.FormAttachment;
+import org.eclipse.swt.layout.FormData;
+import org.eclipse.swt.layout.FormLayout;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.TabItem;
 
-import Client.CardInstance;
-import Client.CardTemplate.CardRenderSize;
+import NewClient.ClientCardInstance.GameZone;
+import NewClient.ClientCardTemplate.CardRenderSize;
 import Shared.GameResources;
 import Shared.GameZones;
 
@@ -28,7 +32,6 @@ public class Game extends Composite {
 	TabItem tab;
 	Label lblUsername;
 	Label lblEnemy;
-	Label lblHand;
 	Label lblEhandsize;
 	Button btnPass;
 	Button btnEnd;
@@ -52,7 +55,11 @@ public class Game extends Composite {
 	ArrayList<String> hand;
 	ArrayList<String> field;
 	ArrayList<String> stack;
-	Label lblStack;
+	Group grpStack;
+	Group grpHand;
+	Group group;
+	Canvas viewcanvas;
+	GC vcgc;
 	/**
 	 * Create the composite.
 	 * @param parent
@@ -66,23 +73,36 @@ public class Game extends Composite {
 		fieldPos = new Point(100, 365);
 		stackPos = new Point(10,33);
 		viewPos= new Point(630,200);
+		setLayout(new FormLayout());
 		lblUsername = new Label(this, SWT.NONE);
-		lblUsername.setBounds(10, 451, 59, 14);
+		FormData fd_lblUsername = new FormData();
+		fd_lblUsername.right = new FormAttachment(0, 69);
+		fd_lblUsername.left = new FormAttachment(0, 10);
+		lblUsername.setLayoutData(fd_lblUsername);
 		lblUsername.setText("USERNAME");
 		
 		lblEnemy = new Label(this, SWT.NONE);
-		lblEnemy.setBounds(675, 43, 59, 14);
+		FormData fd_lblEnemy = new FormData();
+		fd_lblEnemy.left = new FormAttachment(0, 675);
+		fd_lblEnemy.right = new FormAttachment(0, 734);
+		fd_lblEnemy.top = new FormAttachment(0, 43);
+		lblEnemy.setLayoutData(fd_lblEnemy);
 		lblEnemy.setText("ENEMY");
 		
-		lblHand = new Label(this, SWT.NONE);
-		lblHand.setBounds(333, 451, 59, 14);
-		lblHand.setText("HAND");
-		
 		lblEhandsize = new Label(this, SWT.NONE);
-		lblEhandsize.setBounds(675, 74, 59, 14);
+		FormData fd_lblEhandsize = new FormData();
+		fd_lblEhandsize.left = new FormAttachment(0, 675);
+		fd_lblEhandsize.right = new FormAttachment(0, 734);
+		fd_lblEhandsize.top = new FormAttachment(0, 74);
+		lblEhandsize.setLayoutData(fd_lblEhandsize);
 		lblEhandsize.setText("EHANDSIZE");
 		
 		btnPass = new Button(this, SWT.NONE);
+		FormData fd_btnPass = new FormData();
+		fd_btnPass.right = new FormAttachment(0, 104);
+		fd_btnPass.top = new FormAttachment(0, 10);
+		fd_btnPass.left = new FormAttachment(0, 10);
+		btnPass.setLayoutData(fd_btnPass);
 		btnPass.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
@@ -90,66 +110,144 @@ public class Game extends Composite {
 				disablePass();
 			}
 		});
-		btnPass.setBounds(10, 10, 94, 28);
 		btnPass.setText("PASS");
 		
 		btnEnd = new Button(this, SWT.NONE);
+		FormData fd_btnEnd = new FormData();
+		fd_btnEnd.right = new FormAttachment(0, 104);
+		fd_btnEnd.top = new FormAttachment(0, 43);
+		fd_btnEnd.left = new FormAttachment(0, 10);
+		btnEnd.setLayoutData(fd_btnEnd);
 		btnEnd.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
 				main.sendData("END;"+getID());
 			}
 		});
-		btnEnd.setBounds(10, 43, 94, 28);
 		btnEnd.setText("END");
 		
 		lblHandsize = new Label(this, SWT.NONE);
-		lblHandsize.setBounds(10, 465, 59, 14);
+		fd_lblUsername.bottom = new FormAttachment(lblHandsize);
+		FormData fd_lblHandsize = new FormData();
+		fd_lblHandsize.top = new FormAttachment(0, 465);
+		fd_lblHandsize.right = new FormAttachment(0, 69);
+		fd_lblHandsize.left = new FormAttachment(0, 10);
+		lblHandsize.setLayoutData(fd_lblHandsize);
 		lblHandsize.setText("HANDSIZE");
 		
 		lblDecksize = new Label(this, SWT.NONE);
-		lblDecksize.setBounds(10, 486, 59, 14);
+		fd_lblHandsize.bottom = new FormAttachment(lblDecksize, -7);
+		FormData fd_lblDecksize = new FormData();
+		fd_lblDecksize.top = new FormAttachment(0, 486);
+		fd_lblDecksize.right = new FormAttachment(0, 69);
+		fd_lblDecksize.left = new FormAttachment(0, 10);
+		lblDecksize.setLayoutData(fd_lblDecksize);
 		lblDecksize.setText("DECKSIZE");
 		
 		lblGravesize = new Label(this, SWT.NONE);
-		lblGravesize.setBounds(10, 510, 59, 14);
+		fd_lblDecksize.bottom = new FormAttachment(lblGravesize, -10);
+		FormData fd_lblGravesize = new FormData();
+		fd_lblGravesize.top = new FormAttachment(100, -24);
+		fd_lblGravesize.bottom = new FormAttachment(100, -10);
+		fd_lblGravesize.right = new FormAttachment(0, 69);
+		fd_lblGravesize.left = new FormAttachment(0, 10);
+		lblGravesize.setLayoutData(fd_lblGravesize);
 		lblGravesize.setText("GRAVESIZE");
 		
 		lblEdecksize = new Label(this, SWT.NONE);
-		lblEdecksize.setBounds(675, 95, 59, 14);
+		FormData fd_lblEdecksize = new FormData();
+		fd_lblEdecksize.left = new FormAttachment(0, 675);
+		fd_lblEdecksize.right = new FormAttachment(0, 734);
+		fd_lblEdecksize.top = new FormAttachment(0, 95);
+		lblEdecksize.setLayoutData(fd_lblEdecksize);
 		lblEdecksize.setText("EDECKSIZE");
 		
 		lblEgravesize = new Label(this, SWT.NONE);
-		lblEgravesize.setBounds(675, 115, 59, 14);
+		FormData fd_lblEgravesize = new FormData();
+		fd_lblEgravesize.left = new FormAttachment(0, 675);
+		fd_lblEgravesize.right = new FormAttachment(0, 734);
+		fd_lblEgravesize.top = new FormAttachment(0, 115);
+		lblEgravesize.setLayoutData(fd_lblEgravesize);
 		lblEgravesize.setText("EGRAVESIZE");
 		
 		lblEmetal = new Label(this, SWT.NONE);
-		lblEmetal.setBounds(675, 137, 59, 14);
+		FormData fd_lblEmetal = new FormData();
+		fd_lblEmetal.left = new FormAttachment(0, 675);
+		fd_lblEmetal.right = new FormAttachment(0, 734);
+		fd_lblEmetal.top = new FormAttachment(0, 137);
+		lblEmetal.setLayoutData(fd_lblEmetal);
 		lblEmetal.setText("EMETAL");
 		
 		lblEenergy = new Label(this, SWT.NONE);
-		lblEenergy.setBounds(675, 157, 59, 14);
+		FormData fd_lblEenergy = new FormData();
+		fd_lblEenergy.left = new FormAttachment(0, 675);
+		fd_lblEenergy.right = new FormAttachment(0, 734);
+		fd_lblEenergy.top = new FormAttachment(0, 157);
+		lblEenergy.setLayoutData(fd_lblEenergy);
 		lblEenergy.setText("EENERGY");
 		
 		lblEtech = new Label(this, SWT.NONE);
-		lblEtech.setBounds(675, 180, 59, 14);
+		FormData fd_lblEtech = new FormData();
+		fd_lblEtech.left = new FormAttachment(0, 675);
+		fd_lblEtech.right = new FormAttachment(0, 734);
+		fd_lblEtech.top = new FormAttachment(0, 180);
+		lblEtech.setLayoutData(fd_lblEtech);
 		lblEtech.setText("ETECH");
 		
 		lblMetal = new Label(this, SWT.NONE);
-		lblMetal.setBounds(675, 439, 59, 14);
+		FormData fd_lblMetal = new FormData();
+		fd_lblMetal.left = new FormAttachment(0, 675);
+		fd_lblMetal.right = new FormAttachment(0, 734);
+		fd_lblMetal.top = new FormAttachment(0, 439);
+		lblMetal.setLayoutData(fd_lblMetal);
 		lblMetal.setText("METAL");
 		
 		lblEnergy = new Label(this, SWT.NONE);
-		lblEnergy.setBounds(675, 465, 59, 14);
+		FormData fd_lblEnergy = new FormData();
+		fd_lblEnergy.left = new FormAttachment(0, 675);
+		fd_lblEnergy.right = new FormAttachment(0, 734);
+		fd_lblEnergy.top = new FormAttachment(0, 465);
+		lblEnergy.setLayoutData(fd_lblEnergy);
 		lblEnergy.setText("ENERGY");
 		
 		lblTech = new Label(this, SWT.NONE);
-		lblTech.setBounds(675, 486, 59, 14);
+		FormData fd_lblTech = new FormData();
+		fd_lblTech.left = new FormAttachment(0, 675);
+		fd_lblTech.right = new FormAttachment(0, 734);
+		fd_lblTech.top = new FormAttachment(0, 486);
+		lblTech.setLayoutData(fd_lblTech);
 		lblTech.setText("TECH");
 		
-		lblStack = new Label(this, SWT.NONE);
-		lblStack.setBounds(10, 77, 59, 14);
-		lblStack.setText("STACK");
+		grpStack = new Group(this, SWT.NONE);
+		fd_lblUsername.top = new FormAttachment(grpStack, 6);
+		FormData fd_grpStack = new FormData();
+		fd_grpStack.bottom = new FormAttachment(0, 445);
+		fd_grpStack.top = new FormAttachment(0, 74);
+		fd_grpStack.left = new FormAttachment(0, 10);
+		grpStack.setLayoutData(fd_grpStack);
+		grpStack.setText("STACK");
+		
+		grpHand = new Group(this, SWT.NONE);
+		grpHand.setText("HAND");
+		grpHand.setLayout(new GridLayout(7, false));
+		FormData fd_grpHand = new FormData();
+		fd_grpHand.bottom = new FormAttachment(lblGravesize, 0, SWT.BOTTOM);
+		fd_grpHand.top = new FormAttachment(lblMetal, 0, SWT.TOP);
+		fd_grpHand.right = new FormAttachment(lblEnergy, -7);
+		fd_grpHand.left = new FormAttachment(grpStack, 6);
+		grpHand.setLayoutData(fd_grpHand);
+		
+		group = new Group(this, SWT.NONE);
+		group.setLayout(new FillLayout(SWT.HORIZONTAL));
+		FormData fd_group = new FormData();
+		fd_group.left = new FormAttachment(lblEnemy, -148, SWT.LEFT);
+		fd_group.bottom = new FormAttachment(lblMetal, -6);
+		fd_group.top = new FormAttachment(lblEtech, 6);
+		fd_group.right = new FormAttachment(100, -10);
+		group.setLayoutData(fd_group);
+		
+		viewcanvas = new Canvas(group, SWT.NONE);
+		vcgc = new GC(viewcanvas);
 
 		/*
 		 * Finally start game stuff
@@ -247,12 +345,13 @@ public class Game extends Composite {
 		if(!hasCardLoaded(cardID))
 			createCard(cardID);
 		findCardById(cardID).setBounds(stackPos.x, stackPos.y, ClientCardTemplate.CardRenderSize.SMALL.getWidth(), ClientCardTemplate.CardRenderSize.SMALL.getHeight());
+		findCardById(cardID).setZone(GameZone.STACK);
 		stack.add(cardID);
 		manageStack();
 		//handPos.x+=64;
 	}
 	
-	public void Stack(String cardID){
+	public void removeFromStack(String cardID){
 		if(hasCardLoaded(cardID)){
 			stack.remove(cardID);
 		}
@@ -260,11 +359,21 @@ public class Game extends Composite {
 	
 	public void addToHand(String cardID){
 		if(!hasCardLoaded(cardID))
-			createCard(cardID);
-		findCardById(cardID).setBounds(handPos.x, handPos.y, ClientCardTemplate.CardRenderSize.SMALL.getWidth(), ClientCardTemplate.CardRenderSize.SMALL.getHeight());
-		hand.add(cardID);
-		manageHand();
-		//handPos.x+=64;
+			createCard(cardID,GameZone.HAND);
+//		findCardById(cardID).setBounds(handPos.x, handPos.y, ClientCardTemplate.CardRenderSize.SMALL.getWidth(), ClientCardTemplate.CardRenderSize.SMALL.getHeight());
+//		findCardById(cardID).setZone(GameZone.HAND);
+//		hand.add(cardID);
+//		manageHand();
+//		//handPos.x+=64;
+		
+		ClientCardInstance card = findCardById(cardID);
+		card.setZone(GameZone.HAND);
+		card.setParent(grpHand);
+		card.setBounds(grpHand.getBounds().x,grpHand.getBounds().y,card.size.getWidth(),card.size.getWidth());
+		card.redraw();
+		grpHand.layout();
+		card.redraw();
+		
 	}
 	public void removeFromHand(String cardID){
 		if(hasCardLoaded(cardID)){
@@ -276,6 +385,7 @@ public class Game extends Composite {
 		if(!hasCardLoaded(cardID))
 			createCard(cardID);
 		findCardById(cardID).setBounds(fieldPos.x,fieldPos.y,ClientCardTemplate.CardRenderSize.SMALL.getWidth(),ClientCardTemplate.CardRenderSize.SMALL.getHeight());
+		findCardById(cardID).setZone(GameZone.FIELD);
 		field.add(cardID);
 		manageField();
 	}
@@ -297,10 +407,7 @@ public class Game extends Composite {
 	}
 	public void manageHand(){
 		//Try to beautify the shit out of dis hand
-		for(int i=0;i<hand.size();i++){
-			ClientCardInstance card1 = findCardById(hand.get(i));
-			card1.setBounds( handPos.x + i*90, handPos.y, 90,120);
-		}
+		
 		
 	}
 	public void manageStack(){
@@ -355,8 +462,34 @@ public class Game extends Composite {
 	public void createCard(String cardID){
 		System.out.println("ke");
 		//CardTemplate template = CardTemplateManager.get().GetCardTemplate(Integer.valueOf(templateID));
-		ClientCardInstance card = new ClientCardInstance(this, Integer.valueOf(cardID), main, cardID);
+		ClientCardInstance card = new ClientCardInstance(this, Integer.valueOf(cardID), main, cardID,this);
 		//card.SetTemplate(Integer.valueOf(templateID));
+		cards.add(card);
+	}
+	public void createCard(String cardID, String zone){
+		ClientCardInstance card=null;
+		switch(GameZone.valueOf(zone)){
+		case HAND:
+			card = new ClientCardInstance(grpHand, Integer.valueOf(cardID), main, cardID,this);
+			card.setBounds(grpHand.getBounds().x,grpHand.getBounds().y,card.size.getWidth(),card.size.getWidth());
+			handPos.x+=50;
+			redraw();
+			break;
+		case FIELD:
+			break;
+		case STACK:
+			card = new ClientCardInstance(grpStack, Integer.valueOf(cardID), main, cardID,this);
+			break;
+		
+		default:break;
+		}
+		card.setZone(GameZone.valueOf(zone));
+		cards.add(card);
+		
+	}
+	public void createCard(String cardID, GameZone zone){
+		ClientCardInstance card = new ClientCardInstance(this, Integer.valueOf(cardID), main, cardID,this);
+		card.setZone(zone);
 		cards.add(card);
 	}
 	public void setCard(String templateID, String cardID){
@@ -397,5 +530,11 @@ public class Game extends Composite {
 			}
 		}
 		
+	}
+	
+	public void setViewer(String cardID){
+		if(hasCardLoaded(cardID)){
+			findCardById(cardID).template.Render(vcgc, CardRenderSize.LARGE, findCardById(cardID).getStatBlock());
+		}
 	}
 }
