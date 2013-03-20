@@ -24,7 +24,7 @@ public class ClientCardInstance extends Canvas {
 		super(parent, style);
 		this.main=main;
 		this.id=ID;
-		size = CardRenderSize.MEDIUM;
+		size = CardRenderSize.SMALL;
 		this.addPaintListener(new PaintListener(){
 
 			@Override

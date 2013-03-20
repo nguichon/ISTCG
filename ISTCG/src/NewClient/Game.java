@@ -273,7 +273,7 @@ public class Game extends Composite {
 	public void addToField(String cardID){
 		if(!hasCardLoaded(cardID))
 			createCard(cardID);
-		findCardById(cardID).setBounds(fieldPos.x,fieldPos.y,ClientCardTemplate.CardRenderSize.MEDIUM.getWidth(),ClientCardTemplate.CardRenderSize.MEDIUM.getHeight());
+		findCardById(cardID).setBounds(fieldPos.x,fieldPos.y,ClientCardTemplate.CardRenderSize.SMALL.getWidth(),ClientCardTemplate.CardRenderSize.SMALL.getHeight());
 		field.add(cardID);
 		manageField();
 	}
@@ -295,14 +295,9 @@ public class Game extends Composite {
 	}
 	public void manageHand(){
 		//Try to beautify the shit out of dis hand
-		if(!(hand.size()>1))
-			return;
-		for(int i=0;i<hand.size()-1;i++){
+		for(int i=0;i<hand.size();i++){
 			ClientCardInstance card1 = findCardById(hand.get(i));
-			ClientCardInstance card2 = findCardById(hand.get(i+1));
-			while(card1.getBounds().intersects(card2.getBounds())){
-				card2.getBounds().x+=5;
-			}
+			card1.setBounds( handPos.x + i*90, handPos.y, 90,120);
 		}
 		
 	}

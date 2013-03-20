@@ -40,6 +40,7 @@ public class ClientMain {
 		ClientCardTemplateManager.get().Initialize();
 		shell = new Shell( SWT.NO_REDRAW_RESIZE | SWT.SHELL_TRIM );
 		shell.setSize(450, 300);
+		shell.setMinimumSize( 450, 300 );
 		shell.setText("Unnamed TCG");
 		shell.setBackgroundImage( ImageManager.get().GetImage( "Client_BG.png" ) );
 		shell.setBackgroundMode( SWT.INHERIT_DEFAULT );
@@ -61,43 +62,43 @@ public class ClientMain {
 
 			@Override
 			public void handleEvent(Event event) {
-				Image toDraw = ImageManager.get().GetImage( "Client_BG.png" );
-				Image new_bg = new Image(display, shell.getClientArea().width,  shell.getClientArea().height);
-				GC gc = new GC(new_bg);
-				
-				int sh = new_bg.getBounds().height;
-				int sw = new_bg.getBounds().width;
-				int dh = toDraw.getBounds().height;
-				int dw = toDraw.getBounds().width;
-				
-				int source_x = 0;
-				int source_y = 0;
-				int source_width = sw;
-				int source_height = sh;
-				
-				double aspect_w = (double) dw / sw;
-				double aspect_h = (double) dh / sh;
-
-				double selected_aspect = Math.min( aspect_w, aspect_h );
-				source_x = (int) ((dw - (dw / selected_aspect)) / 2);
-				source_y = (int) ((dh - (dh / selected_aspect)) / 2);
-				
-				
-				gc.drawImage( toDraw,
-								0 + (int)((dw - (source_width * selected_aspect)) / 2),
-								0 + (int)((dh - (source_height * selected_aspect)) / 2),
-								(int)(source_width * selected_aspect),
-								(int)(source_height * selected_aspect),
-								0,
-								0,
-								sw,
-								sh);
-				
-				shell.setBackgroundImage( new_bg );
+					Image toDraw = ImageManager.get().GetImage( "Client_BG.png" );
+					Image new_bg = new Image(display, shell.getClientArea().width,  shell.getClientArea().height);
+					GC gc = new GC(new_bg);
+					
+					int sh = new_bg.getBounds().height;
+					int sw = new_bg.getBounds().width;
+					int dh = toDraw.getBounds().height;
+					int dw = toDraw.getBounds().width;
+					
+					int source_x = 0;
+					int source_y = 0;
+					int source_width = sw;
+					int source_height = sh;
+					
+					double aspect_w = (double) dw / sw;
+					double aspect_h = (double) dh / sh;
+	
+					double selected_aspect = Math.min( aspect_w, aspect_h );
+					source_x = (int) ((dw - (dw / selected_aspect)) / 2);
+					source_y = (int) ((dh - (dh / selected_aspect)) / 2);
+					
+					
+					gc.drawImage( toDraw,
+									0 + (int)((dw - (source_width * selected_aspect)) / 2),
+									0 + (int)((dh - (source_height * selected_aspect)) / 2),
+									(int)(source_width * selected_aspect),
+									(int)(source_height * selected_aspect),
+									0,
+									0,
+									sw,
+									sh);
+					
+					shell.setBackgroundImage( new_bg );
+					gc.dispose();
 				if( !composite.isDisposed() ) {
 					composite.setBounds(shell.getClientArea());
 				}
-				gc.dispose();
 			}
 			
 		});
@@ -199,7 +200,6 @@ public class ClientMain {
 			break;
 		case LOGIN_SUCCESS:
 			this.ID=inputs[1];
-			shell.setVisible( false );
 			composite.dispose();
 			Rectangle shell_size = new Rectangle(50, 50, -100, -100);
 			Rectangle window_size = display.getPrimaryMonitor().getBounds();
@@ -207,10 +207,10 @@ public class ClientMain {
 			shell_size.height += window_size.height;
 			shell.setBounds( shell_size );
 			composite = new Lobby(shell, SWT.NONE,this);
+			shell.setBackgroundImage( null );
 			((Lobby)composite).addDeckEditor();
-			Rectangle r = shell.getBounds();
+			Rectangle r = shell.getClientArea();
 			composite.setBounds(r);
-			shell.setVisible( true );
 			break;
 		case LOGIN_FAILED:
 			//ERROR
