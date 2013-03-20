@@ -5,6 +5,7 @@ import java.util.HashMap;
 
 import server.games.GameInstance;
 import server.games.GamePlayer;
+import server.games.events.GameEvent;
 
 
 import Shared.ClientMessages;
@@ -12,6 +13,8 @@ import Shared.GameZones;
 import Shared.StatBlock;
 
 public class ServerCardInstance {
+	private static final int CARD_TEMPLATE_INVISIBLE = -1;
+	
 	//Instance information
 	private ServerCardTemplate m_Template;
 	private int m_UID;
@@ -35,9 +38,7 @@ public class ServerCardInstance {
 	}
 	
 	public void SetLocation( GameZones location ) { m_Location = location; }
-	public void Reset() { 
-		m_Controller = m_Owner;
-	}
+	public void Reset() { m_Controller = m_Owner; }
 	
 	/**
 	 * Sends the id of this CardInstance's CardTemplate.
@@ -48,21 +49,24 @@ public class ServerCardInstance {
 	 */
 	public void SendCardInformation( GamePlayer requester ) {
 		if( requester == m_Controller || !m_Location.isHiddenZone() ) {
-			requester.getAccount().SendMessage( 
+			requester.SendMessageFromGame( 
 					ClientMessages.CARD_INFO, 
-					m_Host.GetGameID() + "", 
-					m_UID + "", 
-					m_Template.getCardTemplateID() + "" );
+					String.valueOf( m_UID ), 
+					String.valueOf( m_Template.getCardTemplateID()) );
 		} else {
-			requester.getAccount().SendMessage( 
+			requester.SendMessageFromGame( 
 					ClientMessages.CARD_INFO, 
-					m_Host.GetGameID() + "", 
-					m_UID + "", 
-					"-1" );
+					String.valueOf( m_UID ), 
+					String.valueOf( CARD_TEMPLATE_INVISIBLE ) );
 		}
 	}
 	
 	public int GetCardUID() { return m_UID; }
 	public ServerCardTemplate GetCardTemplate() { return m_Template; }
 
+	public void resolve(GameEvent e) {
+		e.m_SourcePlayer = m_Controller;
+		e.m_SourceCard = this;
+		m_Template.onPlay( e );
+	}
 }

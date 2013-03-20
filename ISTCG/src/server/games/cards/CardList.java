@@ -5,7 +5,6 @@ import java.util.Collections;
 import java.util.Random;
 
 import server.games.GamePlayer;
-
 import Shared.GameZones;
 
 /**
@@ -45,9 +44,17 @@ public class CardList {
 	 *            The cardBase to add, there can be multiple of the same
 	 *            cardBase in a deck. e.g. multiple copies of the same card
 	 */
-	public void AddCard(ServerCardInstance toAdd) {
+	public void Add(ServerCardInstance toAdd) {
 		toAdd.SetLocation( m_ListLocation );
 		m_CardsInList.add(toAdd);
+	}
+	
+	public ServerCardInstance GetTopCard() {
+		if( !m_CardsInList.isEmpty() ) {
+			return m_CardsInList.remove( 0 );
+		}
+		
+		return null;
 	}
 
 	/**
@@ -83,7 +90,7 @@ public class CardList {
 	 * 
 	 * @return Number of cards in the deck.
 	 */
-	public int DeckCount() {
+	public int Count() {
 		return m_CardsInList.size();
 	}
 
@@ -102,5 +109,14 @@ public class CardList {
 		if( m_CardsInList.size() < 60 ) { return false; }
 		
 		return true;
+	}
+
+	public void Remove(ServerCardInstance card) {
+		card.SetLocation( GameZones.UNKNOWN );
+		m_CardsInList.remove( card );
+	}
+
+	public boolean Contains(ServerCardInstance card) {
+		return m_CardsInList.contains( card );
 	}
 }

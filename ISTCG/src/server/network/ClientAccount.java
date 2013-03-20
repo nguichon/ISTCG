@@ -116,10 +116,10 @@ public class ClientAccount extends Thread {
 						// Drop through
 					case GETCARDINFO:
 						// Drop through
+					case CANCEL:
+						// Drop through
 					case END:
-						GameManager.get().SendMessageToGame(
-								Integer.valueOf(command[1]), this.m_UserID,
-								command);
+						GameManager.get().SendMessageToGame( Integer.valueOf(command[1]), this, command );
 						break;
 					default:
 						break;
