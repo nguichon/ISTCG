@@ -15,7 +15,8 @@ public class ServerCardTemplateManager {
 	//=========
 	//CONSTANTS
 	//=========
-	private static String DEFAULT_CARD_PATH = System.getProperty("user.dir") + "/data/cards/";
+	private static String OS = System.getProperty("os.name").toLowerCase();
+	private static String DEFAULT_CARD_PATH = System.getProperty("user.dir") + (OS.indexOf("mac")>=0?"/ISTCG/data/cards/":"/data/cards/");
 	
 	//CardTemplate collection variables
 	private HashMap<Integer, ServerCardTemplate> m_LoadedCards;
@@ -60,6 +61,7 @@ public class ServerCardTemplateManager {
 			URL uri = null;
 			try {
 				uri = new URL(  "file://" + DEFAULT_CARD_PATH );
+				System.out.println( uri.toString() );
 			} catch (MalformedURLException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
