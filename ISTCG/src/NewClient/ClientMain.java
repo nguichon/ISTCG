@@ -34,8 +34,8 @@ public class ClientMain {
 	private Composite composite = null;
 	private String ID = "";
 	public ClientMain(){
-		//CardTemplateManager.get().Initialize();
-		ClientCardTemplateManager.get().Initialize();
+		CardTemplateManager.get().Initialize();
+		//ClientCardTemplateManager.get().Initialize();
 		display = Display.getDefault();
 		ImageManager.get().Initialize(display);
 		ClientCardTemplateManager.get().Initialize();

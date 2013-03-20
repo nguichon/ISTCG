@@ -12,7 +12,10 @@ public class ClientCardTemplateManager {
     // =========
     // CONSTANTS
     // =========
-    private static String DEFAULT_CARD_PATH = System.getProperty("user.dir") + "/data/cards/card_";
+	private static String OS = System.getProperty("os.name").toLowerCase();
+    private static String DEFAULT_CARD_PATH = System.getProperty("user.dir") + (OS.indexOf("mac")>=0?"/ISTCG/data/cards/card_":"/data/cards/card_");
+    
+    //System.getProperty("user.dir") + (OS.indexOf("mac")>=0?"/ISTCG/data/cards/":"/data/cards/");
 
     // ClientCardTemplate collection variables
     private HashMap<Integer, ClientCardTemplate> m_LoadedCards;
