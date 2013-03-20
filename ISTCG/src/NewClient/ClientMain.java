@@ -42,7 +42,7 @@ public class ClientMain {
 		shell.setSize(450, 300);
 		shell.setMinimumSize( 450, 300 );
 		shell.setText("Unnamed TCG");
-		//shell.setBackgroundImage( ImageManager.get().GetImage( "Client_BG.png" ) );
+		shell.setBackgroundImage( ImageManager.get().GetImage( "Client_BG.png" ) );
 		shell.setBackgroundMode( SWT.INHERIT_DEFAULT );
 		Login = new Login(shell, SWT.NONE, this );
 		//Lobby = new Lobby(shell, SWT.NONE,this);
@@ -62,7 +62,6 @@ public class ClientMain {
 
 			@Override
 			public void handleEvent(Event event) {
-				/*if( Login.class.equals( composite ) ) {
 					Image toDraw = ImageManager.get().GetImage( "Client_BG.png" );
 					Image new_bg = new Image(display, shell.getClientArea().width,  shell.getClientArea().height);
 					GC gc = new GC(new_bg);
@@ -97,9 +96,6 @@ public class ClientMain {
 					
 					shell.setBackgroundImage( new_bg );
 					gc.dispose();
-				} else {
-					
-				}*/
 				if( !composite.isDisposed() ) {
 					composite.setBounds(shell.getClientArea());
 				}
