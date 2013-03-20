@@ -2,11 +2,17 @@ package NewClient;
 
 import java.util.ArrayList;
 
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.graphics.GC;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
 
 import NewClient.ClientCardTemplate.CardRenderSize;
 import Shared.StatBlock;
@@ -20,21 +26,78 @@ public class ClientCardInstance extends Canvas {
 	ClientMain main;
 	ClientCardTemplate template;
 	String id;
+	PaintListener pl;
 	public ClientCardInstance(Composite parent, int style, ClientMain main, String ID) {
 		super(parent, style);
 		this.main=main;
 		this.id=ID;
 		size = CardRenderSize.SMALL;
-		this.addPaintListener(new PaintListener(){
-
+		pl = new PaintListener(){
 			@Override
 			public void paintControl(PaintEvent e) {
 				Render(e.gc);
 				
 			}
+		};
+		this.addPaintListener(pl);
+		this.addMouseListener(new MouseListener(){
+
+			@Override
+			public void mouseDoubleClick(MouseEvent arg0) {
+				cardDClicked();
+				
+			}
+
+			@Override
+			public void mouseDown(MouseEvent arg0) {
+				cardClicked();
+			}
+
+			@Override
+			public void mouseUp(MouseEvent arg0) {
+				
+			}
 			
 		});
 	}
+	
+	public void cardDClicked(){
+		switch(size){
+		case SMALL:
+			break;
+			
+		case MEDIUM:
+			break;
+		case LARGE:
+			Rectangle curBounds = getBounds();
+			setBounds(curBounds.x,curBounds.y+64,CardRenderSize.SMALL.getWidth(),CardRenderSize.SMALL.getHeight());
+			size = CardRenderSize.SMALL;
+			redraw();
+			break;
+		default: redraw(); break;
+		}
+	}
+	
+	public void cardClicked(){
+		//get current size
+		switch(size){
+		case SMALL:
+			//Enlarge the card
+			Rectangle curBounds = getBounds();
+			setBounds(curBounds.x,curBounds.y-64,CardRenderSize.LARGE.getWidth(),CardRenderSize.LARGE.getHeight());
+			size = CardRenderSize.LARGE;
+			redraw();
+			break;
+			
+		case MEDIUM:
+			break;
+		case LARGE:
+			//play card or what have you
+			break;
+		default: redraw(); break;
+		}
+	}
+	
 	public void setTemplate(String ID){
 		template = ClientCardTemplateManager.get().GetClientCardTemplate(Integer.valueOf(ID));
 		this.redraw();

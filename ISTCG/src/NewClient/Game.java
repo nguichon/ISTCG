@@ -47,6 +47,7 @@ public class Game extends Composite {
 	Point handPos;
 	Point fieldPos;
 	Point stackPos;
+	Point viewPos;
 	ArrayList<ClientCardInstance> cards;
 	ArrayList<String> hand;
 	ArrayList<String> field;
@@ -64,6 +65,7 @@ public class Game extends Composite {
 		handPos = new Point(100,465);
 		fieldPos = new Point(100, 365);
 		stackPos = new Point(10,33);
+		viewPos= new Point(630,200);
 		lblUsername = new Label(this, SWT.NONE);
 		lblUsername.setBounds(10, 451, 59, 14);
 		lblUsername.setText("USERNAME");
