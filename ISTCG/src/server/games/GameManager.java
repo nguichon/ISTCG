@@ -5,6 +5,8 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
+import Shared.ClientMessages;
+
 import server.Database;
 import server.ServerMain;
 import server.network.ClientAccount;
@@ -45,8 +47,13 @@ public class GameManager {
 		RemoveGame( g.GetGameID() );
 	}
 	
-	public void SendMessageToGame( int game_id, int origin, String[] message ) {
-		m_ActiveGames.get(game_id).HandleMessage(origin, message);
+	public void SendMessageToGame( int game_id, ClientAccount origin, String[] message ) {
+		GameInstance targetGame = m_ActiveGames.get(game_id);
+		if( !(targetGame == null) ) {
+			targetGame.HandleMessage(origin, message);
+		} else {
+			origin.SendMessage( ClientMessages.SERVER, "Bad game id: " + game_id + "." );
+		}
 	}
 	
 	//=====

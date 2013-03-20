@@ -11,119 +11,192 @@ import Shared.GameResources;
 import Shared.GameZones;
 
 public class GamePlayer {
-	private GameInstance m_Game;
-	private ClientAccount m_PlayerAccount;
-	private CardList m_PlayerDeck;
-	private CardList m_PlayerHand;
-	private boolean m_Ready;
-	private int[] m_Resources = new int[GameResources.values().length];
-	private GamePlayerStates m_State;
+	// GAME CONSTANTS
+		public enum PlayerStates { JOINED, 		// Player joined, needs to submit decklist.
+									READY, 			// Decks submited, waiting for other players.
+									ACTIVE, 		// Waiting for this player to do things.
+									WAITING, 		// This player is waiting for things to happen.
+									DONE,			// Player is ready to let stack resolve.
+									DISCONNECTED, 	// Disconnected, do not send messages pl0x.
+									READING,
+									DEAD; }			// This guy is dead, what a scrub.
+		
+	// Configuration variables
+		private GameInstance m_Game;
+		private ClientAccount m_ClientAccount;
+		
+	// GamePlayer variables
+		private CardList m_Deck;
+		private CardList m_Hand = new CardList( this, GameZones.HAND );
+		private CardList m_Scrapyard = new CardList( this, GameZones.GRAVEYARD );
+		
+	// GameFlow variables
+		private PlayerStates m_PlayerState;
+	
 
 	//Constructors and administrative methods
 	public GamePlayer( GameInstance g, ClientAccount acc ) {
 		m_Game = g;
-		m_PlayerAccount = acc;
-		
-		//As a newly created GamePlayer, he or she is NOT ready. They need to load a deck!
-		m_Ready = false;
-		
-		m_PlayerHand = new CardList( this, GameZones.HAND );
-		m_State = GamePlayerStates.WAITING;
+		m_ClientAccount = acc;
+		m_PlayerState = PlayerStates.JOINED;
 	}
-	public void SwitchAccountInstance( ClientAccount acc ) { m_PlayerAccount = acc; }
-	public void LoadDeck( String deckList ) {
-		if( m_PlayerDeck == null ) {
-			CardList newDeck = new CardList( this, GameZones.DECK );
-			
-			String[] cards = deckList.split("\\|");
-			for( String s : cards ) {
-				String[] values = s.split(",");
-				for( int i = 0; i < Integer.valueOf(values[1]); i++ ) {
-					ServerCardInstance toAdd = new ServerCardInstance( m_Game, this, Integer.valueOf(values[0]) );
-					newDeck.AddCard(toAdd);
-				}
-			}
-			
-			newDeck.Shuffle();
-			
-			if( newDeck.Validate() ) {
-				m_PlayerDeck = newDeck;
-				m_Ready = true;
-				m_Game.Ready();
-			} else {
-				m_PlayerAccount.SendMessage( 
-						ClientMessages.GAME_ERROR, 
-						m_Game.GetGameID() + "", 
-						ClientResponses.DECKLIST.name(), 
-						"Invalid deck list." );
-			}
-		}
-	}
-
+	
 	//Data getters
-	public ClientAccount getAccount() { return m_PlayerAccount; }
-	public boolean isReady() { return m_Ready; }
-	public ClientAccount getClient() { return m_PlayerAccount; }
-	public GamePlayerStates getState() { return m_State; }
-	public int GetPlayerID() { return m_PlayerAccount.getUserID(); }
+	public ClientAccount getClientAccount() { return m_ClientAccount; }
+	public PlayerStates getState() { return m_PlayerState; }
 	
 	//Game play methods
 	public void DrawCards( int number ) {
-		//Draw the cards from the deck and place them in hand.
 		for( int i = 0; i < number; i++ ) {
-			ServerCardInstance cardDrawn = m_PlayerDeck.DrawCard();
-			m_PlayerHand.AddCard( cardDrawn );
-	        m_PlayerAccount.SendMessage( ClientMessages.MOVE,
-					m_Game.GetGameID() + "",
-					cardDrawn.GetCardUID() + "",
-					GameZones.HAND.name() );
+			ServerCardInstance card = m_Deck.GetTopCard();
+			removeCardFromZone( card, GameZones.DECK );
+			putCardInZone( card, GameZones.HAND );
 		}
-		
-		//Notify clients
-		m_Game.SendMessageToAllPlayers( ClientMessages.UPDATE_ZONE,
-											"" + m_Game.GetGameID(), 
-											"" + m_PlayerAccount.getUserID(), 
-											GameZones.DECK.name(),
-											"" + m_PlayerDeck.DeckCount());
-		m_Game.SendMessageToAllPlayers( ClientMessages.UPDATE_ZONE,
-											"" + m_Game.GetGameID(),
-											"" + m_PlayerAccount.getUserID(),
-											GameZones.HAND.name(),
-											"" + m_PlayerHand.DeckCount());
 	}
 	public void AddResource( GameResources res, int value ) {
-		m_Resources[ res.ordinal() ] += value;
-		m_Game.SendMessageToAllPlayers( 
-				ClientMessages.UPDATE_PLAYER, 
-				m_Game.GetGameID() + "", 
-				m_PlayerAccount.getUserID() + "", 
-				res.name(), 
-				m_Resources[ res.ordinal() ] + "" );
+		// TODO add resources to pool.
 	}
-	public void Pass() { m_State = GamePlayerStates.WAITING; }
-	public void PlayCard( int card_id ) { 
-		ServerCardInstance cardPlayed = m_PlayerHand.FindAndGetCard( card_id );
-		
-		//TODO check if card can be paid for.
-		
-		if( cardPlayed != null ) {
-			m_Game.MakeAllPlayersActive();
-			m_Game.AddToStack( cardPlayed );
-			
-			m_Game.SendMessageToAllPlayers( 
-					ClientMessages.UPDATE_ZONE,
-					"" + m_Game.GetGameID(),
-					"" + m_PlayerAccount.getUserID(),
-					GameZones.HAND.name(),
-					"" + m_PlayerHand.DeckCount()); 
-		} else {
-	        m_PlayerAccount.SendMessage( 
-	        		ClientMessages.GAME_ERROR,
-					m_Game.GetGameID() + "",
-					"Card is not in hand, cannot be played" );
+	public void LoadDeck( String decklist ) {
+	    if( m_PlayerState == PlayerStates.JOINED ) {
+            CardList newDeck = new CardList( this, GameZones.DECK );
+            
+            String[] cards = decklist.split("\\|");
+            for( String s : cards ) {
+                    String[] values = s.split(",");
+                    for( int i = 0; i < Integer.valueOf(values[1]); i++ ) {
+                            ServerCardInstance toAdd = new ServerCardInstance( m_Game, this, Integer.valueOf(values[0]) );
+                            newDeck.Add(toAdd);
+                    }
+            }
+            
+            newDeck.Shuffle();
+            
+            if( newDeck.Validate() ) {
+                    m_Deck = newDeck;
+                    m_PlayerState = PlayerStates.READY;
+                    m_Game.Ready();
+            } else {
+                   	SendMessageFromGame( 	ClientMessages.GAME_ERROR, 
+                                    		String.valueOf( m_Game.GetGameID() ), 
+                                    		ClientResponses.DECKLIST.name(), 
+                   							"Invalid deck list." );
+           }
+	    }
+    }
+	
+	//Player card management
+	public void putCardInZone( ServerCardInstance card, GameZones zone ) {
+		switch( zone ) {
+		case DECK:
+			m_Deck.Add( card );
+			//m_Game.SendMessageToAllPlayers( ClientMessages.HIDE, String.valueOf( card.GetCardUID() ), GameZones.GRAVEYARD.name() );
+			updateGameZoneCount( zone );
+			break;
+		case HAND:
+			m_Hand.Add( card );
+			//m_Game.SendMessageToAllPlayers( ClientMessages.HIDE, String.valueOf( card.GetCardUID() ), GameZones.GRAVEYARD.name() );
+			SendMessageFromGame( ClientMessages.MOVE, String.valueOf( card.GetCardUID() ), GameZones.HAND.name() );
+			updateGameZoneCount( zone );
+			break;
+		case GRAVEYARD:
+			m_Scrapyard.Add( card );
+			m_Game.SendMessageToAllPlayers( ClientMessages.MOVE, String.valueOf( card.GetCardUID() ), GameZones.GRAVEYARD.name() );
+			updateGameZoneCount( zone );
+			break;
+		default:
+			break;
+	}
+	}
+	public void removeCardFromZone( ServerCardInstance card, GameZones zone ) {
+		switch( zone ) {
+			case DECK:
+				m_Deck.Remove( card );
+				updateGameZoneCount( zone );
+				break;
+			case HAND:
+				m_Hand.Remove( card );
+				updateGameZoneCount( zone );
+				break;
+			case GRAVEYARD:
+				m_Scrapyard.Remove( card );
+				updateGameZoneCount( zone );
+				break;
+			default:
+				break;
 		}
 	}
-	public void SetState(GamePlayerStates state) {
-		m_State = state;
+	public boolean isCardInZone( ServerCardInstance card, GameZones zone ) {
+		switch( zone ) {
+		case DECK:
+			return m_Deck.Contains( card );
+		case HAND:
+			return m_Hand.Contains( card );
+		case GRAVEYARD:
+			return m_Scrapyard.Contains( card );
+		default:
+			return false;
+		}
 	}
+	public void updateGameZoneCount( GameZones zone ) {
+		int count = 0;
+		switch( zone ) {
+			case DECK:
+				m_Deck.Count();
+				break;
+			case HAND:
+				m_Hand.Count();
+				break;
+			case GRAVEYARD:
+				m_Scrapyard.Count();
+				break;
+			default:
+				break;
+		}
+		m_Game.SendMessageToAllPlayers( ClientMessages.UPDATE_ZONE, String.valueOf( m_ClientAccount.getUserID() ), zone.name(), String.valueOf( count ) );
+	}
+	
+	//Game flow methods
+	public void PlayCard( ServerCardInstance card ) {
+		if( m_PlayerState == PlayerStates.ACTIVE && isCardInZone( card, GameZones.HAND ) ) {
+			// TODO Check for cost/can play
+			
+			removeCardFromZone( card, GameZones.HAND );
+			m_Game.PutCardOnStack( card );
+			m_Game.StartStacking();
+		} else {
+			SendMessageFromGame( ClientMessages.GAME_ERROR, "Cannot play card " + String.valueOf( card.GetCardUID() ) + " at this time.");
+		}
+	}
+	public void StartTurn() {
+		// A player draws a card on their turn.
+		DrawCards(1);
+		
+		// Let all players know that this player's turn has started.
+		m_Game.SendMessageToAllPlayers( ClientMessages.PLAYER_TURN, String.valueOf( m_ClientAccount.getUserID() ));
+		
+		setActive();
+	}
+	public void setActive() {
+		// Set the player state to active.
+		m_PlayerState = PlayerStates.ACTIVE;
+	}
+	public void setWaiting() {
+		m_PlayerState = PlayerStates.WAITING;
+	}
+	public void setDone() {
+		m_PlayerState = PlayerStates.DONE;
+	}
+	public void setReading() {
+		m_PlayerState = PlayerStates.READING;
+	}
+	
+	public void SendMessageFromGame( ClientMessages messageType, String...args ) {
+		String argString = String.valueOf(m_Game.GetGameID()) + ";";
+		for( int i = 0; i < args.length; i++ ) {
+			argString += args[i] + ";";
+		}
+		m_ClientAccount.SendMessage( messageType, argString );
+	}
+
+	
 }

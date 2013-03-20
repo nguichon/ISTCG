@@ -2,7 +2,6 @@ package server.games;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Random;
 import java.util.Stack;
 
@@ -10,8 +9,9 @@ import Shared.ClientMessages;
 import Shared.ClientResponses;
 import Shared.GameZones;
 
+import server.ServerMain;
 import server.games.cards.ServerCardInstance;
-import server.games.cards.ServerCardTemplateManager;
+import server.games.events.GameEvent;
 import server.network.ClientAccount;
 
 /**
@@ -19,24 +19,36 @@ import server.network.ClientAccount;
  * @author Nicholas Guichon
  */
 public class GameInstance {
-	
 	//GAME CONSTANTS
-	private static int STARTING_HAND_SIZE = 7;
+	private static final int STARTING_HAND_SIZE = 7;
+	private enum GameStates { 	CREATED, 			// Game has been created, waiting for players to submit decks.
+								STARTING, 			// Decks submited, commencing setup.
+								ACTIVE, 			// Turn is waiting for main player.
+								STACKING, 			// Cards are on stack, waiting for responses
+								WAITING, 			// Waiting for passed input from a player while stacking
+								RESOLVING, 			// Resolving cards on the stack
+								BETWEEN_TURNS, 		// Switching active players
+								ENDED; }			// Game is over. Done. Finished.
 	
-	//Game setup variables
-	private int m_GameID;
-	private HashMap< Integer, GamePlayer > m_Players;
-	private HashMap< Integer, ServerCardInstance > m_Directory = new HashMap< Integer, ServerCardInstance >();
-	private ArrayList< Integer > m_PlayerList;
-	private boolean m_Started;
+	//GameInstance Variables
+	private final int m_GameInstanceID;
+	
+	//GameFlow Variables
+	private GameStates m_GameInstanceState = GameStates.CREATED;	// Current states of the game.
+	
+	//Player Variables
+	private HashMap< Integer, GamePlayer > m_Players;				// Collection of players in this GameInstance, stored by User_ID
+	private ArrayList< Integer > m_PlayerList;						// List of players' User_IDs in turn order.
 	
 	//Game turn variables
-	private GamePlayer m_CurrentPlayer;
-	private int m_CurrentPlayerIndex;
+	private GamePlayer m_CurrentPlayer;								// GamePlayer link to the current player.
+	private int m_CurrentPlayerIndex;								// Index of m_PlayerList for the current player.
+	private int m_ActivePlayerIndex;								// Index of m_PlayerList for the current player.
 	
 	//Game object variables
-	private HashMap<Integer, ServerCardInstance> m_CardsInPlay = new HashMap<Integer, ServerCardInstance>();
-	private Stack<ServerCardInstance> m_CardsOnStack = new Stack<ServerCardInstance>();
+	private HashMap< Integer, ServerCardInstance > m_Directory = new HashMap< Integer, ServerCardInstance >();
+	private Stack< ServerCardInstance > m_CardsOnStack = new Stack< ServerCardInstance >();
+	private HashMap< Integer, ServerCardInstance > m_CardsOnField = new HashMap< Integer, ServerCardInstance >();
 	private int m_CardsCreated = 0;
 	
 	
@@ -50,6 +62,11 @@ public class GameInstance {
 		return m_CardsCreated++;
 	}
 	
+	/**
+	 * Adds a card to this GameInstance's list of cards.
+	 * @param toAdd
+	 * 		The card to add to the instance.
+	 */
 	public void AddToDirectory( ServerCardInstance toAdd ) {
 		m_Directory.put( toAdd.GetCardUID(), toAdd );
 	}
@@ -63,8 +80,7 @@ public class GameInstance {
 	 * 		List of players that will be in this game.
 	 */
 	public GameInstance(int id, ClientAccount[] players) {
-		m_GameID = id;
-		m_Started = false;
+		m_GameInstanceID = id;
 		m_Players = new HashMap< Integer, GamePlayer >();
 		m_PlayerList = new ArrayList< Integer >();
 		for(ClientAccount ca : players) { AddToGame( ca ); }
@@ -77,21 +93,17 @@ public class GameInstance {
 	 * 		The ClientAccount/Socket connection for this new player
 	 */
 	private void AddToGame( ClientAccount clientToAdd ) {
-		if( !m_Started && !m_Players.containsKey( clientToAdd.getUserID() ) ) {
-			clientToAdd.SendMessage( ClientMessages.JOIN, "" + m_GameID );
-			
-			SendMessageToAllPlayers( ClientMessages.PLAYER_JOINED, "" + m_GameID,  clientToAdd.getUserName(), "" + clientToAdd.getUserID() );
+		if( m_GameInstanceState == GameStates.CREATED && !m_Players.containsKey( clientToAdd.getUserID() ) ) {
+			GamePlayer gp = new GamePlayer( this, clientToAdd );
+			gp.SendMessageFromGame( ClientMessages.JOIN );
+			SendMessageToAllPlayers( ClientMessages.PLAYER_JOINED, gp.getClientAccount().getUserName(), String.valueOf(gp.getClientAccount().getUserID()) );
 			
 			for( Integer i : m_PlayerList ) { 
 				GamePlayer player = m_Players.get(i);
-				clientToAdd.SendMessage( 
-						ClientMessages.PLAYER_JOINED, 
-						m_GameID + "",  
-						player.getAccount().getUserName(), 
-						player.GetPlayerID() + ""); 
+				gp.SendMessageFromGame( ClientMessages.PLAYER_JOINED, player.getClientAccount().getUserName(), String.valueOf(player.getClientAccount().getUserID()) ); 
 			}
 			
-			m_Players.put( clientToAdd.getUserID(), new GamePlayer( this, clientToAdd ) );
+			m_Players.put( clientToAdd.getUserID(), gp );
 			m_PlayerList.add( clientToAdd.getUserID() );
 		}
 	}
@@ -103,40 +115,74 @@ public class GameInstance {
 	 * @param message
 	 * 		The actual message sent by the ClientAccount, split on ';'
 	 */
-	public synchronized void HandleMessage( int origin, String[] message ) {
+	public synchronized void HandleMessage( ClientAccount origin, String[] message ) throws IndexOutOfBoundsException {
 		try {
 			switch(ClientResponses.valueOf( message[0].toUpperCase() )) {
 				case END:
-					if( m_CardsOnStack.empty() ) {
-						if( m_Started && m_CurrentPlayer.GetPlayerID() == origin ) { 
-							EndTurn(); 
-						}
+					if( m_GameInstanceState == GameStates.ACTIVE && origin.getUserID() == m_CurrentPlayer.getClientAccount().getUserID() ) {
+						EndTurn();
+					}
+					break;
+				case CANCEL:
+					if( m_GameInstanceState == GameStates.CREATED ) {
+						//TODO Cancel the game
+					} else {
+						origin.SendMessage( ClientMessages.SERVER, "Game " + m_GameInstanceID + " has already started and cannot be canceled.");
 					}
 					break;
 				case DECKLIST:
-					m_Players.get( origin ).LoadDeck( message[2] );
+					String DECK_LIST = message[2];
+					if( m_GameInstanceState == GameStates.CREATED ) {
+						m_Players.get( origin.getUserID() ).LoadDeck( DECK_LIST );
+					} else {
+						origin.SendMessage( ClientMessages.SERVER, "Game " + m_GameInstanceID + " has already started, you cannot submit another decklist.");
+					}
 					break;
 				case GETCARDINFO:
-					m_Directory.get( Integer.valueOf(message[2]) ).SendCardInformation( m_Players.get( origin ) );
+					int CARD_ID = Integer.valueOf(message[2]);
+					ServerCardInstance targetCard = m_Directory.get( CARD_ID );
+					if( !(targetCard == null) ) {
+						targetCard.SendCardInformation( m_Players.get( origin.getUserID() ) );
+					} else {
+						origin.SendMessage( ClientMessages.SERVER, "CardInstance " + CARD_ID + " does not exist.");
+					}
 					break;
 				case PASS:
-					m_Players.get( origin ).Pass();
+					switch( m_GameInstanceState ){
+					case STACKING:
+						System.out.println("STACK");
+						if( origin.getUserID() == m_PlayerList.get( m_ActivePlayerIndex ) ) {
+							PassPriority();
+						}
+						break;
+					case RESOLVING:
+						System.out.println("RESOLVE");
+						m_Players.get( origin.getUserID() ).setWaiting();
+						CheckForResolution();
+						break;
+					default:
+						break;
+					}
 					break;
 				case PLAY:
-					m_Players.get( origin ).PlayCard( new Integer(message[1]) );
+					if( (	m_GameInstanceState == GameStates.ACTIVE 
+							&& m_Players.get( origin.getUserID() ).getState() == GamePlayer.PlayerStates.ACTIVE ) 
+						|| (m_GameInstanceState == GameStates.STACKING 
+							&& m_Players.get( origin.getUserID() ).getState() == GamePlayer.PlayerStates.ACTIVE )) {
+						CARD_ID = Integer.valueOf(message[2]);
+						m_Players.get( origin.getUserID() ).PlayCard( m_Directory.get( CARD_ID ));
+					}
 					break;
 				default:
+					ServerMain.ConsoleMessage( '?', "Reached default block in method \"GameInstance.HandleMessage\"." );
 					break;
 			}
-		} catch ( Exception e ) {
+		} catch ( RuntimeException e ) {
+			origin.SendMessage( ClientMessages.SERVER, "Unknown error caught. " + e.getMessage() );
 			e.printStackTrace();
 		}
 	}
 	
-	private void PlayCard(int origin, int card_template_id) {
-		//m_CardsOnStack.add( new CardInstance( this, origin, CardTemplateManager.get().GetCardTemplate( card_template_id )  ) );
-	}
-
 	/**
 	 * Iterates through the list of GamePlayers, sending the same message to each of them
 	 * @param message
@@ -145,7 +191,7 @@ public class GameInstance {
 	public void SendMessageToAllPlayers( ClientMessages messageType, String ... parameters ) {
 		for( Integer i : m_PlayerList ) { 
 			GamePlayer player = m_Players.get(i);
-			player.getClient().SendMessage( messageType, parameters ); 
+			player.SendMessageFromGame( messageType, parameters ); 
 		}
 	}
 	
@@ -155,15 +201,15 @@ public class GameInstance {
 	 * 		The database ID number of this game, this ID number should be unique unless constructed illegally.
 	 */
 	public int GetGameID() {
-		return m_GameID;
+		return m_GameInstanceID;
 	}
 	
 	/**
 	 * Starts this game, drawing each player's initial hand and picking a random starting player.
 	 */
 	private void StartGame() {
-		if( !m_Started ) {
-			m_Started = true;
+		if( m_GameInstanceState == GameStates.CREATED ) {
+			m_GameInstanceState = GameStates.STARTING;
 			
 			for( Integer i : m_PlayerList ) { 
 				GamePlayer player = m_Players.get(i);
@@ -181,14 +227,101 @@ public class GameInstance {
 	 * Starts the current turn.
 	 */
 	private void StartTurn() {
-		SendMessageToAllPlayers( ClientMessages.PLAYER_TURN, "" + m_GameID, "" + m_CurrentPlayer.GetPlayerID());
-		m_CurrentPlayer.DrawCards(1);
+		m_CurrentPlayer.StartTurn();
+		SetActivePlayer();
+		//Set game state.
+		m_GameInstanceState = GameStates.ACTIVE;
+	}
+	
+	private void SetActivePlayer() {
+		SetAllPlayersToWaiting();
+		m_ActivePlayerIndex = m_CurrentPlayerIndex;
+		m_CurrentPlayer.setActive();
+	}
+	
+	public void SetAllPlayersToWaiting() {
+		for( Integer i : m_PlayerList ) { 
+			m_Players.get(i).setWaiting();
+		}
+	}
+	public void SetAllPlayersToReading() {
+		for( Integer i : m_PlayerList ) { 
+			m_Players.get(i).setReading();
+		}
+	}
+	public void PassPriority() {
+		GamePlayer gp = m_Players.get(m_PlayerList.get( m_ActivePlayerIndex ));
+		gp.setDone();
+
+		boolean start_resolving = true;
+		for( Integer id : m_PlayerList ) {
+			if( m_Players.get(id).getState() != GamePlayer.PlayerStates.DONE ) {
+				start_resolving = false;
+			}
+		}
+		
+		if( start_resolving ) {
+		
+		} else {
+			if( ++m_ActivePlayerIndex >= m_Players.size() ) { m_ActivePlayerIndex = 0; }
+			
+			if( gp.getState() == GamePlayer.PlayerStates.WAITING ) {
+				gp = m_Players.get(m_PlayerList.get( m_ActivePlayerIndex ));
+				gp.setActive();
+			} else {
+				PassPriority();
+			}
+		}
+	}
+
+	public void StartResolving() {
+		m_GameInstanceState = GameStates.RESOLVING;
+		SetAllPlayersToReading();
+	}
+	public void CheckForResolution() {
+		boolean resolve = true;
+		for( Integer id : m_PlayerList ) {
+			if( m_Players.get(id).getState() != GamePlayer.PlayerStates.WAITING ) {
+				resolve = false;
+			}
+		}
+		
+		if( resolve ) {
+			ResolveCard( GetCardFromStack() );
+			if( m_CardsOnStack.isEmpty() ) {
+				m_GameInstanceState = GameStates.ACTIVE;
+				SetActivePlayer();
+			}
+		}
+	}
+	
+	private void ResolveCard(ServerCardInstance card) {
+		GameEvent e = new GameEvent( this );
+		card.resolve( e );
+	}
+
+	public ServerCardInstance GetCardFromStack() {
+		ServerCardInstance card = m_CardsOnStack.pop();
+		card.SetLocation( GameZones.UNKNOWN );
+		SendMessageToAllPlayers( ClientMessages.HIDE, String.valueOf( card.GetCardUID() ), GameZones.UNKNOWN.name() );
+		return card;
+	}
+	public void PutCardOnStack( ServerCardInstance card ) {
+		card.SetLocation( GameZones.STACK );
+		m_CardsOnStack.push( card );
+		SendMessageToAllPlayers( ClientMessages.MOVE, String.valueOf( card.GetCardUID() ), GameZones.STACK.name() );
+	}
+	public void PutCardOntoField( ServerCardInstance card ) {
+		card.SetLocation( GameZones.FIELD );
+		m_CardsOnField.put( card.GetCardUID(), card );
+		SendMessageToAllPlayers( ClientMessages.HIDE, String.valueOf( card.GetCardUID() ), GameZones.STACK.name() );
 	}
 	
 	/**
-	 * Ends the current turn.
+	 * Ends the current turn and starts the next one.
 	 */
 	private void EndTurn() {
+		m_GameInstanceState = GameStates.BETWEEN_TURNS;
 		NextPlayer();
 		StartTurn();
 	}
@@ -209,7 +342,7 @@ public class GameInstance {
 		boolean start_the_game = true;
 		for( Integer i : m_PlayerList ) { 
 			GamePlayer player = m_Players.get(i);
-			if( !player.isReady() ) {
+			if( player.getState() == GamePlayer.PlayerStates.JOINED ) {
 				start_the_game = false;
 			}
 		}
@@ -219,41 +352,7 @@ public class GameInstance {
 		}
 	}
 
-	public void AddToStack(ServerCardInstance cardPlayed) {
-		cardPlayed.SetLocation( GameZones.STACK );
-		m_CardsOnStack.add( cardPlayed );
-		
-		SendMessageToAllPlayers( 
-        		ClientMessages.MOVE,
-				GetGameID() + "",
-				cardPlayed.GetCardUID() + "",
-				GameZones.STACK.name() );
-		
-	}
-
-	public boolean GameStackStep() {
-		int initial_player = m_CurrentPlayerIndex;
-		int current_player = initial_player;
-		
-		while( m_Players.get( m_PlayerList.get( current_player ) ).getState() == GamePlayerStates.DONE ) {
-			current_player++;
-			if( current_player >= m_PlayerList.size() ) {
-				current_player = 0;
-			}
-			
-			if( current_player == initial_player ) {
-				return false;
-			}
-		}
-		
-		m_Players.get( m_PlayerList.get( current_player ) ).getAccount().SendMessage( ClientMessages.PRIORITY );
-		
-		return true;
-	}
-	public void MakeAllPlayersActive() {
-		for( Integer i : m_PlayerList ) { 
-			GamePlayer player = m_Players.get(i);
-			player.SetState( GamePlayerStates.ACTIVE );
-		}		
+	public void StartStacking() {
+		m_GameInstanceState = GameStates.STACKING;
 	}
 }
