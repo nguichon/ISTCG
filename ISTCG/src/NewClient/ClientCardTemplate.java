@@ -77,11 +77,12 @@ public class ClientCardTemplate {
      *            unknown StatBlocks.
      */
     public void Render(GC targetGC, CardRenderSize size, ArrayList<StatBlock> stats) {
+    	final Color black = new Color(targetGC.getDevice(), SWT.COLOR_BLACK, 0, 0);
     	Image toDraw = ImageManager.get().GetImage( m_BGImage );
         targetGC.drawImage( toDraw, 
         		0, 0, toDraw.getBounds().width, toDraw.getBounds().height,
         		0, 0, size.getWidth(), size.getHeight());
-        targetGC.drawText( m_CardName, 0, 0, SWT.NONE);//SWT.DRAW_TRANSPARENT);
+        targetGC.drawText( m_CardName, 2, 2, SWT.NONE);//SWT.DRAW_TRANSPARENT);
     }
     public static void RenderBlack(GC targetGC, CardRenderSize size, ArrayList<StatBlock> stats) {
     	final Color black = new Color(targetGC.getDevice(), SWT.COLOR_BLACK, 0, 0);
