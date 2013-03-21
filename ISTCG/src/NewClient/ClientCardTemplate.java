@@ -9,7 +9,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
-import org.eclipse.swt.graphics.Image;
+//import org.eclipse.swt.graphics.Image;
 
 import Client.ImageManager;
 import Shared.CardTypes;
@@ -48,7 +48,8 @@ public class ClientCardTemplate {
     	TEXT_EDGE_LEFT( "text_box_edge_left.png" ),
     	TEXT_EDGE_RIGHT( "text_box_edge_right.png" ),
     	TEXT_EDGE_TOP( "text_box_edge_top.png" ),
-    	TEXT_EDGE_BOTTOM( "text_box_edge_bottom.png" );
+    	TEXT_EDGE_BOTTOM( "text_box_edge_bottom.png" ),
+    	TEXT_BODY("text_box_body.png");
     	
     	private CardImageAssets( String path ) { m_ImagePath = path; }
     	private String m_ImagePath;
@@ -77,10 +78,87 @@ public class ClientCardTemplate {
      *            unknown StatBlocks.
      */
     public void Render(GC targetGC, CardRenderSize size, ArrayList<StatBlock> stats) {
-    	Image toDraw = ImageManager.get().GetImage( m_BGImage );
-        targetGC.drawImage( toDraw, 
-        		0, 0, toDraw.getBounds().width, toDraw.getBounds().height,
-        		0, 0, size.getWidth(), size.getHeight());
+    	//Image toDraw = ImageManager.get().GetImage( m_BGImage );
+        double factor = 1;
+    	switch (size){
+    	case TINY:
+        	factor = .03;
+        	targetGC.drawImage(ImageManager.get().GetImage(m_BGImage), 0, 0,
+                    300, 400, 0, 0, (int) (300 * factor), (int) (400 * factor));
+        	break;        
+    	case SMALL:
+        	factor = .1;
+        	targetGC.drawImage(ImageManager.get().GetImage(m_BGImage), 0, 0,
+                    300, 400, 0, 0, (int) (300 * factor), (int) (400 * factor));
+        	break;
+    	case MEDIUM:
+    		factor = .3;
+    		targetGC.drawImage(ImageManager.get().GetImage(m_BGImage), 0, 0,
+                    300, 400, 0, 0, (int) (300 * factor), (int) (400 * factor));
+    		break;
+    	case LARGE:
+    		//BG image
+    		factor = 1;
+    		targetGC.drawImage(ImageManager.get().GetImage(m_BGImage), 0, 0,
+                    300, 400, 0, 0, (int) (300 * factor), (int) (400 * factor));
+    		// Name box and Name
+    		targetGC.drawImage(ImageManager.get().GetImage(CardImageAssets.TEXT_EDGE_LEFT.path()), 10, 10);
+            targetGC.drawImage(ImageManager.get().GetImage(CardImageAssets.TEXT_CORNER_BOTTOM_LEFT.path()), 10, 31);
+            for (int i = 31; i < 300; i += 21) {
+                targetGC.drawImage(ImageManager.get().GetImage(CardImageAssets.TEXT_BODY.path()), i, 10);
+                targetGC.drawImage(ImageManager.get().GetImage(CardImageAssets.TEXT_EDGE_BOTTOM.path()), i, 31);
+            }
+            targetGC.drawText(m_CardName, 25, 20, true);
+    		// Stat boxes (empty)
+            for (int i = 0; i < m_Stats.size(); i++) {
+                int x = 235;
+                int y = i * 25 + 35;
+                targetGC.drawImage(ImageManager.get().GetImage(CardImageAssets.TEXT_CORNER_TOP_LEFT.path()), x, y);
+                targetGC.drawImage(ImageManager.get().GetImage(CardImageAssets.TEXT_EDGE_TOP.path()), x + 21,
+                        y);
+                targetGC.drawImage(ImageManager.get().GetImage(CardImageAssets.TEXT_CORNER_TOP_RIGHT.path()), x + 42,
+                        y);
+                targetGC.drawImage(ImageManager.get().GetImage(CardImageAssets.TEXT_CORNER_BOTTOM_LEFT.path()), x,
+                        y + 21);
+                targetGC.drawImage(ImageManager.get().GetImage(CardImageAssets.TEXT_EDGE_BOTTOM.path()), x + 21,
+                        y + 21);
+                targetGC.drawImage(ImageManager.get().GetImage(CardImageAssets.TEXT_CORNER_BOTTOM_RIGHT.path()), x + 42,
+                        y + 21);
+            }
+    		// Text Box
+            targetGC.drawImage(ImageManager.get().GetImage(CardImageAssets.TEXT_CORNER_TOP_LEFT.path()), 10, 250);
+            for (int i = 31; i < 300; i += 21) {
+                targetGC.drawImage(ImageManager.get().GetImage(CardImageAssets.TEXT_EDGE_TOP.path()), i, 250);
+            }
+            for (int i = 271; i < 400; i += 21) {
+                targetGC.drawImage(ImageManager.get().GetImage(CardImageAssets.TEXT_EDGE_LEFT.path()), 10, i);
+                for (int j = 31; j < 300; j += 21) {
+                    targetGC.drawImage(ImageManager.get().GetImage(CardImageAssets.TEXT_BODY.path()), j, i);
+                }
+            }
+            // draw text
+            DrawInfoText(m_CardText, targetGC);
+    		// Border
+            targetGC.drawImage(ImageManager.get().GetImage(CardImageAssets.CARD_CORNER_TOP_LEFT.path()), 0, 0);
+            targetGC.drawImage(ImageManager.get().GetImage(CardImageAssets.CARD_CORNER_TOP_RIGHT.path()), 275, 0);
+            targetGC.drawImage(ImageManager.get().GetImage(CardImageAssets.CARD_CORNER_BOTTOM_LEFT.path()), 0, 375);
+            targetGC.drawImage(ImageManager.get().GetImage(CardImageAssets.CARD_CORNER_BOTTOM_RIGHT.path()), 275, 375);
+    		for (int i = 25; i <= 274; i += 25) {
+    			targetGC.drawImage(ImageManager.get().GetImage(CardImageAssets.CARD_EDGE_TOP.path()), i, 0);
+    			targetGC.drawImage(ImageManager.get().GetImage(CardImageAssets.CARD_EDGE_BOTTOM.path()), i, 375);
+    		}
+    		for (int i = 25; i <= 374; i += 25) {
+    			targetGC.drawImage(ImageManager.get().GetImage(CardImageAssets.CARD_EDGE_LEFT.path()), 0, i);
+    			targetGC.drawImage(ImageManager.get().GetImage(CardImageAssets.CARD_EDGE_RIGHT.path()), 275, i);
+    		}
+    		break;
+        default:
+    	}
+    	
+    	
+    	//targetGC.drawImage( toDraw, 
+        //		0, 0, toDraw.getBounds().width, toDraw.getBounds().height,
+        //		0, 0, size.getWidth(), size.getHeight());
         targetGC.drawText( m_CardName, 0, 0, SWT.NONE);//SWT.DRAW_TRANSPARENT);
     }
     public static void RenderBlack(GC targetGC, CardRenderSize size, ArrayList<StatBlock> stats) {
@@ -88,6 +166,27 @@ public class ClientCardTemplate {
     	targetGC.setForeground( black );
     	targetGC.setBackground( black );
     	targetGC.fillRectangle( 0, 0, size.getWidth(), size.getHeight() );
+    }
+    private void DrawInfoText(String txt, GC targetGC){
+    	ArrayList<String> info = new ArrayList<String>(0);
+    	int i=-1;
+    	while(txt.length() > 50){
+    		i=-1;
+    		for (int bk = 0; bk < 50 ; bk ++){
+    			if (txt.charAt(bk)==' '){
+    				i = bk;
+    			}
+    		}
+    		info.add(txt.substring(0, i));
+    		txt = txt.substring(i+1);
+    	}
+    	info.add(txt);
+    	
+    	int x = 25;
+    	int y = 265;
+    	for (int j = 0 ; j < info.size() ; j++){
+    		targetGC.drawText(info.get(j), x, y, true);
+    	}
     }
 
     /**

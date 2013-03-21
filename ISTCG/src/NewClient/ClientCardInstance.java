@@ -8,14 +8,19 @@ import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.graphics.GC;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 
-import Client.CardTemplateManager;
 import NewClient.ClientCardTemplate.CardRenderSize;
+
+import Client.CardTemplateManager;
+import NewClient.ClientCardTemplateManager;
+import NewClient.ClientMain;
+import NewClient.Game;
 import Shared.StatBlock;
 
 public class ClientCardInstance extends Canvas {
@@ -24,6 +29,7 @@ public class ClientCardInstance extends Canvas {
 	String[] description;
 	ArrayList<String> stats;
 	CardRenderSize size;
+	CardRenderSize lastSize;
 	ClientMain main;
 	ClientCardTemplate template;
 	String id;
@@ -63,7 +69,7 @@ public class ClientCardInstance extends Canvas {
 
 			@Override
 			public void mouseDown(MouseEvent arg0) {
-				cardClicked();
+				cardClicked(arg0);
 			}
 
 			@Override
@@ -87,12 +93,15 @@ public class ClientCardInstance extends Canvas {
 	
 	public void cardDClicked(){
 		switch(size){
-		case SMALL:
-			break;
+		
+		//case SMALL:
+		//	break;
 			
-		case MEDIUM:
-			break;
+		//case MEDIUM:
+		//	break;
 		case LARGE:
+			size = lastSize;
+			redraw();
 //			if(zone==GameZone.VIEWER){
 //				setBounds(lastBounds);
 //				size = CardRenderSize.SMALL;
@@ -100,11 +109,15 @@ public class ClientCardInstance extends Canvas {
 //				redraw();
 //			}
 			break;
-		default: redraw(); break;
+		default:
+			lastSize = size;
+			size = CardRenderSize.LARGE;
+			redraw();
+			break;
 		}
 	}
 	
-	public void cardClicked(){
+	public void cardClicked(MouseEvent mouse){
 		//get current size
 		switch(size){
 		case SMALL:
@@ -123,11 +136,55 @@ public class ClientCardInstance extends Canvas {
 		case MEDIUM:
 			break;
 		case LARGE:
+			String aM = "ABILITY;" + game.getID() + ";" + id + ";"; 
+			if(mouse.x >= 235){
+				if (35<= mouse.y && mouse.y < 60){
+					if (stats.size() >= 1){
+						main.sendData(aM + "0");
+					}
+				}
+				if (60<= mouse.y && mouse.y < 85){
+					if (stats.size() >= 2){
+						main.sendData(aM + "1");
+					}
+				}
+				if (85<= mouse.y && mouse.y < 110){
+					if (stats.size() >= 3){
+						main.sendData(aM + "2");
+					}
+				}
+				if (110<= mouse.y && mouse.y < 135){
+					if (stats.size() >= 4){
+						main.sendData(aM + "3");
+					}
+				}
+				if (135<= mouse.y && mouse.y < 160){
+					if (stats.size() >= 5){
+						main.sendData(aM + "4");
+					}
+				}
+				if (160<= mouse.y && mouse.y < 185){
+					if (stats.size() >= 6){
+						main.sendData(aM + "5");
+					}
+				}
+				if (185<= mouse.y && mouse.y < 210){
+					if (stats.size() >= 7){
+						main.sendData(aM + "6");
+					}
+				}
+				if (235<= mouse.y && mouse.y < 260){
+					if (stats.size() >= 8){
+						main.sendData(aM + "7");
+					}
+				}
+			}
 			//play card or what have you
 			break;
 		default: redraw(); break;
 		}
 	}
+	
 	
 	public void setTemplate(String ID){
 		template = ClientCardTemplateManager.get().GetClientCardTemplate(Integer.valueOf(ID));
@@ -200,7 +257,7 @@ public class ClientCardInstance extends Canvas {
 	public String getID(){
 		return id;
 	}
-	public ClientCardTemplate.CardRenderSize getRenderSize(){
+	public src.NewClient.CardRenderSize getRenderSize(){
 		return size;
 	}
 	public void setRenderSize(ClientCardTemplate.CardRenderSize size){
