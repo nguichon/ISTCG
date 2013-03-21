@@ -127,6 +127,8 @@ public class ClientCardTemplate {
                 targetGC.drawImage(ImageManager.get().GetImage(CardImageAssets.TEXT_CORNER_BOTTOM_RIGHT.path()), x + 42,
                         y + 21);
             }
+            //Stats fill
+            RenderStats(targetGC, stats);
     		// Text Box
             targetGC.drawImage(ImageManager.get().GetImage(CardImageAssets.TEXT_CORNER_TOP_LEFT.path()), 10, 250);
             for (int i = 31; i < 300; i += 21) {
@@ -169,6 +171,15 @@ public class ClientCardTemplate {
     	targetGC.setBackground( black );
     	targetGC.fillRectangle( 0, 0, size.getWidth(), size.getHeight() );
     }
+    private void RenderStats(GC gc, ArrayList<StatBlock> stats){
+		for(int i = 0 ; i < stats.size() ; i++){
+			int x = 250;
+			int y = 50;
+			int val = stats.get(i).m_Value;
+			String st = ""+val;
+			gc.drawText(st, x, y + (i * 25), true);
+		}
+	}
     private void DrawInfoText(String txt, GC targetGC){
     	ArrayList<String> info = new ArrayList<String>(0);
     	int i=-1;
