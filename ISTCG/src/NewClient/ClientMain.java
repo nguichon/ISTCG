@@ -5,9 +5,13 @@ import java.io.IOException;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.PaletteData;
+import org.eclipse.swt.graphics.PathData;
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Canvas;
@@ -38,6 +42,7 @@ public class ClientMain {
 		//ClientCardTemplateManager.get().Initialize();
 		display = Display.getDefault();
 		ImageManager.get().Initialize(display);
+		
 		ClientCardTemplateManager.get().Initialize();
 		shell = new Shell( SWT.NO_REDRAW_RESIZE | SWT.SHELL_TRIM );
 		shell.setSize(450, 300);
