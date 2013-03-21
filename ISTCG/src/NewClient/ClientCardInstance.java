@@ -234,8 +234,16 @@ public class ClientCardInstance extends Canvas {
 	public void Render(GC gc){
 		if(template!=null) {
 			template.Render(gc, size, getStatBlock());
+			RenderStats(gc);
 		} else {
 			ClientCardTemplate.RenderBlack( gc, size, getStatBlock());
+		}
+	}
+	private void RenderStats(GC gc){
+		for(int i = 0 ; i < stats.size() ; i++){
+			int x = 250;
+			int y = 50;
+			gc.drawText(stats.get(i), x, y + (i * 25), true);
 		}
 	}
 	public ArrayList<StatBlock> getStatBlock(){

@@ -108,6 +108,8 @@ public class ClientCardTemplate {
                 targetGC.drawImage(ImageManager.get().GetImage(CardImageAssets.TEXT_BODY.path()), i, 10);
                 targetGC.drawImage(ImageManager.get().GetImage(CardImageAssets.TEXT_EDGE_BOTTOM.path()), i, 31);
             }
+            //Font ft = new Font();
+            //targetGC.setFont(Bold);
             targetGC.drawText(m_CardName, 25, 20, true);
     		// Stat boxes (empty)
             for (int i = 0; i < m_Stats.size(); i++) {
@@ -159,7 +161,7 @@ public class ClientCardTemplate {
     	//targetGC.drawImage( toDraw, 
         //		0, 0, toDraw.getBounds().width, toDraw.getBounds().height,
         //		0, 0, size.getWidth(), size.getHeight());
-        targetGC.drawText( m_CardName, 0, 0, SWT.NONE);//SWT.DRAW_TRANSPARENT);
+        //targetGC.drawText( m_CardName, 0, 0, SWT.NONE);//SWT.DRAW_TRANSPARENT);
     }
     public static void RenderBlack(GC targetGC, CardRenderSize size, ArrayList<StatBlock> stats) {
     	final Color black = new Color(targetGC.getDevice(), SWT.COLOR_BLACK, 0, 0);
@@ -185,7 +187,7 @@ public class ClientCardTemplate {
     	int x = 25;
     	int y = 265;
     	for (int j = 0 ; j < info.size() ; j++){
-    		targetGC.drawText(info.get(j), x, y, true);
+    		targetGC.drawText(info.get(j), x, y + (j * 15), true);
     	}
     }
 
