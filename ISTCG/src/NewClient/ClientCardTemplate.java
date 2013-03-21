@@ -128,7 +128,11 @@ public class ClientCardTemplate {
                         y + 21);
             }
             //Stats fill
-            RenderStats(targetGC, stats);
+            if( stats == null ) {
+            	RenderStats(targetGC, m_Stats);
+            } else {
+            	RenderStats(targetGC, stats);
+            }
     		// Text Box
             targetGC.drawImage(ImageManager.get().GetImage(CardImageAssets.TEXT_CORNER_TOP_LEFT.path()), 10, 250);
             for (int i = 31; i < 300; i += 21) {
