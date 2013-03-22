@@ -95,7 +95,6 @@ public class GameInstance {
 	private void AddToGame( ClientAccount clientToAdd ) {
 		if( m_GameInstanceState == GameStates.CREATED && !m_Players.containsKey( clientToAdd.getUserID() ) ) {
 			GamePlayer gp = new GamePlayer( this, clientToAdd );
-			gp.SendMessageFromGame( ClientMessages.JOIN );
 			SendMessageToAllPlayers( ClientMessages.PLAYER_JOINED, gp.getClientAccount().getUserName(), String.valueOf(gp.getClientAccount().getUserID()) );
 			
 			for( Integer i : m_PlayerList ) { 
@@ -165,12 +164,21 @@ public class GameInstance {
 					}
 					break;
 				case PLAY:
-					if( (	m_GameInstanceState == GameStates.ACTIVE 
-							&& m_Players.get( origin.getUserID() ).getState() == GamePlayer.PlayerStates.ACTIVE ) 
-						|| (m_GameInstanceState == GameStates.STACKING 
-							&& m_Players.get( origin.getUserID() ).getState() == GamePlayer.PlayerStates.ACTIVE )) {
-						CARD_ID = Integer.valueOf(message[2]);
-						m_Players.get( origin.getUserID() ).PlayCard( m_Directory.get( CARD_ID ));
+					ServerCardInstance CARD_TO_PLAY = m_Directory.get( Integer.valueOf(message[2]) );
+					switch( m_GameInstanceState ) {
+					case ACTIVE:
+						if( m_Players.get( origin.getUserID() ).getState() == GamePlayer.PlayerStates.ACTIVE ) {
+							m_Players.get( origin.getUserID() ).PlayCard( CARD_TO_PLAY );
+						}
+						break;
+					case STACKING:
+						if( m_Players.get( origin.getUserID() ).getState() == GamePlayer.PlayerStates.ACTIVE ) {
+							m_Players.get( origin.getUserID() ).PlayCard( CARD_TO_PLAY );
+						}
+						break;
+					default:
+						m_Players.get( origin.getUserID() ).SendMessageFromGame( ClientMessages.GAME_ERROR, "Cannot play card " + String.valueOf( CARD_TO_PLAY.GetCardUID() ) + " at this time.");
+						break;
 					}
 					break;
 				default:
@@ -209,7 +217,7 @@ public class GameInstance {
 	 */
 	private void StartGame() {
 		if( m_GameInstanceState == GameStates.CREATED ) {
-			m_GameInstanceState = GameStates.STARTING;
+			ChangeState(GameStates.STARTING);
 			
 			for( Integer i : m_PlayerList ) { 
 				GamePlayer player = m_Players.get(i);
@@ -230,7 +238,7 @@ public class GameInstance {
 		m_CurrentPlayer.StartTurn();
 		SetActivePlayer();
 		//Set game state.
-		m_GameInstanceState = GameStates.ACTIVE;
+		ChangeState(GameStates.ACTIVE);
 	}
 	
 	private void SetActivePlayer() {
@@ -261,9 +269,10 @@ public class GameInstance {
 		}
 		
 		if( start_resolving ) {
-		
+			// TODO Resolve here
 		} else {
 			if( ++m_ActivePlayerIndex >= m_Players.size() ) { m_ActivePlayerIndex = 0; }
+			gp = m_Players.get(m_PlayerList.get( m_ActivePlayerIndex ));
 			
 			if( gp.getState() == GamePlayer.PlayerStates.WAITING ) {
 				gp = m_Players.get(m_PlayerList.get( m_ActivePlayerIndex ));
@@ -275,7 +284,7 @@ public class GameInstance {
 	}
 
 	public void StartResolving() {
-		m_GameInstanceState = GameStates.RESOLVING;
+		ChangeState(GameStates.RESOLVING);
 		SetAllPlayersToReading();
 	}
 	public void CheckForResolution() {
@@ -289,7 +298,7 @@ public class GameInstance {
 		if( resolve ) {
 			ResolveCard( GetCardFromStack() );
 			if( m_CardsOnStack.isEmpty() ) {
-				m_GameInstanceState = GameStates.ACTIVE;
+				ChangeState(GameStates.ACTIVE);
 				SetActivePlayer();
 			}
 		}
@@ -321,7 +330,7 @@ public class GameInstance {
 	 * Ends the current turn and starts the next one.
 	 */
 	private void EndTurn() {
-		m_GameInstanceState = GameStates.BETWEEN_TURNS;
+		ChangeState(GameStates.BETWEEN_TURNS);
 		NextPlayer();
 		StartTurn();
 	}
@@ -353,6 +362,11 @@ public class GameInstance {
 	}
 
 	public void StartStacking() {
-		m_GameInstanceState = GameStates.STACKING;
+		ChangeState(GameStates.STACKING);
+	}
+	
+	public void ChangeState( GameStates newState ) {
+		m_GameInstanceState = newState;
+		SendMessageToAllPlayers( ClientMessages.GAMESTATE, m_GameInstanceState.name() );
 	}
 }

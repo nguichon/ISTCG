@@ -61,7 +61,6 @@ public class ServerCardTemplateManager {
 			URL uri = null;
 			try {
 				uri = new URL(  "file://" + DEFAULT_CARD_PATH );
-				System.out.println( uri.toString() );
 			} catch (MalformedURLException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

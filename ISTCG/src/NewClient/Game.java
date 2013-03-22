@@ -241,8 +241,8 @@ public class Game extends Composite {
 		group.setLayout(new FillLayout(SWT.HORIZONTAL));
 		FormData fd_group = new FormData();
 		fd_group.left = new FormAttachment(lblEnemy, -148, SWT.LEFT);
-		fd_group.bottom = new FormAttachment(lblMetal, -6);
-		fd_group.top = new FormAttachment(lblEtech, 6);
+		fd_group.bottom = new FormAttachment(lblMetal, 100);
+		fd_group.top = new FormAttachment(lblEtech, -100);
 		fd_group.right = new FormAttachment(100, -10);
 		group.setLayoutData(fd_group);
 		

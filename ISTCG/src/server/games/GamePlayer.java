@@ -38,7 +38,8 @@ public class GamePlayer {
 	public GamePlayer( GameInstance g, ClientAccount acc ) {
 		m_Game = g;
 		m_ClientAccount = acc;
-		m_PlayerState = PlayerStates.JOINED;
+		SendMessageFromGame( ClientMessages.JOIN );
+		ChangeState(PlayerStates.JOINED);
 	}
 	
 	//Data getters
@@ -73,7 +74,7 @@ public class GamePlayer {
             
             if( newDeck.Validate() ) {
                     m_Deck = newDeck;
-                    m_PlayerState = PlayerStates.READY;
+                    ChangeState(PlayerStates.READY);
                     m_Game.Ready();
             } else {
                    	SendMessageFromGame( 	ClientMessages.GAME_ERROR, 
@@ -141,13 +142,13 @@ public class GamePlayer {
 		int count = 0;
 		switch( zone ) {
 			case DECK:
-				m_Deck.Count();
+				count = m_Deck.Count();
 				break;
 			case HAND:
-				m_Hand.Count();
+				count = m_Hand.Count();
 				break;
 			case GRAVEYARD:
-				m_Scrapyard.Count();
+				count = m_Scrapyard.Count();
 				break;
 			default:
 				break;
@@ -156,15 +157,18 @@ public class GamePlayer {
 	}
 	
 	//Game flow methods
-	public void PlayCard( ServerCardInstance card ) {
+	public boolean PlayCard( ServerCardInstance card ) {
 		if( m_PlayerState == PlayerStates.ACTIVE && isCardInZone( card, GameZones.HAND ) ) {
 			// TODO Check for cost/can play
 			
 			removeCardFromZone( card, GameZones.HAND );
 			m_Game.PutCardOnStack( card );
 			m_Game.StartStacking();
+			
+			return true;
 		} else {
 			SendMessageFromGame( ClientMessages.GAME_ERROR, "Cannot play card " + String.valueOf( card.GetCardUID() ) + " at this time.");
+			return false;
 		}
 	}
 	public void StartTurn() {
@@ -178,16 +182,16 @@ public class GamePlayer {
 	}
 	public void setActive() {
 		// Set the player state to active.
-		m_PlayerState = PlayerStates.ACTIVE;
+		ChangeState(PlayerStates.ACTIVE);
 	}
 	public void setWaiting() {
-		m_PlayerState = PlayerStates.WAITING;
+		ChangeState(PlayerStates.WAITING);
 	}
 	public void setDone() {
-		m_PlayerState = PlayerStates.DONE;
+		ChangeState(PlayerStates.DONE);
 	}
 	public void setReading() {
-		m_PlayerState = PlayerStates.READING;
+		ChangeState(PlayerStates.READING);
 	}
 	
 	public void SendMessageFromGame( ClientMessages messageType, String...args ) {
@@ -196,6 +200,11 @@ public class GamePlayer {
 			argString += args[i] + ";";
 		}
 		m_ClientAccount.SendMessage( messageType, argString );
+	}
+	
+	private void ChangeState( PlayerStates newState ) {
+		m_PlayerState = newState;
+		SendMessageFromGame( ClientMessages.PLAYERSTATE, m_PlayerState.name() );
 	}
 
 	
