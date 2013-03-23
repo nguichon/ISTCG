@@ -174,6 +174,9 @@ public class GameInstance {
 					case STACKING:
 						if( m_Players.get( origin.getUserID() ).getState() == GamePlayer.PlayerStates.ACTIVE ) {
 							m_Players.get( origin.getUserID() ).PlayCard( CARD_TO_PLAY );
+							for( Integer p : m_PlayerList ) {
+								if( p != origin.getUserID() ) { m_Players.get( p ).setWaiting(); }
+							}
 						}
 						break;
 					default:
@@ -269,7 +272,7 @@ public class GameInstance {
 		}
 		
 		if( start_resolving ) {
-			// TODO Resolve here
+			StartResolving();
 		} else {
 			if( ++m_ActivePlayerIndex >= m_Players.size() ) { m_ActivePlayerIndex = 0; }
 			gp = m_Players.get(m_PlayerList.get( m_ActivePlayerIndex ));

@@ -71,6 +71,7 @@ public class ServerCardTemplateManager {
 		}
 		
 		try {
+			@SuppressWarnings("unchecked")
 			Class<ServerCardTemplate> loadedCard = (Class<ServerCardTemplate>)m_TemplateLoader.loadClass( card.getString("name").replaceAll(" ", ""));
 			ServerCardTemplate sct = loadedCard.newInstance();
 			sct.Initialize( card );

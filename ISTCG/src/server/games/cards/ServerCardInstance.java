@@ -1,8 +1,5 @@
 package server.games.cards;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-
 import server.games.GameInstance;
 import server.games.GamePlayer;
 import server.games.events.GameEvent;
@@ -10,7 +7,6 @@ import server.games.events.GameEvent;
 
 import Shared.ClientMessages;
 import Shared.GameZones;
-import Shared.StatBlock;
 
 public class ServerCardInstance {
 	private static final int CARD_TEMPLATE_INVISIBLE = -1;

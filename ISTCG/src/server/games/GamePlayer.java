@@ -1,9 +1,7 @@
 package server.games;
 
-import server.games.cards.ServerCardTemplateManager;
 import server.games.cards.CardList;
 import server.games.cards.ServerCardInstance;
-import server.games.cards.ServerCardTemplate;
 import server.network.ClientAccount;
 import Shared.ClientMessages;
 import Shared.ClientResponses;
@@ -55,6 +53,7 @@ public class GamePlayer {
 		}
 	}
 	public void AddResource( GameResources res, int value ) {
+		System.out.println("ADDING " + res.name() + "x" + value );
 		// TODO add resources to pool.
 	}
 	public void LoadDeck( String decklist ) {

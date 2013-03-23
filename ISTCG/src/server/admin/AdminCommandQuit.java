@@ -1,10 +1,5 @@
 package server.admin;
 
-import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
-import java.sql.SQLException;
-
-import server.Database;
 import server.ServerMain;
 
 public class AdminCommandQuit extends AdminCommand {
