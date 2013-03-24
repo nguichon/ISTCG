@@ -11,7 +11,7 @@ import Shared.GameZones;
 
 import server.ServerMain;
 import server.games.cards.ServerCardInstance;
-import server.games.events.GameEvent;
+import server.games.stack.StackObject;
 import server.network.ClientAccount;
 
 /**
@@ -47,9 +47,9 @@ public class GameInstance {
 	
 	//Game object variables
 	private HashMap< Integer, ServerCardInstance > m_Directory = new HashMap< Integer, ServerCardInstance >();
-	private Stack< ServerCardInstance > m_CardsOnStack = new Stack< ServerCardInstance >();
+	private Stack< StackObject > m_ObjectsOnStack = new Stack< StackObject >();
 	private HashMap< Integer, ServerCardInstance > m_CardsOnField = new HashMap< Integer, ServerCardInstance >();
-	private int m_CardsCreated = 0;
+	private int m_UniqueIDsCreated = 0;
 	
 	
 	/**
@@ -58,8 +58,8 @@ public class GameInstance {
 	 * @return
 	 * 		An integer, unique to this instance of Game
 	 */
-	public synchronized int CreateNewCardID() {
-		return m_CardsCreated++;
+	public synchronized int CreateNewUniqueID() {
+		return m_UniqueIDsCreated++;
 	}
 	
 	/**
@@ -130,9 +130,10 @@ public class GameInstance {
 					}
 					break;
 				case DECKLIST:
-					String DECK_LIST = message[2];
+					int COMMAND_UNIT = Integer.valueOf(message[2]);
+					String DECK_LIST = message[3];
 					if( m_GameInstanceState == GameStates.CREATED ) {
-						m_Players.get( origin.getUserID() ).LoadDeck( DECK_LIST );
+						m_Players.get( origin.getUserID() ).LoadDeck( COMMAND_UNIT, DECK_LIST );
 					} else {
 						origin.SendMessage( ClientMessages.SERVER, "Game " + m_GameInstanceID + " has already started, you cannot submit another decklist.");
 					}
@@ -163,17 +164,33 @@ public class GameInstance {
 						break;
 					}
 					break;
-				case PLAY:
-					ServerCardInstance CARD_TO_PLAY = m_Directory.get( Integer.valueOf(message[2]) );
+				case ATTACK:
+					ServerCardInstance ATTACKER = m_Directory.get( Integer.valueOf( message[2] ));
+					ServerCardInstance DEFENDER = m_Directory.get( Integer.valueOf( message[3] ));
 					switch( m_GameInstanceState ) {
 					case ACTIVE:
 						if( m_Players.get( origin.getUserID() ).getState() == GamePlayer.PlayerStates.ACTIVE ) {
-							m_Players.get( origin.getUserID() ).PlayCard( CARD_TO_PLAY );
+							// TODO Put attack onto stack.
+						}
+						break;
+					default:
+						m_Players.get( origin.getUserID() ).SendMessageFromGame( ClientMessages.GAME_ERROR, String.valueOf( ATTACKER.GetCardUID() ) + " cannot attack at this time.");
+						break;
+					}
+					break;
+				case PLAY:
+					ServerCardInstance CARD_TO_PLAY = m_Directory.get( Integer.valueOf(message[2]) );
+					String TARGETING_SOLUTION = null;
+					if( message.length == 4 ) { TARGETING_SOLUTION = message[4]; }
+					switch( m_GameInstanceState ) {
+					case ACTIVE:
+						if( m_Players.get( origin.getUserID() ).getState() == GamePlayer.PlayerStates.ACTIVE ) {
+							m_Players.get( origin.getUserID() ).PlayCard( CARD_TO_PLAY, TARGETING_SOLUTION );
 						}
 						break;
 					case STACKING:
 						if( m_Players.get( origin.getUserID() ).getState() == GamePlayer.PlayerStates.ACTIVE ) {
-							m_Players.get( origin.getUserID() ).PlayCard( CARD_TO_PLAY );
+							m_Players.get( origin.getUserID() ).PlayCard( CARD_TO_PLAY, TARGETING_SOLUTION );
 							for( Integer p : m_PlayerList ) {
 								if( p != origin.getUserID() ) { m_Players.get( p ).setWaiting(); }
 							}
@@ -225,6 +242,7 @@ public class GameInstance {
 			for( Integer i : m_PlayerList ) { 
 				GamePlayer player = m_Players.get(i);
 				player.DrawCards( STARTING_HAND_SIZE );
+				player.onGameStart();
 			}
 			
 			m_CurrentPlayerIndex = new Random().nextInt( m_Players.size() );
@@ -299,28 +317,33 @@ public class GameInstance {
 		}
 		
 		if( resolve ) {
-			ResolveCard( GetCardFromStack() );
-			if( m_CardsOnStack.isEmpty() ) {
+			ResolveStackObject( GetObjectFromStack() );
+			if( m_ObjectsOnStack.isEmpty() ) {
 				ChangeState(GameStates.ACTIVE);
 				SetActivePlayer();
 			}
 		}
 	}
 	
-	private void ResolveCard(ServerCardInstance card) {
-		GameEvent e = new GameEvent( this );
-		card.resolve( e );
+	private void ResolveStackObject( StackObject so ) {
+		//GameEvent e = new GameEvent( this );
+		//card.resolve( e );
+		// TODO resolve card here
 	}
 
-	public ServerCardInstance GetCardFromStack() {
-		ServerCardInstance card = m_CardsOnStack.pop();
-		card.SetLocation( GameZones.UNKNOWN );
-		SendMessageToAllPlayers( ClientMessages.HIDE, String.valueOf( card.GetCardUID() ), GameZones.UNKNOWN.name() );
-		return card;
+	public StackObject GetObjectFromStack() {
+		StackObject so = m_ObjectsOnStack.pop();
+		if( ServerCardInstance.class.isInstance( so )) {
+			((ServerCardInstance)so).SetLocation( GameZones.UNKNOWN );
+			SendMessageToAllPlayers( ClientMessages.HIDE, String.valueOf( ((ServerCardInstance)so).GetCardUID() ), GameZones.UNKNOWN.name() );
+		} else {
+			SendMessageToAllPlayers( ClientMessages.REMOVE_STACK_OBJECT, String.valueOf( so.getStackObjectID() ) );
+		}
+		return so;
 	}
 	public void PutCardOnStack( ServerCardInstance card ) {
 		card.SetLocation( GameZones.STACK );
-		m_CardsOnStack.push( card );
+		m_ObjectsOnStack.push( card );
 		SendMessageToAllPlayers( ClientMessages.MOVE, String.valueOf( card.GetCardUID() ), GameZones.STACK.name() );
 	}
 	public void PutCardOntoField( ServerCardInstance card ) {

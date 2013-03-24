@@ -3,29 +3,29 @@ package server.games.cards;
 import server.games.GameInstance;
 import server.games.GamePlayer;
 import server.games.events.GameEvent;
+import server.games.events.ResolutionEvent;
+import server.games.stack.StackObject;
 
 
 import Shared.ClientMessages;
 import Shared.GameZones;
 
-public class ServerCardInstance {
+public class ServerCardInstance extends StackObject {
 	private static final int CARD_TEMPLATE_INVISIBLE = -1;
 	
 	//Instance information
 	private ServerCardTemplate m_Template;
-	private int m_UID;
 	
 	//Game information
-	private GameInstance m_Host;
 	private GameZones m_Location;
 	
 	//Player information
 	private GamePlayer m_Owner, m_Controller;
 	
 	public ServerCardInstance( GameInstance host, GamePlayer owner, int template_id ) {
-		m_Host = host; m_Owner = owner; m_Controller = owner;
+		super( host );
+		m_Owner = owner; m_Controller = owner;
 		
-		m_UID = m_Host.CreateNewCardID();
 		m_Location = GameZones.UNKNOWN;
 		
 		m_Template = ServerCardTemplateManager.get().GetCardTemplate( template_id );
@@ -35,6 +35,8 @@ public class ServerCardInstance {
 	
 	public void SetLocation( GameZones location ) { m_Location = location; }
 	public void Reset() { m_Controller = m_Owner; }
+	public GamePlayer getController() { return m_Controller; }
+	public GamePlayer getOwner() { return m_Owner; };
 	
 	/**
 	 * Sends the id of this CardInstance's CardTemplate.
@@ -60,9 +62,9 @@ public class ServerCardInstance {
 	public int GetCardUID() { return m_UID; }
 	public ServerCardTemplate GetCardTemplate() { return m_Template; }
 
-	public void resolve(GameEvent e) {
-		e.m_SourcePlayer = m_Controller;
-		e.m_SourceCard = this;
-		m_Template.onPlay( e );
+	@Override
+	public void Resolve(ResolutionEvent e) {
+		// TODO Auto-generated method stub
+		
 	}
 }

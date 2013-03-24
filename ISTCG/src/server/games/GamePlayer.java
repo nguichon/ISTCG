@@ -3,6 +3,7 @@ package server.games;
 import server.games.cards.CardList;
 import server.games.cards.ServerCardInstance;
 import server.network.ClientAccount;
+import Shared.CardTypes;
 import Shared.ClientMessages;
 import Shared.ClientResponses;
 import Shared.GameResources;
@@ -27,10 +28,12 @@ public class GamePlayer {
 		private CardList m_Deck;
 		private CardList m_Hand = new CardList( this, GameZones.HAND );
 		private CardList m_Scrapyard = new CardList( this, GameZones.GRAVEYARD );
+		private CardList m_Delayed = new CardList( this, GameZones.DELAYED );
+		private ServerCardInstance m_CommandUnit;
+		private int[] m_Resources = new int[GameResources.values().length];
 		
 	// GameFlow variables
 		private PlayerStates m_PlayerState;
-	
 
 	//Constructors and administrative methods
 	public GamePlayer( GameInstance g, ClientAccount acc ) {
@@ -45,6 +48,13 @@ public class GamePlayer {
 	public PlayerStates getState() { return m_PlayerState; }
 	
 	//Game play methods
+	public void onGameStart() {
+        m_CommandUnit.SetLocation( GameZones.FIELD );
+		m_Game.SendMessageToAllPlayers( ClientMessages.MOVE, String.valueOf( m_CommandUnit.GetCardUID() ), GameZones.FIELD.name() );
+		updateGameZoneCount( GameZones.DECK );
+		updateGameZoneCount( GameZones.HAND );
+		updateGameZoneCount( GameZones.GRAVEYARD );
+	}
 	public void DrawCards( int number ) {
 		for( int i = 0; i < number; i++ ) {
 			ServerCardInstance card = m_Deck.GetTopCard();
@@ -53,12 +63,16 @@ public class GamePlayer {
 		}
 	}
 	public void AddResource( GameResources res, int value ) {
-		System.out.println("ADDING " + res.name() + "x" + value );
-		// TODO add resources to pool.
+		m_Resources[ res.ordinal() ] += value;
+		m_Game.SendMessageToAllPlayers( ClientMessages.UPDATE_PLAYER, 
+										String.valueOf( m_ClientAccount.getUserID() ), 
+										res.name(), 
+										String.valueOf( m_Resources[ res.ordinal() ] ) );
 	}
-	public void LoadDeck( String decklist ) {
+	public void LoadDeck( int commandUnit, String decklist ) {
 	    if( m_PlayerState == PlayerStates.JOINED ) {
             CardList newDeck = new CardList( this, GameZones.DECK );
+            m_CommandUnit = new ServerCardInstance( m_Game, this, commandUnit );
             
             String[] cards = decklist.split("\\|");
             for( String s : cards ) {
@@ -71,7 +85,7 @@ public class GamePlayer {
             
             newDeck.Shuffle();
             
-            if( newDeck.Validate() ) {
+            if( m_CommandUnit.GetCardTemplate().getCardType() == CardTypes.COMMAND_UNIT && newDeck.Validate() ) {
                     m_Deck = newDeck;
                     ChangeState(PlayerStates.READY);
                     m_Game.Ready();
@@ -89,12 +103,10 @@ public class GamePlayer {
 		switch( zone ) {
 		case DECK:
 			m_Deck.Add( card );
-			//m_Game.SendMessageToAllPlayers( ClientMessages.HIDE, String.valueOf( card.GetCardUID() ), GameZones.GRAVEYARD.name() );
 			updateGameZoneCount( zone );
 			break;
 		case HAND:
 			m_Hand.Add( card );
-			//m_Game.SendMessageToAllPlayers( ClientMessages.HIDE, String.valueOf( card.GetCardUID() ), GameZones.GRAVEYARD.name() );
 			SendMessageFromGame( ClientMessages.MOVE, String.valueOf( card.GetCardUID() ), GameZones.HAND.name() );
 			updateGameZoneCount( zone );
 			break;
@@ -102,6 +114,10 @@ public class GamePlayer {
 			m_Scrapyard.Add( card );
 			m_Game.SendMessageToAllPlayers( ClientMessages.MOVE, String.valueOf( card.GetCardUID() ), GameZones.GRAVEYARD.name() );
 			updateGameZoneCount( zone );
+			break;
+		case DELAYED:
+			m_Delayed.Add( card );
+			m_Game.SendMessageToAllPlayers( ClientMessages.MOVE, String.valueOf( card.GetCardUID() ), GameZones.DELAYED.name() );
 			break;
 		default:
 			break;
@@ -120,6 +136,9 @@ public class GamePlayer {
 			case GRAVEYARD:
 				m_Scrapyard.Remove( card );
 				updateGameZoneCount( zone );
+				break;
+			case DELAYED:
+				m_Delayed.Remove( card );
 				break;
 			default:
 				break;
@@ -156,7 +175,7 @@ public class GamePlayer {
 	}
 	
 	//Game flow methods
-	public boolean PlayCard( ServerCardInstance card ) {
+	public boolean PlayCard( ServerCardInstance card, String targets ) {
 		if( m_PlayerState == PlayerStates.ACTIVE && isCardInZone( card, GameZones.HAND ) ) {
 			// TODO Check for cost/can play
 			
@@ -171,13 +190,23 @@ public class GamePlayer {
 		}
 	}
 	public void StartTurn() {
-		// A player draws a card on their turn.
-		DrawCards(1);
-		
-		// Let all players know that this player's turn has started.
+		m_Resources[ GameResources.METAL.ordinal() ] = 0;
+		m_Resources[ GameResources.ENERGY.ordinal() ] = 0;
+		m_Resources[ GameResources.TECH.ordinal() ] = 0;
+		m_Game.SendMessageToAllPlayers( ClientMessages.UPDATE_PLAYER, 
+				String.valueOf( m_ClientAccount.getUserID() ), 
+				GameResources.METAL.name(), 
+				String.valueOf( m_Resources[ GameResources.METAL.ordinal() ] ) );
+		m_Game.SendMessageToAllPlayers( ClientMessages.UPDATE_PLAYER, 
+				String.valueOf( m_ClientAccount.getUserID() ), 
+				GameResources.ENERGY.name(), 
+				String.valueOf( m_Resources[ GameResources.ENERGY.ordinal() ] ) );
+		m_Game.SendMessageToAllPlayers( ClientMessages.UPDATE_PLAYER, 
+				String.valueOf( m_ClientAccount.getUserID() ), 
+				GameResources.TECH.name(), 
+				String.valueOf( m_Resources[ GameResources.TECH.ordinal() ] ) );
+		DrawCards( 1 );
 		m_Game.SendMessageToAllPlayers( ClientMessages.PLAYER_TURN, String.valueOf( m_ClientAccount.getUserID() ));
-		
-		setActive();
 	}
 	public void setActive() {
 		// Set the player state to active.
@@ -203,7 +232,7 @@ public class GamePlayer {
 	
 	private void ChangeState( PlayerStates newState ) {
 		m_PlayerState = newState;
-		SendMessageFromGame( ClientMessages.PLAYERSTATE, m_PlayerState.name() );
+		SendMessageFromGame( ClientMessages.PLAYERSTATE, String.valueOf(m_ClientAccount.getUserID()), m_PlayerState.name() );
 	}
 
 	

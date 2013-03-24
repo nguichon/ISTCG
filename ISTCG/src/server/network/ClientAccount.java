@@ -240,9 +240,7 @@ public class ClientAccount extends Thread {
 				Database.get().quickInsert(
 						"UPDATE Users SET last_login = NOW() WHERE Users.id = "
 								+ m_UserID + ";");
-				// m_AdminAccount = rs.getBoolean("is_admin");
-				// TODO fix the check for admin, so not everyone is an admin :P
-				m_AdminAccount = true;
+				m_AdminAccount = rs.getBoolean( "is_admin" );
 			} else {
 				m_UserID = -1;
 				return false;

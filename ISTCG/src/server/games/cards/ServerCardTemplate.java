@@ -2,19 +2,22 @@ package server.games.cards;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.HashMap;
 
-import server.games.events.AttackEvent;
-import server.games.events.DamageEvent;
-import server.games.events.GameEvent;
+import server.games.cards.abilities.Ability;
+import server.games.cards.abilities.TargetingCondition;
+import server.games.events.ResolutionEvent;
 
 import Shared.CardTypes;
 import Shared.StatBlock;
 
 public abstract class ServerCardTemplate {
 	private CardTypes m_CardType;
-	private int m_CardID, m_AbilityCount;
+	private int m_CardID;
 	private HashMap<StatBlock.StatType, StatBlock> m_Stats;
+	private ArrayList<Ability> m_Abilities;
+	private ArrayList<TargetingCondition> m_Targets;
 	
 	public ServerCardTemplate( ) { m_Stats = new HashMap<StatBlock.StatType, StatBlock>();  }
 	public void Initialize(ResultSet card) throws SQLException  {
@@ -28,28 +31,19 @@ public abstract class ServerCardTemplate {
 		setStat( StatBlock.StatType.METAL,  card.getInt( "metal" ) );
 		setStat( StatBlock.StatType.ENERGY,  card.getInt( "energy" ) );
 		setStat( StatBlock.StatType.TECH,  card.getInt( "tech" ) );
+		m_CardType = CardTypes.valueOf( card.getString( "type" ) );
 	}
 	
 	public final int getCardTemplateID() { return m_CardID; }
 	public final CardTypes getCardType() { return m_CardType; }
 	public final StatBlock getStat( StatBlock.StatType type ) { return m_Stats.get( type ); }
+	public final int getAbilityCount() { return m_Abilities.size(); }
+	public final Ability getAbility( int abilIndex ) { return m_Abilities.get( abilIndex ); }
 	
 	protected final void setCardTemplateID( int id ) { m_CardID = id; }
 	protected final void setStat( StatBlock.StatType type, int value ) { if( value != -1 ) { setStat( new StatBlock( type, value ) ); } }
 	protected final void setStat( StatBlock sb ) { m_Stats.put( sb.m_Type, sb ); }
 	protected final void setCardType(CardTypes type) { m_CardType = type; }
-	protected final void setAbilityCount( int abilities ) { m_AbilityCount = abilities; }
 	
-	public abstract void onEnter( GameEvent e );
-	public abstract void onExit( GameEvent e );
-	public abstract void onDeath( GameEvent e );
-	public abstract void onActivate(  GameEvent e, int index );
-	public abstract void onGlobalUpdate( GameEvent e );
-	public abstract void preAttacked( AttackEvent e );
-	public abstract void postAttacked( AttackEvent e );
-	public abstract void preAttack( AttackEvent e );
-	public abstract void postAttack( AttackEvent e );
-	public abstract void preDamage( DamageEvent e );
-	public abstract void postDamage( DamageEvent e);
-	public abstract void onPlay( GameEvent e );
+	public abstract void Resolve( ResolutionEvent e );
 }
