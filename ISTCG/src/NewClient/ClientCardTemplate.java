@@ -8,7 +8,11 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.GC;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.widgets.Display;
 //import org.eclipse.swt.graphics.Image;
 
 import OldClient.ImageManager;
@@ -67,6 +71,7 @@ public class ClientCardTemplate {
     
     private String m_BGImage;
 
+	private static Rectangle frameBounds =  ImageManager.get().GetImage(CardImageAssets.CARD_CORNER_TOP_RIGHT.path()).getBounds();
     /**
      * This method draws a card using the passed GC. It will use the default
      * stat blocks stored in this class unless overwritten by passed StatBlock
@@ -78,97 +83,219 @@ public class ClientCardTemplate {
      *            unknown StatBlocks.
      */
     public void Render(GC targetGC, CardRenderSize size, ArrayList<StatBlock> stats) {
-    	//Image toDraw = ImageManager.get().GetImage( m_BGImage );
-        double factor = 1;
-    	switch (size){
-    	case TINY:
-        	factor = .03;
-        	targetGC.drawImage(ImageManager.get().GetImage(m_BGImage), 0, 0,
-                    300, 400, 0, 0, (int) (300 * factor), (int) (400 * factor));
-        	break;        
-    	case SMALL:
-        	factor = .1;
-        	targetGC.drawImage(ImageManager.get().GetImage(m_BGImage), 0, 0,
-                    300, 400, 0, 0, (int) (300 * factor), (int) (400 * factor));
-        	break;
-    	case MEDIUM:
-    		factor = .3;
-    		targetGC.drawImage(ImageManager.get().GetImage(m_BGImage), 0, 0,
-                    300, 400, 0, 0, (int) (300 * factor), (int) (400 * factor));
-    		break;
+    	Image toRender = ImageManager.get().GetImage( m_BGImage );
+    	
+    	switch( size ) {
     	case LARGE:
-    		//BG image
-    		factor = 1;
-    		targetGC.drawImage(ImageManager.get().GetImage(m_BGImage), 0, 0,
-                    300, 400, 0, 0, (int) (300 * factor), (int) (400 * factor));
-    		// Name box and Name
-    		targetGC.drawImage(ImageManager.get().GetImage(CardImageAssets.TEXT_EDGE_LEFT.path()), 10, 10);
-            targetGC.drawImage(ImageManager.get().GetImage(CardImageAssets.TEXT_CORNER_BOTTOM_LEFT.path()), 10, 31);
-            for (int i = 31; i < 300; i += 21) {
-                targetGC.drawImage(ImageManager.get().GetImage(CardImageAssets.TEXT_BODY.path()), i, 10);
-                targetGC.drawImage(ImageManager.get().GetImage(CardImageAssets.TEXT_EDGE_BOTTOM.path()), i, 31);
-            }
-            //Font ft = new Font();
-            //targetGC.setFont(Bold);
-            targetGC.drawText(m_CardName, 25, 20, true);
-    		// Stat boxes (empty)
-            for (int i = 0; i < m_Stats.size(); i++) {
-                int x = 235;
-                int y = i * 25 + 35;
-                targetGC.drawImage(ImageManager.get().GetImage(CardImageAssets.TEXT_CORNER_TOP_LEFT.path()), x, y);
-                targetGC.drawImage(ImageManager.get().GetImage(CardImageAssets.TEXT_EDGE_TOP.path()), x + 21,
-                        y);
-                targetGC.drawImage(ImageManager.get().GetImage(CardImageAssets.TEXT_CORNER_TOP_RIGHT.path()), x + 42,
-                        y);
-                targetGC.drawImage(ImageManager.get().GetImage(CardImageAssets.TEXT_CORNER_BOTTOM_LEFT.path()), x,
-                        y + 21);
-                targetGC.drawImage(ImageManager.get().GetImage(CardImageAssets.TEXT_EDGE_BOTTOM.path()), x + 21,
-                        y + 21);
-                targetGC.drawImage(ImageManager.get().GetImage(CardImageAssets.TEXT_CORNER_BOTTOM_RIGHT.path()), x + 42,
-                        y + 21);
-            }
-            //Stats fill
-            if( stats == null ) {
-            	RenderStats(targetGC, m_Stats);
-            } else {
-            	RenderStats(targetGC, stats);
-            }
-    		// Text Box
-            targetGC.drawImage(ImageManager.get().GetImage(CardImageAssets.TEXT_CORNER_TOP_LEFT.path()), 10, 250);
-            for (int i = 31; i < 300; i += 21) {
-                targetGC.drawImage(ImageManager.get().GetImage(CardImageAssets.TEXT_EDGE_TOP.path()), i, 250);
-            }
-            for (int i = 271; i < 400; i += 21) {
-                targetGC.drawImage(ImageManager.get().GetImage(CardImageAssets.TEXT_EDGE_LEFT.path()), 10, i);
-                for (int j = 31; j < 300; j += 21) {
-                    targetGC.drawImage(ImageManager.get().GetImage(CardImageAssets.TEXT_BODY.path()), j, i);
-                }
-            }
-            // draw text
-            DrawInfoText(m_CardText, targetGC);
-    		// Border
-            targetGC.drawImage(ImageManager.get().GetImage(CardImageAssets.CARD_CORNER_TOP_LEFT.path()), 0, 0);
-            targetGC.drawImage(ImageManager.get().GetImage(CardImageAssets.CARD_CORNER_TOP_RIGHT.path()), 275, 0);
-            targetGC.drawImage(ImageManager.get().GetImage(CardImageAssets.CARD_CORNER_BOTTOM_LEFT.path()), 0, 375);
-            targetGC.drawImage(ImageManager.get().GetImage(CardImageAssets.CARD_CORNER_BOTTOM_RIGHT.path()), 275, 375);
-    		for (int i = 25; i <= 274; i += 25) {
-    			targetGC.drawImage(ImageManager.get().GetImage(CardImageAssets.CARD_EDGE_TOP.path()), i, 0);
-    			targetGC.drawImage(ImageManager.get().GetImage(CardImageAssets.CARD_EDGE_BOTTOM.path()), i, 375);
+    		//Draw Image
+    			targetGC.drawImage( toRender, 
+    								0, 0, toRender.getBounds().width, toRender.getBounds().height,
+    								frameBounds.width / 4, frameBounds.height / 4, size.getWidth() - frameBounds.width / 2, size.getHeight() - frameBounds.height / 2 );
+    		if( !(m_CardText.isEmpty() && m_CardFlavor.isEmpty()) ) { RenderTextBox( targetGC, size ); RenderCardText( targetGC, size );}
+    		RenderName( targetGC, size );
+    		RenderBorder( targetGC, size );
+    		RenderCardFlavor( targetGC, size );
+    		for( StatBlock sb : m_Stats ) {
+    			StatBlock toUse = sb;
+    			if( stats != null ) {
+    				for( StatBlock sb2 : stats ) {
+    					if( sb2.m_Type == toUse.m_Type ) { toUse = sb2; }
+    				}
+    			}
+    			
+    			switch( toUse.m_Type ) {
+    			case ATTACK:
+    				RenderAttack( toUse, targetGC, size );
+    				break;
+    			case DEFENSE:
+    				RenderDefense( toUse, targetGC, size );
+    				break;
+    			case POWER:
+    				RenderPower( toUse, targetGC, size );
+    				break;
+    			case STRUCTURE:
+    				RenderStructure( toUse, targetGC, size );
+    				break;
+    			default:
+    				break;
+    			}
     		}
-    		for (int i = 25; i <= 374; i += 25) {
-    			targetGC.drawImage(ImageManager.get().GetImage(CardImageAssets.CARD_EDGE_LEFT.path()), 0, i);
-    			targetGC.drawImage(ImageManager.get().GetImage(CardImageAssets.CARD_EDGE_RIGHT.path()), 275, i);
-    		}
+	    	break;
+    	default:
+    		targetGC.drawImage( toRender, 0, 0, toRender.getBounds().width, toRender.getBounds().height, 0, 0, size.getWidth(), size.getHeight() );
+    		targetGC.drawRectangle( 0, 0, size.getWidth() - 1, size.getHeight() - 1 );
+    		targetGC.drawRectangle( 1, 1, size.getWidth() - 3, size.getHeight() - 3 );
+    		//RenderBorder( targetGC, size );
     		break;
-        default:
     	}
-    	
-    	
-    	//targetGC.drawImage( toDraw, 
-        //		0, 0, toDraw.getBounds().width, toDraw.getBounds().height,
-        //		0, 0, size.getWidth(), size.getHeight());
-        //targetGC.drawText( m_CardName, 0, 0, SWT.NONE);//SWT.DRAW_TRANSPARENT);
     }
+    
+    private static final Font NAME_FONT = new Font( Display.getDefault(), "Monospaced", 16, SWT.BOLD);
+    private static final Font TEXT_FONT = new Font( Display.getDefault(), "Monospaced", 12, SWT.NONE);
+    private static final Font FLAVOR_FONT = new Font( Display.getDefault(), "Monospaced", 9, SWT.ITALIC);
+    private void RenderName( GC targetGC, CardRenderSize size ) {
+    	if( size == CardRenderSize.LARGE ) {
+        	Image textBox = ImageManager.get().GetImage( "card-element-text-box.png" );
+    		targetGC.setFont(NAME_FONT);
+    		int length = targetGC.getFontMetrics().getAverageCharWidth() * m_CardName.length();
+    		targetGC.drawImage( textBox,
+					0, 0, textBox.getBounds().width, textBox.getBounds().height,
+					size.getWidth() - length - 32, 0, size.getWidth() - length - 20, 36);
+    		targetGC.drawText( m_CardName, size.getWidth() - length - 24, 12, true );
+    	}
+    }
+    private static void RenderTextBox( GC targetGC, CardRenderSize size ) {
+    	Image textBox = ImageManager.get().GetImage( "card-element-text-box.png" );
+		targetGC.drawImage( textBox,
+							0, 0, textBox.getBounds().width, textBox.getBounds().height,
+							75, size.getHeight() - size.getHeight() / 3 - size.getHeight() / 9, size.getWidth() - 75, size.getHeight() / 3);
+
+    }
+    private void RenderCardText( GC targetGC, CardRenderSize size ) {
+    	targetGC.setFont( TEXT_FONT );
+    	int width = targetGC.getFontMetrics().getAverageCharWidth();
+    	int height = targetGC.getFontMetrics().getHeight();
+    	int space = targetGC.getCharWidth( ' ' );
+    	int lineWidth = size.getWidth() - 75 - 8 - 12;
+    	String[] words = m_CardText.split(" ");
+    	int running_length = 0;
+    	int lines = 0;
+    	String s = "";
+    	for( int i = 0; i < words.length; i++ ) {
+    		if( running_length + (words[i].length() * width) >= lineWidth ) {
+        		targetGC.drawText( 	s,  
+						75 + 8, 
+						(size.getHeight() - size.getHeight() / 3 - size.getHeight() / 9) + (lines * (height + 2)) + 5, true);
+    			running_length = 0;
+    			s = "";
+        		lines++;
+    		}
+    		
+    		running_length += (words[i].length()) * width + space;
+    		s += words[i] + " ";
+    	}
+		targetGC.drawText( 	s,  
+				75 + 8, 
+				(size.getHeight() - size.getHeight() / 3 - size.getHeight() / 9) + (lines * (height + 2)) + 5, true);
+    }
+    private void RenderCardFlavor( GC targetGC, CardRenderSize size ) {
+    	targetGC.setFont( FLAVOR_FONT );
+    	int width = targetGC.getFontMetrics().getAverageCharWidth();
+    	int height = targetGC.getFontMetrics().getHeight();
+    	int space = targetGC.getCharWidth( ' ' );
+    	int lineWidth = size.getWidth() - 75 - 25;
+    	String[] words = m_CardFlavor.split(" ");
+    	int running_length = 0;
+    	int lines = 0;
+    	String s = "";
+    	
+    	for( int i = 0; i < words.length; i++ ) {
+    		if( running_length + (words[i].length() * width) >= lineWidth ) {
+    			running_length = 0;
+        		lines++;
+    		}
+    		
+    		running_length += (words[i].length()) * width + space;
+    	}
+    	lines+=2;
+    	for( int i = 0; i < words.length; i++ ) {
+    		if( running_length + (words[i].length() * width) >= lineWidth ) {
+        		targetGC.drawText( 	s,  
+						75 + 8, 
+						(size.getHeight() - size.getHeight() / 9 ) - (lines * (height + 2)) + 5, true);
+    			running_length = 0;
+    			s = "";
+        		lines--;
+    		}
+    		
+    		running_length += (words[i].length()) * width + space;
+    		s += words[i] + " ";
+    	}
+		targetGC.drawText( 	s,  
+				75 + 8, 
+				(size.getHeight() - size.getHeight() / 9) - (lines * (height + 2)) + 5, true);
+    }
+    private static void RenderBorder( GC targetGC, CardRenderSize size ) {
+		Rectangle frameBounds =  ImageManager.get().GetImage(CardImageAssets.CARD_CORNER_TOP_RIGHT.path()).getBounds();
+		
+		targetGC.drawImage( ImageManager.get().GetImage(CardImageAssets.CARD_CORNER_TOP_LEFT.path()), 0, 0);
+		targetGC.drawImage( ImageManager.get().GetImage(CardImageAssets.CARD_CORNER_TOP_RIGHT.path()), size.getWidth() - frameBounds.width, 0);
+		targetGC.drawImage( ImageManager.get().GetImage(CardImageAssets.CARD_CORNER_BOTTOM_LEFT.path()), 0, size.getHeight() - frameBounds.height);
+		targetGC.drawImage( ImageManager.get().GetImage(CardImageAssets.CARD_CORNER_BOTTOM_RIGHT.path()), size.getWidth() - frameBounds.width, size.getHeight() - frameBounds.height);
+		targetGC.drawImage( ImageManager.get().GetImage(CardImageAssets.CARD_EDGE_LEFT.path()), 
+														0, 0, frameBounds.width, frameBounds.height, 
+														0, frameBounds.height, frameBounds.width, size.getHeight() - 2 * frameBounds.height );
+		targetGC.drawImage( ImageManager.get().GetImage(CardImageAssets.CARD_EDGE_RIGHT.path()), 
+														0, 0, frameBounds.width, frameBounds.height, 
+														size.getWidth() - frameBounds.width, frameBounds.height, frameBounds.width, size.getHeight() - 2 * frameBounds.height );
+		targetGC.drawImage( ImageManager.get().GetImage(CardImageAssets.CARD_EDGE_TOP.path()), 
+														0, 0, frameBounds.width, frameBounds.height, 
+														frameBounds.width, 0, size.getWidth() - 2*frameBounds.width, frameBounds.height );
+		targetGC.drawImage( ImageManager.get().GetImage(CardImageAssets.CARD_EDGE_BOTTOM.path()), 
+														0, 0, frameBounds.width, frameBounds.height, 
+														frameBounds.width, size.getHeight() - frameBounds.height, size.getWidth() - 2*frameBounds.width, frameBounds.height );
+    }
+   //TODO Relativevise this
+    private static void RenderAttack( StatBlock toRender, GC targetGC, CardRenderSize size ) {
+    	if( toRender.m_Type == StatBlock.StatType.ATTACK && size == CardRenderSize.LARGE && toRender.m_Value != -1 ) {
+    		Image icon =  ImageManager.get().GetImage("icon-attack-inverse.png");
+    		Image box = ImageManager.get().GetImage("card-element-stat-bubble.png");
+    		targetGC.drawImage( icon,
+    							0, 0, icon.getBounds().width, icon.getBounds().height,
+    							75, (size.getHeight() - size.getHeight() / 3 - size.getHeight() / 9) - 26, 24, 24 );
+    		targetGC.drawImage( box,
+					0, 0, box.getBounds().width, box.getBounds().height,
+					75 + 26, (size.getHeight() - size.getHeight() / 3 - size.getHeight() / 9) - 26, 32, 24 );
+    		targetGC.setFont( NAME_FONT );
+    		targetGC.drawText( String.valueOf( toRender.m_Value), 75 + 26 + 5, (size.getHeight() - size.getHeight() / 3 - size.getHeight() / 9) - 26 + 0, true);
+    	}
+    }
+    private static void RenderPower( StatBlock toRender, GC targetGC, CardRenderSize size ) {
+    	if( toRender.m_Type == StatBlock.StatType.POWER && size == CardRenderSize.LARGE && toRender.m_Value != -1 ) {
+    		Image icon =  ImageManager.get().GetImage("icon-damage-inverse.png");
+    		Image box = ImageManager.get().GetImage("card-element-stat-bubble.png");
+    		targetGC.drawImage( icon,
+    							0, 0, icon.getBounds().width, icon.getBounds().height,
+    							75 + 60, (size.getHeight() - size.getHeight() / 3 - size.getHeight() / 9) - 26, 24, 24 );
+    		targetGC.drawImage( box,
+					0, 0, box.getBounds().width, box.getBounds().height,
+					75 + 60 + 26, (size.getHeight() - size.getHeight() / 3 - size.getHeight() / 9) - 26, 32, 24 );
+    		targetGC.setFont( NAME_FONT );
+    		targetGC.drawText( String.valueOf( toRender.m_Value), 75 + 60 + 26 + 5, (size.getHeight() - size.getHeight() / 3 - size.getHeight() / 9) - 26 + 0, true);
+    	}
+    }
+    private static void RenderDefense( StatBlock toRender, GC targetGC, CardRenderSize size ) {
+    	if( toRender.m_Type == StatBlock.StatType.DEFENSE && size == CardRenderSize.LARGE && toRender.m_Value != -1 ) {
+    		Image icon =  ImageManager.get().GetImage("icon-defense-inverse.png");
+    		Image box = ImageManager.get().GetImage("card-element-stat-bubble.png");
+    		targetGC.drawImage( icon,
+    							0, 0, icon.getBounds().width, icon.getBounds().height,
+    							75 + 60 + 60, (size.getHeight() - size.getHeight() / 3 - size.getHeight() / 9) - 26, 24, 24 );
+    		targetGC.drawImage( box,
+					0, 0, box.getBounds().width, box.getBounds().height,
+					75 + 60 + 60 + 26, (size.getHeight() - size.getHeight() / 3 - size.getHeight() / 9) - 26, 32, 24 );
+    		targetGC.setFont( NAME_FONT );
+    		targetGC.drawText( String.valueOf( toRender.m_Value), 75 + 60 + 60 + 26 + 5, (size.getHeight() - size.getHeight() / 3 - size.getHeight() / 9) - 26 + 0, true);
+    	}
+    }
+    private static void RenderStructure( StatBlock toRender, GC targetGC, CardRenderSize size ) {
+    	if( toRender.m_Type == StatBlock.StatType.STRUCTURE && size == CardRenderSize.LARGE && toRender.m_Value != -1 ) {
+    		Image icon =  ImageManager.get().GetImage("icon-structure-good.png");
+    		for( int i = 0; i < toRender.m_Value; i++ ) {
+    			if( i % 2 == 0 ) {
+    				targetGC.drawImage( icon,
+	    							0, 0, icon.getBounds().width, icon.getBounds().height,
+	    							0 + frameBounds.width - 8, size.getHeight() - ((frameBounds.height + 2) * ((i/2) + 2)) + 8, 24, 24 );
+    			} else {
+    				targetGC.drawImage( icon,
+							0, 0, icon.getBounds().width, icon.getBounds().height,
+							0 + frameBounds.width - 8 + 26, size.getHeight() - ((frameBounds.height + 2) * ((i/2) + 2)) + 8 - 12, 24, 24 );
+    				
+    			}
+    		}
+    	}
+    }
+    
     public static void RenderBlack(GC targetGC, CardRenderSize size, ArrayList<StatBlock> stats) {
     	final Color black = new Color(targetGC.getDevice(), SWT.COLOR_BLACK, 0, 0);
     	targetGC.setForeground( black );
