@@ -1,4 +1,4 @@
-package Client;
+package OldClient;
 
 import java.util.Vector;
 
@@ -17,9 +17,9 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
-import Client.ClientMain.MessageType;
 import NewClient.ClientCardTemplate;
 import NewClient.ClientCardTemplateManager;
+import OldClient.ClientMain.MessageType;
 
 public class LoginUI extends GameStateUI {
 	Label m_Error;

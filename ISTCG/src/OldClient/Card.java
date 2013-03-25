@@ -1,4 +1,4 @@
-package Client;
+package OldClient;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.GC;

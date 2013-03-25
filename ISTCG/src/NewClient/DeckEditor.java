@@ -15,7 +15,7 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Spinner;
 import org.eclipse.swt.widgets.TabItem;
 
-import Client.CardTemplate;
+import OldClient.CardTemplate;
 
 public class DeckEditor extends Composite {
 

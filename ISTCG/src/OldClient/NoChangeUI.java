@@ -1,4 +1,4 @@
-package Client;
+package OldClient;
 
 public class NoChangeUI extends GameStateUI {
 	@Override

@@ -11,7 +11,7 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
 //import org.eclipse.swt.graphics.Image;
 
-import Client.ImageManager;
+import OldClient.ImageManager;
 import Shared.CardTypes;
 import Shared.StatBlock;
 

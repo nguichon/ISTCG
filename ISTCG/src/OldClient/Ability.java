@@ -1,4 +1,4 @@
-package Client;
+package OldClient;
 
 public class Ability {
 	private int m_Cost;

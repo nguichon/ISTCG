@@ -24,8 +24,8 @@ import org.omg.PortableInterceptor.SYSTEM_EXCEPTION;
 
 //import server.games.cards.ServerCardTemplateManager;
 
-import Client.CardTemplateManager;
-import Client.ImageManager;
+import OldClient.CardTemplateManager;
+import OldClient.ImageManager;
 import Shared.ClientResponses;
 import Shared.ThreadedConnectionDevice;
 
