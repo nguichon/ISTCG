@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="500"
+   height="500"
+   id="svg2"
+   version="1.1"
+   inkscape:version="0.48.4 r9939"
+   sodipodi:docname="icon-structure-bad.svg"
+   inkscape:export-filename="C:\Users\Nick\git\capstone-card-game\ISTCG\data\images\icon-structure-good.png"
+   inkscape:export-xdpi="90"
+   inkscape:export-ydpi="90">
+  <defs
+     id="defs4">
+    <linearGradient
+       id="linearGradient3844">
+      <stop
+         style="stop-color:#ffffff;stop-opacity:1;"
+         offset="0"
+         id="stop3846" />
+      <stop
+         style="stop-color:#000000;stop-opacity:0;"
+         offset="1"
+         id="stop3848" />
+    </linearGradient>
+  </defs>
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="0.18674561"
+     inkscape:cx="524.38572"
+     inkscape:cy="-559.52351"
+     inkscape:document-units="px"
+     inkscape:current-layer="layer1"
+     showgrid="false"
+     inkscape:window-width="1600"
+     inkscape:window-height="848"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1" />
+  <metadata
+     id="metadata7">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(0,-552.36218)">
+    <path
+       sodipodi:type="arc"
+       style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:2.94666100000000020;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       id="path5305"
+       sodipodi:cx="190.74347"
+       sodipodi:cy="184.77631"
+       sodipodi:rx="63.896694"
+       sodipodi:ry="81.409119"
+       d="m 254.64016,184.77631 a 63.896694,81.409119 0 1 1 -127.79338,0 63.896694,81.409119 0 1 1 127.79338,0 z"
+       transform="matrix(3.8342396,0,0,3.0094328,-483.2987,244.55578)" />
+    <path
+       style="fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:10.47700024;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       d="M 45.25 5.25 L 5.25 45.25 L 210 250 L 5.25 454.75 L 45.25 494.75 L 250 290 L 454.75 494.75 L 494.75 454.75 L 290 250 L 494.75 45.25 L 454.75 5.25 L 250 210 L 45.25 5.25 z "
+       transform="translate(0,552.36218)"
+       id="rect5307" />
+  </g>
+</svg>
