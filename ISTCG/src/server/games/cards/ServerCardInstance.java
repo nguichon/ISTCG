@@ -57,7 +57,9 @@ public class ServerCardInstance extends StackObject {
 			requester.SendMessageFromGame( 
 					ClientMessages.CARD_INFO, 
 					String.valueOf( m_UID ), 
-					String.valueOf( m_Template.getCardTemplateID()) );
+					String.valueOf( m_Template.getCardTemplateID() ), 
+					String.valueOf( m_Owner.getClientAccount().getUserID() ), 
+					String.valueOf( m_Controller.getClientAccount().getUserID() ) );
 		} else {
 			requester.SendMessageFromGame( 
 					ClientMessages.CARD_INFO, 

@@ -17,10 +17,10 @@ import org.eclipse.swt.widgets.Listener;
 
 import NewClient.ClientCardTemplate.CardRenderSize;
 
-import Client.CardTemplateManager;
 import NewClient.ClientCardTemplateManager;
 import NewClient.ClientMain;
 import NewClient.Game;
+import OldClient.CardTemplateManager;
 import Shared.StatBlock;
 
 public class ClientCardInstance extends Canvas {

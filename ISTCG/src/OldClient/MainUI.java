@@ -1,4 +1,4 @@
-package Client;
+package OldClient;
 
 import java.util.Vector;
 
@@ -17,8 +17,8 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
-import Client.ClientMain.GameState;
-import Client.ClientMain.MessageType;
+import OldClient.ClientMain.GameState;
+import OldClient.ClientMain.MessageType;
 
 public class MainUI extends GameStateUI {
 	private StyledText m_Messages;

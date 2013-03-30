@@ -1,4 +1,4 @@
-package Client;
+package OldClient;
 
 import java.util.ArrayList;
 
@@ -13,7 +13,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 
-import Client.CardTemplate.CardRenderSize;
+import OldClient.CardTemplate.CardRenderSize;
 import Shared.NetworkObject;
 import Shared.StatBlock;
 
