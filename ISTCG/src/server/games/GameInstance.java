@@ -12,6 +12,7 @@ import Shared.GameZones;
 import server.Database;
 import server.ServerMain;
 import server.games.cards.ServerCardInstance;
+import server.games.events.ResolutionEvent;
 import server.games.stack.Attack;
 import server.games.stack.StackObject;
 import server.network.ClientAccount;
@@ -175,6 +176,7 @@ public class GameInstance {
 					case ACTIVE:
 						if( m_Players.get( origin.getUserID() ).getState() == GamePlayer.PlayerStates.ACTIVE ) {
 							PutAttackOnStack( new Attack( this, ATTACKER, DEFENDER ) );
+							StartStacking();
 						}
 						break;
 					default:
@@ -330,10 +332,8 @@ public class GameInstance {
 	}
 	
 	private void ResolveStackObject( StackObject so ) {
-		//GameEvent e = new GameEvent( this );
-		//card.resolve( e );
-		// TODO resolve card here
-		
+		ResolutionEvent e = new ResolutionEvent( this );
+		so.Resolve( e );
 	}
 
 	public StackObject GetObjectFromStack() {
@@ -407,5 +407,9 @@ public class GameInstance {
 	public void ChangeState( GameStates newState ) {
 		m_GameInstanceState = newState;
 		SendMessageToAllPlayers( ClientMessages.GAMESTATE, m_GameInstanceState.name() );
+	}
+
+	public ServerCardInstance GetCardInstance(Integer valueOf) {
+		return m_Directory.get( valueOf );
 	}
 }

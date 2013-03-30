@@ -2,12 +2,16 @@ package server.games;
 
 import server.games.cards.CardList;
 import server.games.cards.ServerCardInstance;
+import server.games.cards.ServerCardTemplate;
+import server.games.cards.abilities.Target;
 import server.network.ClientAccount;
 import Shared.CardTypes;
 import Shared.ClientMessages;
 import Shared.ClientResponses;
 import Shared.GameResources;
 import Shared.GameZones;
+import Shared.StatBlock;
+import Shared.StatBlock.StatType;
 
 public class GamePlayer {
 	// GAME CONSTANTS
@@ -177,8 +181,41 @@ public class GamePlayer {
 	//Game flow methods
 	public boolean PlayCard( ServerCardInstance card, String targets ) {
 		if( m_PlayerState == PlayerStates.ACTIVE && isCardInZone( card, GameZones.HAND ) ) {
-			// TODO Check for cost/can play
+			//Check targets
+			String[] trgts = targets.split("|");
+			card.clearTargets();
+			for( String target : trgts ) {
+				card.addTarget( new Target( m_Game.GetCardInstance(Integer.valueOf(target)) ) );
+			}
+			if( !card.ValidateTargets() ) {
+				SendMessageFromGame( ClientMessages.GAME_ERROR, "Invalid/Incorrect Number of targets.");
+				return false;
+			}
+
+			//Check for costs
+			ServerCardTemplate sct = card.GetCardTemplate();
+			StatBlock m = sct.getStat( StatType.METAL );
+			if( m != null && m.m_Value != -1 && m.m_Value > m_Resources[GameResources.METAL.ordinal()] ) {
+				SendMessageFromGame( ClientMessages.GAME_ERROR, "Not enough Metal to play " + String.valueOf( card.GetCardUID() ) + " at this time.");
+				return false;
+			}
+			StatBlock e = sct.getStat( StatType.ENERGY );
+			if(e != null && e.m_Value != -1 && e.m_Value >m_Resources[GameResources.ENERGY.ordinal()] ) {
+				SendMessageFromGame( ClientMessages.GAME_ERROR, "Not enough Energy to play " + String.valueOf( card.GetCardUID() ) + " at this time.");
+				return false;
+			}
+			StatBlock t = sct.getStat( StatType.TECH );
+			if(t != null && t.m_Value != -1 && t.m_Value >m_Resources[GameResources.TECH.ordinal()] ) {
+				SendMessageFromGame( ClientMessages.GAME_ERROR, "Not enough Tech points to play " + String.valueOf( card.GetCardUID() ) + " at this time.");
+				return false;
+			}
 			
+			//Pay costs
+			if( m != null && m.m_Value != -1 ) m_Resources[GameResources.METAL.ordinal()] -= m.m_Value;
+			if( e != null && e.m_Value != -1 ) m_Resources[GameResources.METAL.ordinal()] -= e.m_Value;
+			if( t != null && t.m_Value != -1 ) m_Resources[GameResources.METAL.ordinal()] -= t.m_Value;
+			
+			//Put onto stack
 			removeCardFromZone( card, GameZones.HAND );
 			m_Game.PutCardOnStack( card );
 			m_Game.StartStacking();

@@ -1,12 +1,16 @@
 package server.games.cards;
 
+import java.util.ArrayList;
+
 import server.games.GameInstance;
 import server.games.GamePlayer;
+import server.games.cards.abilities.Target;
 import server.games.events.GameEvent;
 import server.games.events.ResolutionEvent;
 import server.games.stack.StackObject;
 
 
+import Shared.CardTypes;
 import Shared.ClientMessages;
 import Shared.GameZones;
 
@@ -15,6 +19,7 @@ public class ServerCardInstance extends StackObject {
 	
 	//Instance information
 	private ServerCardTemplate m_Template;
+	private ArrayList<Target> m_Targets = new ArrayList<Target>();
 	
 	//Game information
 	private GameZones m_Location;
@@ -73,8 +78,24 @@ public class ServerCardInstance extends StackObject {
 
 	@Override
 	public void Resolve(ResolutionEvent e) {
-		// TODO Auto-generated method stub
-		
+		e.resolvingCard = this;
+		e.targets = m_Targets;
+		if( m_Template.getCardType() == CardTypes.UNIT || m_Template.getCardType() == CardTypes.GEAR ) {
+			e.locationAfterResolution = GameZones.FIELD;
+		}
+		m_Template.Resolve( e );
+		MoveCardTo( e.locationAfterResolution );
+		m_Targets.clear();
+	}
+
+	private void MoveCardTo(GameZones locationAfterResolution) {
+		switch( locationAfterResolution ) {
+		case GRAVEYARD:
+			m_Owner.putCardInZone( this, GameZones.GRAVEYARD );
+		case FIELD:
+			m_Host.PutCardOntoField( this );
+		default:
+		}
 	}
 
 	public GameZones getLocation() {
@@ -88,6 +109,19 @@ public class ServerCardInstance extends StackObject {
 
 	@Override
 	public boolean isValid() {
+		return true;
+	}
+
+	public void clearTargets() {
+		m_Targets.clear();
+	}
+	
+	public void addTarget( Target t ) {
+		m_Targets.add( t );
+	}
+	
+	public boolean ValidateTargets() {
+		//TODO Validate targets
 		return true;
 	}
 }
