@@ -21,6 +21,8 @@ public class ServerCardInstance extends StackObject {
 	
 	//Player information
 	private GamePlayer m_Owner, m_Controller;
+
+	private int m_TimesMoved = 0;
 	
 	public ServerCardInstance( GameInstance host, GamePlayer owner, int template_id ) {
 		super( host );
@@ -33,7 +35,12 @@ public class ServerCardInstance extends StackObject {
 		host.AddToDirectory( this );
 	}
 	
-	public void SetLocation( GameZones location ) { m_Location = location; }
+	public synchronized void SetLocation( GameZones location ) { 
+		if( m_Location != location ) { 
+			++m_TimesMoved; 
+			m_Location = location;
+		}
+	}
 	public void Reset() { m_Controller = m_Owner; }
 	public GamePlayer getController() { return m_Controller; }
 	public GamePlayer getOwner() { return m_Owner; };
@@ -59,12 +66,26 @@ public class ServerCardInstance extends StackObject {
 		}
 	}
 	
-	public int GetCardUID() { return m_UID; }
+	public int GetCardUID() { return getStackObjectID(); }
 	public ServerCardTemplate GetCardTemplate() { return m_Template; }
 
 	@Override
 	public void Resolve(ResolutionEvent e) {
 		// TODO Auto-generated method stub
 		
+	}
+
+	public GameZones getLocation() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public int TimesMoved() {
+		return m_TimesMoved ;
+	}
+
+	@Override
+	public boolean isValid() {
+		return true;
 	}
 }
