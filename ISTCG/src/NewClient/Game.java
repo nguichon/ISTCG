@@ -343,13 +343,16 @@ public class Game extends Composite {
 		}
 		if(hasCardLoaded(cardID)&&field.contains(cardID)&&getActive()&&findCardById(cardID).getController().equals(main.getPID())){ //HOLY IF STATEMENT BATMAN
 			this.targeting=true; // we are now ready to attack
-			lblActionhelp.setText("Select a target.");
+			lblActionhelp.setText("Select target.");
+			System.out.println("Preparing to attack");
 			this.curattacker=cardID;
 		}
 		} else {
-			if(hasCardLoaded(cardID)&&field.contains(findCardById(cardID))&&getActive()&&findCardById(cardID).getController().equals(this.eID)){ //HOLY IF STATEMENT BATMAN
+			if(hasCardLoaded(cardID)&&field.contains(findCardById(cardID))&&getActive()&&!findCardById(cardID).getController().equals(main.getPID())){ //HOLY IF STATEMENT BATMAN
 				this.targeting=false; // we are now ready to attack
 				main.sendData("ATTACK;"+this.ID+";"+curattacker+";"+cardID);
+				System.out.println(curattacker+" is attaking "+cardID);
+				curattacker="";
 			}
 		}
 	}
@@ -674,6 +677,12 @@ public class Game extends Composite {
 		if(hasCardLoaded(cardID)){
 			findCardById(cardID).template.Render(vcgc, CardRenderSize.LARGE, findCardById(cardID).getStatBlock(),0);
 			vcard = cardID;
+		}
+		if(targeting){
+			main.sendData("ATTACK;"+this.ID+";"+curattacker+";"+cardID);
+			System.out.println("Attacking!");
+			targeting = false;
+			curattacker="";
 		}
 	}
 
