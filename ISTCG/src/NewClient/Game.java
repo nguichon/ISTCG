@@ -682,8 +682,11 @@ public class Game extends Composite {
 			System.out.println("NOW IS " + state);
 			setActive(false);
 			break;
+		case READING:
+			this.enablePass();
+			break;
 		default:
-			System.out.println("NOW IS " + state); break;
+			System.out.println("NOW IS " + state + "(NOT HANDLED)"); break;
 		}
 		
 	}

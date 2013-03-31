@@ -191,6 +191,7 @@ public class ClientMain {
 			m_Server.sendData( "LOGIN;" + login + ";" + password );
 	}
 	public void ParseMessage( String input ) {
+		System.out.println( "Magic man! - " + input );
 		//System.out.println(input);
 		String[] inputs = input.split(";");
 		switch( Shared.ClientMessages.valueOf(inputs[0].toUpperCase()) ) {
@@ -292,11 +293,6 @@ public class ClientMain {
 		case GAME_ERROR:
 			System.err.println("Game error in game "+inputs[1]+". Error: "+inputs[2]); break;
 		case PLAYER_STATE:
-			System.out.print( "Magic man! - " );
-			for( String s : inputs ) {
-				System.out.print( s + "..." );
-			}
-			System.out.println();
 			if(composite instanceof Lobby){
 				if(((Lobby)composite).findGameById(inputs[1])!=null){
 					((Lobby)composite).findGameById(inputs[1]).setPlayerState(inputs[2],inputs[3]);

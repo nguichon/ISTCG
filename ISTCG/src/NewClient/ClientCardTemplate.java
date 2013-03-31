@@ -20,6 +20,7 @@ import server.games.cards.abilities.TargetingCondition;
 import OldClient.ImageManager;
 import Shared.CardTypes;
 import Shared.StatBlock;
+import Shared.StatBlock.StatType;
 
 @XmlRootElement(namespace = "card template")
 public class ClientCardTemplate {
@@ -154,6 +155,14 @@ public class ClientCardTemplate {
     		}
     	}
 	}
+    
+    public int GetStatValue( StatType type ) {
+    	for( StatBlock s : m_Stats ) {
+    		if( s.m_Type == type )
+    			return s.m_Value;
+    	}
+    	return -1;
+    }
 
 	private static final Font NAME_FONT = new Font( Display.getDefault(), "Monospaced", 16, SWT.BOLD);
     private static final Font TEXT_FONT = new Font( Display.getDefault(), "Monospaced", 12, SWT.NONE);
@@ -162,11 +171,11 @@ public class ClientCardTemplate {
     	if( size == CardRenderSize.LARGE ) {
         	Image textBox = ImageManager.get().GetImage( "card-element-text-box.png" );
     		targetGC.setFont(NAME_FONT);
-    		int length = targetGC.getFontMetrics().getAverageCharWidth() * m_CardName.length();
+    		int length = size.getWidth() - 75;//targetGC.getFontMetrics().getAverageCharWidth() * m_CardName.length();
     		targetGC.drawImage( textBox,
 					0, 0, textBox.getBounds().width, textBox.getBounds().height,
-					size.getWidth() - length - 32, 0, size.getWidth() - length - 20, 36);
-    		targetGC.drawText( m_CardName, size.getWidth() - length - 24, 12, true );
+					size.getWidth() - length, 0, length, 36);
+    		targetGC.drawText( m_CardName, size.getWidth() - length + 5, 12, true );
     	}
     }
     private static void RenderTextBox( GC targetGC, CardRenderSize size ) {

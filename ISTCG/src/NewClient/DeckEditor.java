@@ -55,16 +55,16 @@ public class DeckEditor extends Composite {
 		m_LabelTotalCount = new Label(this, SWT.NONE);
 			m_LabelTotalCount.setText("Total Count");
 		m_SpinnerToMove = new Spinner(this, SWT.BORDER);
-		m_CardPreview = new Canvas( this, SWT.BORDER );
-			m_CardPreviewType = 2;
+		m_CardPreview = new Canvas( this, SWT.NONE );
+			m_CardPreviewType = 3;
 			m_CardPreview.addPaintListener( new PaintListener() {
 	
 				@Override
 				public void paintControl(PaintEvent e) {
 					if( m_CardPreviewType == -1 ) {
-						ClientCardTemplate.RenderBlack( e.gc, ClientCardTemplate.CardRenderSize.MEDIUM, null );
+						ClientCardTemplate.RenderBlack( e.gc, ClientCardTemplate.CardRenderSize.LARGE, null );
 					} else {
-						ClientCardTemplateManager.get().GetClientCardTemplate( m_CardPreviewType ).Render( e.gc, ClientCardTemplate.CardRenderSize.MEDIUM, null, 0 );
+						ClientCardTemplateManager.get().GetClientCardTemplate( m_CardPreviewType ).Render( e.gc, ClientCardTemplate.CardRenderSize.LARGE, null, 5 );
 					}
 				}
 			});
@@ -83,11 +83,11 @@ public class DeckEditor extends Composite {
 				int width_2 = (int)((new_size.width - 5) * 0.5);
 				
 				m_MyCollectionList.setBounds( 0, 0, width_1, new_size.height );
-				m_MyDeckList.setBounds( new_size.width - width_2, 0, width_2, new_size.height-250 );
-				m_CardPreview.setBounds( new_size.width - 180, new_size.height-240,  180,  240 );
-				m_AddCardButton.setBounds( new_size.width - width_2, new_size.height-240, width_2-230, 22 );
-				m_RemoveCardButton.setBounds( new_size.width - width_2, new_size.height-213, width_2-190, 22 );
-				m_SpinnerToMove.setBounds( new_size.width - 230, new_size.height-240, 40, 22 );
+				m_MyDeckList.setBounds( new_size.width - width_2, 0, width_2, new_size.height - ClientCardTemplate.CardRenderSize.LARGE.getHeight() );
+				m_CardPreview.setBounds( new_size.width -  ClientCardTemplate.CardRenderSize.LARGE.getWidth(), new_size.height- ClientCardTemplate.CardRenderSize.LARGE.getHeight(),  ClientCardTemplate.CardRenderSize.LARGE.getWidth(),  ClientCardTemplate.CardRenderSize.LARGE.getHeight() );
+				m_AddCardButton.setBounds( new_size.width - width_2, new_size.height-ClientCardTemplate.CardRenderSize.LARGE.getHeight(), width_2- ClientCardTemplate.CardRenderSize.LARGE.getWidth() - 50, 22 );
+				m_RemoveCardButton.setBounds( new_size.width - width_2, new_size.height-ClientCardTemplate.CardRenderSize.LARGE.getHeight() + 27, width_2-  ClientCardTemplate.CardRenderSize.LARGE.getWidth() - 10, 22 );
+				m_SpinnerToMove.setBounds( new_size.width - (ClientCardTemplate.CardRenderSize.LARGE.getWidth() + 50), new_size.height-ClientCardTemplate.CardRenderSize.LARGE.getHeight(), 40, 22 );
 			}
 			
 		});
