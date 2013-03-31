@@ -14,12 +14,12 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Display;
 
-import server.games.cards.abilities.TargetingCondition;
 //import org.eclipse.swt.graphics.Image;
 
 import OldClient.ImageManager;
 import Shared.CardTypes;
 import Shared.StatBlock;
+import Shared.TargetingCondition;
 import Shared.StatBlock.StatType;
 
 @XmlRootElement(namespace = "card template")

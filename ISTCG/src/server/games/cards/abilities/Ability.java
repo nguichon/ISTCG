@@ -2,6 +2,8 @@ package server.games.cards.abilities;
 
 import java.util.ArrayList;
 
+import Shared.TargetingCondition;
+
 import server.games.cards.ServerCardInstance;
 import server.games.stack.AbilityInstance;
 

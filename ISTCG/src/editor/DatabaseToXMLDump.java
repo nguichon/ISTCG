@@ -12,11 +12,11 @@ import javax.xml.bind.Unmarshaller;
 
 import NewClient.ClientCardTemplate;
 import Shared.StatBlock;
+import Shared.TargetingCondition;
 import Shared.StatBlock.StatType;
 
 import server.Database;
 import server.ServerMain;
-import server.games.cards.abilities.TargetingCondition;
 
 public class DatabaseToXMLDump {
 	private static String DEFAULT_CARD_PATH = System.getProperty("user.dir") + "/data/cards/card_";

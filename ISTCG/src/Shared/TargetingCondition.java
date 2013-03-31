@@ -1,12 +1,10 @@
-package server.games.cards.abilities;
+package Shared;
 
 import java.util.ArrayList;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import Shared.CardTypes;
-import Shared.GameZones;
 
 @XmlRootElement(name = "TargetingCondition")
 public class TargetingCondition {
