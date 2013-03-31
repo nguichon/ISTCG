@@ -133,6 +133,7 @@ public class ClientCardInstance extends Canvas {
 //			redraw();
 //			game.group.layout();
 			game.setViewer(this.getID());
+			game.vcard=this.getID();
 			break;
 			
 		case MEDIUM:
