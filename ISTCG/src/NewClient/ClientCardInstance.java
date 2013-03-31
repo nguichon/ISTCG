@@ -95,29 +95,30 @@ public class ClientCardInstance extends Canvas {
 	}
 	
 	public void cardDClicked(){
-		switch(size){
-		
-		//case SMALL:
-		//	break;
-			
-		//case MEDIUM:
-		//	break;
-		case LARGE:
-			size = lastSize;
-			redraw();
-//			if(zone==GameZone.VIEWER){
-//				setBounds(lastBounds);
-//				size = CardRenderSize.SMALL;
-//				setParent(this.lastParent);
-//				redraw();
-//			}
-			break;
-		default:
-			lastSize = size;
-			size = CardRenderSize.LARGE;
-			redraw();
-			break;
-		}
+//		switch(size){
+//		
+//		//case SMALL:
+//		//	break;
+//			
+//		//case MEDIUM:
+//		//	break;
+//		case LARGE:
+//			size = lastSize;
+//			redraw();
+////			if(zone==GameZone.VIEWER){
+////				setBounds(lastBounds);
+////				size = CardRenderSize.SMALL;
+////				setParent(this.lastParent);
+////				redraw();
+////			}
+//			break;
+//		default:
+//			lastSize = size;
+//			size = CardRenderSize.LARGE;
+//			redraw();
+//			break;
+//		}
+		game.playCard(this.id);
 	}
 	
 	public void cardClicked(MouseEvent mouse){

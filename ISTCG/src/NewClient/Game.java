@@ -245,20 +245,15 @@ public class Game extends Composite {
 		grpHand.setText("HAND");
 		grpHand.setLayout(new GridLayout(7, false));
 		
-		group = new Group(this, SWT.NONE);
-		FormData fd_group = new FormData();
-		fd_group.bottom = new FormAttachment(0, 539);
-		fd_group.right = new FormAttachment(0, 1035);
-		fd_group.top = new FormAttachment(0, 94);
-		fd_group.left = new FormAttachment(0, 527);
-		group.setLayoutData(fd_group);
-		group.setLayout(new FillLayout(SWT.HORIZONTAL));
-		
-		viewcanvas = new Canvas(group, SWT.NONE);
-		viewcanvas.setBounds(new Rectangle(this.getBounds().width-CardRenderSize.LARGE.getWidth(),this.getBounds().height-CardRenderSize.LARGE.getHeight(),CardRenderSize.LARGE.getWidth(),CardRenderSize.LARGE.getHeight()));
+//		group = new Group(this,SWT.NONE);
+//		FormData fd_group = new FormData();
+//		fd_group.bottom = new FormAttachment(0, 539);
+//		fd_group.right = new FormAttachment(0, 1035);
+//		fd_group.top = new FormAttachment(0, 94);
+//		fd_group.left = new FormAttachment(0, 717);
+//		//group.setLayoutData(fd_group);
+//		group.setLayout(new FillLayout(SWT.HORIZONTAL));
 		vcard = "";
-		vcgc = new GC(viewcanvas);
-		viewcanvas.setLayout(new FillLayout(SWT.HORIZONTAL));
 		
 		group_1 = new Group(this, SWT.NONE);
 		FormData fd_group_1 = new FormData();
@@ -285,6 +280,25 @@ public class Game extends Composite {
 		fd_lblActionhelp.left = new FormAttachment(0, 527);
 		lblActionhelp.setLayoutData(fd_lblActionhelp);
 		lblActionhelp.setText("ACTIONHELP");
+		
+		
+		
+		Group grpViewer = new Group(this, SWT.NONE);
+		grpViewer.setText("VIEWER");
+		grpViewer.setLayout(new FillLayout(SWT.HORIZONTAL));
+		FormData fd_grpViewer = new FormData();
+		fd_grpViewer.top = new FormAttachment(lblEtech, 80);
+		fd_grpViewer.right = new FormAttachment(grpHand, 306, SWT.RIGHT);
+		fd_grpViewer.bottom = new FormAttachment(lblMetal, 31, SWT.BOTTOM);
+		fd_grpViewer.left = new FormAttachment(grpHand, 6);
+		grpViewer.setLayoutData(fd_grpViewer);
+		viewcanvas = new Canvas(grpViewer, SWT.NONE);
+		//viewcanvas.setLayoutData(new FormData());
+		//viewcanvas.setParent(group);
+		//viewcanvas.setLayoutData(new FormData());
+		//viewcanvas.setBounds(new Rectangle(viewcanvas.getParent().getBounds().width-CardRenderSize.LARGE.getWidth(),viewcanvas.getParent().getBounds().height-CardRenderSize.LARGE.getHeight(),CardRenderSize.LARGE.getWidth(),CardRenderSize.LARGE.getHeight()));
+		vcgc = new GC(viewcanvas);
+		viewcanvas.setLayout(new FillLayout(SWT.HORIZONTAL));
 		viewcanvas.addMouseListener(new MouseListener(){
 
 			@Override
