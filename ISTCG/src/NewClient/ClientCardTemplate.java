@@ -13,6 +13,8 @@ import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Display;
+
+import server.games.cards.abilities.TargetingCondition;
 //import org.eclipse.swt.graphics.Image;
 
 import OldClient.ImageManager;
@@ -70,6 +72,7 @@ public class ClientCardTemplate {
     // private static Display display = null;
     
     private String m_BGImage;
+	private ArrayList<TargetingCondition> m_Targets;
 
 	private static Rectangle frameBounds =  ImageManager.get().GetImage(CardImageAssets.CARD_CORNER_TOP_RIGHT.path()).getBounds();
     /**
@@ -429,5 +432,15 @@ public class ClientCardTemplate {
 
     public ArrayList<StatBlock> getStats() {
         return m_Stats;
+    }
+    
+    @XmlElementWrapper(name = "targetList")
+    @XmlElement(name = "target")
+    public void setTargets(ArrayList<TargetingCondition> trgts) {
+        this.m_Targets = trgts;
+    }
+
+    public ArrayList<TargetingCondition> getTargets() {
+        return m_Targets;
     }
 }

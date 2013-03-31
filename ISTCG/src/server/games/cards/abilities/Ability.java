@@ -2,6 +2,7 @@ package server.games.cards.abilities;
 
 import java.util.ArrayList;
 
+import server.games.cards.ServerCardInstance;
 import server.games.stack.AbilityInstance;
 
 public abstract class Ability {
@@ -20,6 +21,8 @@ public abstract class Ability {
 	protected void AddNewTargetingCondition( TargetingCondition tc ) {
 		m_AbilityTargets.add( tc );
 	}
+
+	public abstract void resolve(ServerCardInstance m_Source, ArrayList<Target> m_Targets);
 }
 
 

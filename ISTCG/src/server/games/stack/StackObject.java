@@ -13,4 +13,5 @@ public abstract class StackObject {
 	}
 	public abstract void Resolve( ResolutionEvent e );
 	public int getStackObjectID( ) { return m_UID; }
+	public abstract boolean isValid();
 }

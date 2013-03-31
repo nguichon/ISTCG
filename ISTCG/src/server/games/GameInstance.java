@@ -9,8 +9,11 @@ import Shared.ClientMessages;
 import Shared.ClientResponses;
 import Shared.GameZones;
 
+import server.Database;
 import server.ServerMain;
 import server.games.cards.ServerCardInstance;
+import server.games.events.ResolutionEvent;
+import server.games.stack.Attack;
 import server.games.stack.StackObject;
 import server.network.ClientAccount;
 
@@ -94,6 +97,7 @@ public class GameInstance {
 	 */
 	private void AddToGame( ClientAccount clientToAdd ) {
 		if( m_GameInstanceState == GameStates.CREATED && !m_Players.containsKey( clientToAdd.getUserID() ) ) {
+			Database.get().quickInsert( "INSERT INTO game_players(id, created_at, modified_at, game_id, user_id) VALUES (DEFAULT,DEFAULT,DEFAULT," + m_GameInstanceID + "," + clientToAdd.getUserID() + ");");
 			GamePlayer gp = new GamePlayer( this, clientToAdd );
 			SendMessageToAllPlayers( ClientMessages.PLAYER_JOINED, gp.getClientAccount().getUserName(), String.valueOf(gp.getClientAccount().getUserID()) );
 			
@@ -171,7 +175,8 @@ public class GameInstance {
 					switch( m_GameInstanceState ) {
 					case ACTIVE:
 						if( m_Players.get( origin.getUserID() ).getState() == GamePlayer.PlayerStates.ACTIVE ) {
-							// TODO Put attack onto stack.
+							PutAttackOnStack( new Attack( this, ATTACKER, DEFENDER ) );
+							StartStacking();
 						}
 						break;
 					default:
@@ -327,9 +332,8 @@ public class GameInstance {
 	}
 	
 	private void ResolveStackObject( StackObject so ) {
-		//GameEvent e = new GameEvent( this );
-		//card.resolve( e );
-		// TODO resolve card here
+		ResolutionEvent e = new ResolutionEvent( this );
+		so.Resolve( e );
 	}
 
 	public StackObject GetObjectFromStack() {
@@ -347,10 +351,18 @@ public class GameInstance {
 		m_ObjectsOnStack.push( card );
 		SendMessageToAllPlayers( ClientMessages.MOVE, String.valueOf( card.GetCardUID() ), GameZones.STACK.name() );
 	}
+	public void PutAttackOnStack( Attack attack ) {
+		m_ObjectsOnStack.push( attack );
+		SendMessageToAllPlayers( ClientMessages.STACK_OBJECT, 
+								 String.valueOf(attack.getStackObjectID()), 
+								 "ATTACK", 
+								 String.valueOf(attack.getAttacker().GetCardUID()), 
+								 String.valueOf( attack.getDefender().GetCardUID()));
+	}
 	public void PutCardOntoField( ServerCardInstance card ) {
 		card.SetLocation( GameZones.FIELD );
 		m_CardsOnField.put( card.GetCardUID(), card );
-		SendMessageToAllPlayers( ClientMessages.HIDE, String.valueOf( card.GetCardUID() ), GameZones.STACK.name() );
+		SendMessageToAllPlayers( ClientMessages.MOVE, String.valueOf( card.GetCardUID() ), GameZones.FIELD.name() );
 	}
 	
 	/**
@@ -395,5 +407,9 @@ public class GameInstance {
 	public void ChangeState( GameStates newState ) {
 		m_GameInstanceState = newState;
 		SendMessageToAllPlayers( ClientMessages.GAMESTATE, m_GameInstanceState.name() );
+	}
+
+	public ServerCardInstance GetCardInstance(Integer valueOf) {
+		return m_Directory.get( valueOf );
 	}
 }
