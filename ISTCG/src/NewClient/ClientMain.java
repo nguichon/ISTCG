@@ -41,7 +41,7 @@ public class ClientMain {
 		shell = new Shell( SWT.NO_REDRAW_RESIZE | SWT.SHELL_TRIM );
 		shell.setSize(450, 300);
 		shell.setMinimumSize( 450, 300 );
-		shell.setText("Unnamed TCG");
+		shell.setText("Intersteller TCG");
 		shell.setBackgroundImage( ImageManager.get().GetImage( "Client_BG.png" ) );
 		shell.setBackgroundMode( SWT.INHERIT_DEFAULT );
 		Login = new Login(shell, SWT.NONE, this );
@@ -186,6 +186,7 @@ public class ClientMain {
 		}
 	}
 	public void Login( String login, String password ) {
+		shell.setText( "Intersteller TCG - " + login );
 		if(MakeConnection())
 			m_Server.sendData( "LOGIN;" + login + ";" + password );
 	}

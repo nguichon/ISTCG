@@ -87,9 +87,10 @@ public class GamePlayer {
                     }
             }
             
+            m_CommandUnit = new ServerCardInstance( m_Game, this, commandUnit );
             newDeck.Shuffle();
             
-            if( m_CommandUnit.GetCardTemplate().getCardType() == CardTypes.COMMAND_UNIT && newDeck.Validate() ) {
+            if(  newDeck.Validate() ) {
                     m_Deck = newDeck;
                     ChangeState(PlayerStates.READY);
                     m_Game.Ready();

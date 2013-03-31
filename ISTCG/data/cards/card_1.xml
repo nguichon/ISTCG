@@ -1,0 +1,1 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?><ns2:clientCardTemplate xmlns:ns2="card template"><cardArt>Energy Cell.png</cardArt><cardFlavor></cardFlavor><cardID>1</cardID><cardName>Energy Cell</cardName><cardText>Adds 1 Energy to your available resources.</cardText><cardType>RESOURCE</cardType><statList/></ns2:clientCardTemplate>

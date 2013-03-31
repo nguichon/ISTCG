@@ -120,6 +120,11 @@ public class GameInstance {
 	 * 		The actual message sent by the ClientAccount, split on ';'
 	 */
 	public synchronized void HandleMessage( ClientAccount origin, String[] message ) throws IndexOutOfBoundsException {
+		System.out.print( "[" + origin.getUserID() + "]: " );
+		for( String s : message ) {
+			System.out.print( s + ";" );
+		}
+		System.out.println();
 		try {
 			switch(ClientResponses.valueOf( message[0].toUpperCase() )) {
 				case END:
