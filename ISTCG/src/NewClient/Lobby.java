@@ -69,8 +69,8 @@ public class Lobby extends Composite {
 			@Override
 			public void handleEvent(Event event) {
 				Rectangle new_size = main.rShell().getClientArea();
-				int width_1 = (int)((new_size.width - 30) * 0.6);
-				int width_2 = (int)((new_size.width - 30) * 0.4);
+				int width_1 = (int)((new_size.width - 30) * 0.8);
+				int width_2 = (int)((new_size.width - 30) * 0.2);
 				
 				m_TabFolder.setBounds( 10, 10, width_1, new_size.height - 20);
 				m_ReceivedMessagesStyledText.setBounds( new_size.width - width_2, 10, width_2 - 20, new_size.height - 74);
