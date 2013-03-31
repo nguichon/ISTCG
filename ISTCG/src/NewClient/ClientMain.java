@@ -318,6 +318,7 @@ public class ClientMain {
 				
 			} break;
 		case REMOVE_STACK_OBJECT:
+			System.out.println("REMOVE STACK OBJECT");
 			if(composite instanceof Lobby){
 				if(((Lobby)composite).findGameById(inputs[1])!=null){
 					

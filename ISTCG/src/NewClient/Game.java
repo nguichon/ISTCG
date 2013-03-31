@@ -651,7 +651,7 @@ public class Game extends Composite {
 	}
 	public void setViewer(String cardID){
 		if(hasCardLoaded(cardID)){
-			findCardById(cardID).template.Render(vcgc, CardRenderSize.LARGE, findCardById(cardID).getStatBlock(), 0);
+			findCardById(cardID).template.Render(vcgc, CardRenderSize.LARGE, findCardById(cardID).getStatBlock(),0);
 			vcard = cardID;
 		}
 	}
@@ -666,6 +666,7 @@ public class Game extends Composite {
 			} break;
 		case READY:
 			System.out.println("NOW IS " + state);
+			this.enablePass();
 			break;
 		case ACTIVE:
 			System.out.println("NOW IS " + state);
