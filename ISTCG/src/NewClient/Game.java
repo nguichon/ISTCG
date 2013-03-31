@@ -22,8 +22,6 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.TabItem;
 
 import server.games.GamePlayer;
-import sun.tools.tree.ThisExpression;
-
 import NewClient.ClientCardInstance.GameZone;
 import NewClient.ClientCardTemplate.CardRenderSize;
 import Shared.GameResources;
@@ -418,7 +416,7 @@ public class Game extends Composite {
 	//3,100
 	public void loadDeck(){
 		//default for now
-		main.sendData("DECKLIST;"+this.getID()+";3,30|2,30");
+		main.sendData("DECKLIST;"+this.getID()+";3;3,30|2,30");
 	}
 
 	public void addToStack(String cardID){

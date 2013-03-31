@@ -1,0 +1,1 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?><ns2:clientCardTemplate xmlns:ns2="card template"><cardArt>Analyze.png</cardArt><cardFlavor></cardFlavor><cardID>19</cardID><cardName>Analyze</cardName><cardText>Draw 2 cards.</cardText><cardType>ORDER</cardType><statList><stat><StatType>TECH</StatType><Value>1</Value></stat></statList></ns2:clientCardTemplate>

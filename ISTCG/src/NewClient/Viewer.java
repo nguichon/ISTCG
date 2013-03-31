@@ -25,10 +25,10 @@ public class Viewer extends Composite {
 		super( parent, style );
 		cards_in_hand = new Group(this, SWT.NONE);
 		cards_in_hand.setText("HAND");
-		Main.big_info = new Canvas( cards_in_hand, SWT.BORDER | SWT.ON_TOP | SWT.NO_FOCUS );
-		Main.big_info.setSize( 200, 300 );
-		Main.big_info.setVisible(false );
-		
+//		Main.big_info = new Canvas( cards_in_hand, SWT.BORDER | SWT.ON_TOP | SWT.NO_FOCUS );
+//		Main.big_info.setSize( 200, 300 );
+//		Main.big_info.setVisible(false );
+//		
 		this.addListener( SWT.Resize, new Listener() {
 
 			@Override
@@ -41,7 +41,7 @@ public class Viewer extends Composite {
 	}
 	
 	public void AddCard() {
-		Canvas newbie = new CardThing( cards_in_hand, SWT.BORDER ); 
+//		Canvas newbie = new CardThing( cards_in_hand, SWT.BORDER ); 
 		OptimizeLayout();
 	}
 	
