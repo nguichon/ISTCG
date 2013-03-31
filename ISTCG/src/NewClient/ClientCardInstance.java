@@ -119,6 +119,7 @@ public class ClientCardInstance extends Canvas {
 //			break;
 //		}
 		game.playCard(this.id);
+		game.setAssistText(this.controller);
 	}
 	
 	public void cardClicked(MouseEvent mouse){

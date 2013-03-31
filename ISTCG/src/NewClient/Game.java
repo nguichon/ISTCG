@@ -582,6 +582,9 @@ public class Game extends Composite {
 			redraw();
 			break;
 		case FIELD:
+			Group g = findCardById(cardID).getController().equals(main.getPID())?group_1:this.grpEnemy;
+			card = new ClientCardInstance(g, Integer.valueOf(cardID), main, cardID,this);
+			redraw();
 			break;
 		case STACK:
 			card = new ClientCardInstance(grpStack, Integer.valueOf(cardID), main, cardID,this);
@@ -605,6 +608,11 @@ public class Game extends Composite {
 			findCardById(cardID).setTemplate(templateID);
 			findCardById(cardID).setOwner(owner);
 			findCardById(cardID).setController(controller);
+			/*
+			 * update card
+			 */
+			if(findCardById(cardID).zone==ClientCardInstance.GameZone.FIELD)
+				findCardById(cardID).setParent(findCardById(cardID).getController().equals(main.getPID())?group_1:this.grpEnemy);
 			findCardById(cardID).redraw();
 		}
 	}
@@ -669,6 +677,10 @@ public class Game extends Composite {
 		}
 	}
 
+	public void setAssistText(String s){
+		this.lblActionhelp.setText(s);
+	}
+	
 	public void setPlayerState(String pid, String state) {
 		switch(GamePlayer.PlayerStates.valueOf(state)){
 		
