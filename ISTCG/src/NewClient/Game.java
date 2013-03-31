@@ -320,6 +320,10 @@ public class Game extends Composite {
 	}
 	
 	public void playCard(String cardID){
+		System.out.println( hasCardLoaded(cardID) );
+		System.out.println( hand.contains(cardID) );
+		System.out.println( getActive() );
+		System.out.println( findCardById(cardID).getController().equals(main.getPID()) );
 		if(!targeting){
 		if(hasCardLoaded(cardID)&&hand.contains(cardID)&&getActive()&&findCardById(cardID).getController().equals(main.getPID())){ //HOLY IF STATEMENT BATMAN
 			main.sendData("PLAY;"+getID()+";"+cardID);
@@ -655,23 +659,29 @@ public class Game extends Composite {
 		switch(GamePlayer.PlayerStates.valueOf(state)){
 		
 		case JOINED:
+			System.out.println("NOW IS " + state);
 			if(pid.equals(main.getPID())){
 				main.sendData(main.getDeck());
 			} break;
 		case READY:
+			System.out.println("NOW IS " + state);
 			break;
 		case ACTIVE:
+			System.out.println("NOW IS " + state);
 			setActive(true);
 			setWaiting(false);
 			break;
 		case WAITING:
+			System.out.println("NOW IS " + state);
 			setActive(false);
 			setWaiting(true);
 			break;
 		case DONE:
+			System.out.println("NOW IS " + state);
 			setActive(false);
 			break;
-		default: break;
+		default:
+			System.out.println("NOW IS " + state); break;
 		}
 		
 	}

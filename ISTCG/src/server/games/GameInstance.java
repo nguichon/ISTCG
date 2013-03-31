@@ -411,7 +411,7 @@ public class GameInstance {
 	
 	public void ChangeState( GameStates newState ) {
 		m_GameInstanceState = newState;
-		SendMessageToAllPlayers( ClientMessages.GAMESTATE, m_GameInstanceState.name() );
+		SendMessageToAllPlayers( ClientMessages.GAME_STATE, m_GameInstanceState.name() );
 	}
 
 	public ServerCardInstance GetCardInstance(Integer valueOf) {

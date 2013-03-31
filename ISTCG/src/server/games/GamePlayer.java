@@ -183,14 +183,16 @@ public class GamePlayer {
 	public boolean PlayCard( ServerCardInstance card, String targets ) {
 		if( m_PlayerState == PlayerStates.ACTIVE && isCardInZone( card, GameZones.HAND ) ) {
 			//Check targets
-			String[] trgts = targets.split("|");
-			card.clearTargets();
-			for( String target : trgts ) {
-				card.addTarget( new Target( m_Game.GetCardInstance(Integer.valueOf(target)) ) );
-			}
-			if( !card.ValidateTargets() ) {
-				SendMessageFromGame( ClientMessages.GAME_ERROR, "Invalid/Incorrect Number of targets.");
-				return false;
+			if( targets != null ) {
+				String[] trgts = targets.split("|");
+				card.clearTargets();
+				for( String target : trgts ) {
+					card.addTarget( new Target( m_Game.GetCardInstance(Integer.valueOf(target)) ) );
+				}
+				if( !card.ValidateTargets() ) {
+					SendMessageFromGame( ClientMessages.GAME_ERROR, "Invalid/Incorrect Number of targets.");
+					return false;
+				}
 			}
 
 			//Check for costs
@@ -270,7 +272,7 @@ public class GamePlayer {
 	
 	private void ChangeState( PlayerStates newState ) {
 		m_PlayerState = newState;
-		SendMessageFromGame( ClientMessages.PLAYERSTATE, String.valueOf(m_ClientAccount.getUserID()), m_PlayerState.name() );
+		SendMessageFromGame( ClientMessages.PLAYER_STATE, String.valueOf(m_ClientAccount.getUserID()), m_PlayerState.name() );
 	}
 
 	
