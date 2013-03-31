@@ -9,6 +9,7 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;
@@ -88,28 +89,30 @@ public class Game extends Composite {
 		lblUsername = new Label(this, SWT.NONE);
 		FormData fd_lblUsername = new FormData();
 		fd_lblUsername.right = new FormAttachment(0, 69);
+		fd_lblUsername.top = new FormAttachment(0, 451);
 		fd_lblUsername.left = new FormAttachment(0, 10);
 		lblUsername.setLayoutData(fd_lblUsername);
 		lblUsername.setText("USERNAME");
 		
 		lblEnemy = new Label(this, SWT.NONE);
 		FormData fd_lblEnemy = new FormData();
-		fd_lblEnemy.left = new FormAttachment(0, 675);
-		fd_lblEnemy.right = new FormAttachment(0, 734);
-		fd_lblEnemy.top = new FormAttachment(0, 43);
+		fd_lblEnemy.right = new FormAttachment(0, 586);
+		fd_lblEnemy.top = new FormAttachment(0, 17);
+		fd_lblEnemy.left = new FormAttachment(0, 527);
 		lblEnemy.setLayoutData(fd_lblEnemy);
 		lblEnemy.setText("ENEMY");
 		
 		lblEhandsize = new Label(this, SWT.NONE);
 		FormData fd_lblEhandsize = new FormData();
-		fd_lblEhandsize.left = new FormAttachment(0, 675);
-		fd_lblEhandsize.right = new FormAttachment(0, 734);
-		fd_lblEhandsize.top = new FormAttachment(0, 74);
+		fd_lblEhandsize.right = new FormAttachment(0, 586);
+		fd_lblEhandsize.top = new FormAttachment(0, 37);
+		fd_lblEhandsize.left = new FormAttachment(0, 527);
 		lblEhandsize.setLayoutData(fd_lblEhandsize);
 		lblEhandsize.setText("EHANDSIZE");
 		
 		btnPass = new Button(this, SWT.NONE);
 		FormData fd_btnPass = new FormData();
+		fd_btnPass.right = new FormAttachment(0, 88);
 		fd_btnPass.top = new FormAttachment(0, 10);
 		fd_btnPass.left = new FormAttachment(0, 10);
 		btnPass.setLayoutData(fd_btnPass);
@@ -123,7 +126,6 @@ public class Game extends Composite {
 		btnPass.setText("PASS");
 		
 		btnEnd = new Button(this, SWT.NONE);
-		fd_btnPass.right = new FormAttachment(btnEnd, 0, SWT.RIGHT);
 		FormData fd_btnEnd = new FormData();
 		fd_btnEnd.right = new FormAttachment(0, 88);
 		fd_btnEnd.top = new FormAttachment(0, 43);
@@ -138,99 +140,94 @@ public class Game extends Composite {
 		btnEnd.setText("END");
 		
 		lblHandsize = new Label(this, SWT.NONE);
-		fd_lblUsername.bottom = new FormAttachment(lblHandsize);
 		FormData fd_lblHandsize = new FormData();
-		fd_lblHandsize.top = new FormAttachment(0, 465);
 		fd_lblHandsize.right = new FormAttachment(0, 69);
+		fd_lblHandsize.top = new FormAttachment(0, 465);
 		fd_lblHandsize.left = new FormAttachment(0, 10);
 		lblHandsize.setLayoutData(fd_lblHandsize);
 		lblHandsize.setText("HANDSIZE");
 		
 		lblDecksize = new Label(this, SWT.NONE);
-		fd_lblHandsize.bottom = new FormAttachment(lblDecksize, -7);
 		FormData fd_lblDecksize = new FormData();
-		fd_lblDecksize.top = new FormAttachment(0, 486);
 		fd_lblDecksize.right = new FormAttachment(0, 69);
+		fd_lblDecksize.top = new FormAttachment(0, 486);
 		fd_lblDecksize.left = new FormAttachment(0, 10);
 		lblDecksize.setLayoutData(fd_lblDecksize);
 		lblDecksize.setText("DECKSIZE");
 		
 		lblGravesize = new Label(this, SWT.NONE);
-		fd_lblDecksize.bottom = new FormAttachment(lblGravesize, -10);
 		FormData fd_lblGravesize = new FormData();
-		fd_lblGravesize.top = new FormAttachment(100, -24);
-		fd_lblGravesize.bottom = new FormAttachment(100, -10);
 		fd_lblGravesize.right = new FormAttachment(0, 69);
+		fd_lblGravesize.top = new FormAttachment(0, 506);
 		fd_lblGravesize.left = new FormAttachment(0, 10);
 		lblGravesize.setLayoutData(fd_lblGravesize);
 		lblGravesize.setText("GRAVESIZE");
 		
 		lblEdecksize = new Label(this, SWT.NONE);
 		FormData fd_lblEdecksize = new FormData();
-		fd_lblEdecksize.left = new FormAttachment(0, 675);
-		fd_lblEdecksize.right = new FormAttachment(0, 734);
-		fd_lblEdecksize.top = new FormAttachment(0, 95);
+		fd_lblEdecksize.right = new FormAttachment(0, 586);
+		fd_lblEdecksize.top = new FormAttachment(0, 57);
+		fd_lblEdecksize.left = new FormAttachment(0, 527);
 		lblEdecksize.setLayoutData(fd_lblEdecksize);
 		lblEdecksize.setText("EDECKSIZE");
 		
 		lblEgravesize = new Label(this, SWT.NONE);
 		FormData fd_lblEgravesize = new FormData();
-		fd_lblEgravesize.left = new FormAttachment(0, 675);
-		fd_lblEgravesize.right = new FormAttachment(0, 734);
-		fd_lblEgravesize.top = new FormAttachment(0, 115);
+		fd_lblEgravesize.right = new FormAttachment(0, 651);
+		fd_lblEgravesize.top = new FormAttachment(0, 37);
+		fd_lblEgravesize.left = new FormAttachment(0, 592);
 		lblEgravesize.setLayoutData(fd_lblEgravesize);
 		lblEgravesize.setText("EGRAVESIZE");
 		
 		lblEmetal = new Label(this, SWT.NONE);
 		FormData fd_lblEmetal = new FormData();
-		fd_lblEmetal.left = new FormAttachment(0, 675);
-		fd_lblEmetal.right = new FormAttachment(0, 734);
-		fd_lblEmetal.top = new FormAttachment(0, 137);
+		fd_lblEmetal.right = new FormAttachment(0, 716);
+		fd_lblEmetal.top = new FormAttachment(0, 37);
+		fd_lblEmetal.left = new FormAttachment(0, 657);
 		lblEmetal.setLayoutData(fd_lblEmetal);
 		lblEmetal.setText("EMETAL");
 		
 		lblEenergy = new Label(this, SWT.NONE);
 		FormData fd_lblEenergy = new FormData();
-		fd_lblEenergy.left = new FormAttachment(0, 675);
-		fd_lblEenergy.right = new FormAttachment(0, 734);
-		fd_lblEenergy.top = new FormAttachment(0, 157);
+		fd_lblEenergy.right = new FormAttachment(0, 716);
+		fd_lblEenergy.top = new FormAttachment(0, 57);
+		fd_lblEenergy.left = new FormAttachment(0, 657);
 		lblEenergy.setLayoutData(fd_lblEenergy);
 		lblEenergy.setText("EENERGY");
 		
 		lblEtech = new Label(this, SWT.NONE);
 		FormData fd_lblEtech = new FormData();
-		fd_lblEtech.left = new FormAttachment(0, 675);
-		fd_lblEtech.right = new FormAttachment(0, 734);
-		fd_lblEtech.top = new FormAttachment(0, 180);
+		fd_lblEtech.right = new FormAttachment(0, 716);
+		fd_lblEtech.top = new FormAttachment(0, 77);
+		fd_lblEtech.left = new FormAttachment(0, 657);
 		lblEtech.setLayoutData(fd_lblEtech);
 		lblEtech.setText("ETECH");
 		
 		lblMetal = new Label(this, SWT.NONE);
 		FormData fd_lblMetal = new FormData();
-		fd_lblMetal.left = new FormAttachment(0, 675);
-		fd_lblMetal.right = new FormAttachment(0, 734);
-		fd_lblMetal.top = new FormAttachment(0, 439);
+		fd_lblMetal.right = new FormAttachment(0, 69);
+		fd_lblMetal.top = new FormAttachment(0, 526);
+		fd_lblMetal.left = new FormAttachment(0, 10);
 		lblMetal.setLayoutData(fd_lblMetal);
 		lblMetal.setText("METAL");
 		
 		lblEnergy = new Label(this, SWT.NONE);
 		FormData fd_lblEnergy = new FormData();
-		fd_lblEnergy.left = new FormAttachment(0, 675);
-		fd_lblEnergy.right = new FormAttachment(0, 734);
-		fd_lblEnergy.top = new FormAttachment(0, 465);
+		fd_lblEnergy.right = new FormAttachment(0, 69);
+		fd_lblEnergy.top = new FormAttachment(0, 546);
+		fd_lblEnergy.left = new FormAttachment(0, 10);
 		lblEnergy.setLayoutData(fd_lblEnergy);
 		lblEnergy.setText("ENERGY");
 		
 		lblTech = new Label(this, SWT.NONE);
 		FormData fd_lblTech = new FormData();
-		fd_lblTech.left = new FormAttachment(0, 675);
-		fd_lblTech.right = new FormAttachment(0, 734);
-		fd_lblTech.top = new FormAttachment(0, 486);
+		fd_lblTech.right = new FormAttachment(0, 69);
+		fd_lblTech.top = new FormAttachment(0, 566);
+		fd_lblTech.left = new FormAttachment(0, 10);
 		lblTech.setLayoutData(fd_lblTech);
 		lblTech.setText("TECH");
 		
 		grpStack = new Group(this, SWT.NONE);
-		fd_lblUsername.top = new FormAttachment(grpStack, 6);
 		FormData fd_grpStack = new FormData();
 		fd_grpStack.bottom = new FormAttachment(0, 445);
 		fd_grpStack.top = new FormAttachment(0, 74);
@@ -239,51 +236,53 @@ public class Game extends Composite {
 		grpStack.setText("STACK");
 		
 		grpHand = new Group(this, SWT.NONE);
+		FormData fd_grpHand = new FormData();
+		fd_grpHand.bottom = new FormAttachment(0, 690);
+		fd_grpHand.right = new FormAttachment(0, 668);
+		fd_grpHand.top = new FormAttachment(0, 439);
+		fd_grpHand.left = new FormAttachment(0, 94);
+		grpHand.setLayoutData(fd_grpHand);
 		grpHand.setText("HAND");
 		grpHand.setLayout(new GridLayout(7, false));
-		FormData fd_grpHand = new FormData();
-		fd_grpHand.bottom = new FormAttachment(lblGravesize, 0, SWT.BOTTOM);
-		fd_grpHand.top = new FormAttachment(lblMetal, 0, SWT.TOP);
-		fd_grpHand.right = new FormAttachment(lblEnergy, -7);
-		fd_grpHand.left = new FormAttachment(grpStack, 6);
-		grpHand.setLayoutData(fd_grpHand);
 		
 		group = new Group(this, SWT.NONE);
-		group.setLayout(new FillLayout(SWT.HORIZONTAL));
 		FormData fd_group = new FormData();
-		fd_group.left = new FormAttachment(lblEnemy, -148, SWT.LEFT);
-		fd_group.bottom = new FormAttachment(lblMetal, 100);
-		fd_group.top = new FormAttachment(lblEtech, -100);
-		fd_group.right = new FormAttachment(100, -10);
+		fd_group.bottom = new FormAttachment(0, 539);
+		fd_group.right = new FormAttachment(0, 1035);
+		fd_group.top = new FormAttachment(0, 94);
+		fd_group.left = new FormAttachment(0, 527);
 		group.setLayoutData(fd_group);
+		group.setLayout(new FillLayout(SWT.HORIZONTAL));
 		
 		viewcanvas = new Canvas(group, SWT.NONE);
+		viewcanvas.setBounds(new Rectangle(this.getBounds().width-CardRenderSize.LARGE.getWidth(),this.getBounds().height-CardRenderSize.LARGE.getHeight(),CardRenderSize.LARGE.getWidth(),CardRenderSize.LARGE.getHeight()));
 		vcard = "";
 		vcgc = new GC(viewcanvas);
+		viewcanvas.setLayout(new FillLayout(SWT.HORIZONTAL));
 		
 		group_1 = new Group(this, SWT.NONE);
-		group_1.setLayout(new GridLayout(1, false));
 		FormData fd_group_1 = new FormData();
-		fd_group_1.top = new FormAttachment(grpHand, -200, SWT.TOP);
-		fd_group_1.right = new FormAttachment(group, -6);
-		fd_group_1.bottom = new FormAttachment(grpHand, -6);
+		fd_group_1.bottom = new FormAttachment(grpHand, -4);
 		fd_group_1.left = new FormAttachment(grpStack, 6);
+		fd_group_1.right = new FormAttachment(0, 521);
 		group_1.setLayoutData(fd_group_1);
+		group_1.setLayout(new GridLayout(1, false));
 		
 		grpEnemy = new Group(this, SWT.NONE);
+		fd_group_1.top = new FormAttachment(grpEnemy, 6);
+		FormData fd_grpEnemy = new FormData();
+		fd_grpEnemy.bottom = new FormAttachment(0, 233);
+		fd_grpEnemy.right = new FormAttachment(0, 521);
+		fd_grpEnemy.top = new FormAttachment(0, 10);
+		fd_grpEnemy.left = new FormAttachment(0, 94);
+		grpEnemy.setLayoutData(fd_grpEnemy);
 		grpEnemy.setText("ENEMY");
 		grpEnemy.setLayout(new GridLayout(1, false));
-		FormData fd_grpEnemy = new FormData();
-		fd_grpEnemy.top = new FormAttachment(btnPass, 0, SWT.TOP);
-		fd_grpEnemy.left = new FormAttachment(grpStack, 6);
-		fd_grpEnemy.bottom = new FormAttachment(group_1, -6);
-		fd_grpEnemy.right = new FormAttachment(group, -6);
-		grpEnemy.setLayoutData(fd_grpEnemy);
 		
 		lblActionhelp = new Label(this, SWT.NONE);
 		FormData fd_lblActionhelp = new FormData();
-		fd_lblActionhelp.bottom = new FormAttachment(lblEhandsize, 0, SWT.BOTTOM);
-		fd_lblActionhelp.left = new FormAttachment(group, 0, SWT.LEFT);
+		fd_lblActionhelp.top = new FormAttachment(0, 74);
+		fd_lblActionhelp.left = new FormAttachment(0, 527);
 		lblActionhelp.setLayoutData(fd_lblActionhelp);
 		lblActionhelp.setText("ACTIONHELP");
 		viewcanvas.addMouseListener(new MouseListener(){
@@ -666,7 +665,7 @@ public class Game extends Composite {
 			} break;
 		case READY:
 			System.out.println("NOW IS " + state);
-			this.enablePass();
+			//this.enablePass();
 			break;
 		case ACTIVE:
 			System.out.println("NOW IS " + state);
