@@ -88,6 +88,8 @@ public class ServerCardInstance extends StackObject {
 		e.targets = m_Targets;
 		if( m_Template.getCardType() == CardTypes.UNIT || m_Template.getCardType() == CardTypes.GEAR ) {
 			e.locationAfterResolution = GameZones.FIELD;
+		} else {
+			e.locationAfterResolution = GameZones.GRAVEYARD;
 		}
 		m_Template.Resolve( e );
 		MoveCardTo( e.locationAfterResolution );
@@ -102,9 +104,12 @@ public class ServerCardInstance extends StackObject {
 		switch( locationAfterResolution ) {
 		case GRAVEYARD:
 			m_Owner.putCardInZone( this, GameZones.GRAVEYARD );
+			break;
 		case FIELD:
 			m_Host.PutCardOntoField( this );
+			break;
 		default:
+			break;
 		}
 	}
 	
