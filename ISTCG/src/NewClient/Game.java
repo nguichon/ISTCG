@@ -321,10 +321,10 @@ public class Game extends Composite {
 	
 	public void playCard(String cardID){
 		if(!targeting){
-		if(hasCardLoaded(cardID)&&hand.contains(findCardById(cardID))&&getActive()&&findCardById(cardID).getController().equals(main.getPID())){ //HOLY IF STATEMENT BATMAN
+		if(hasCardLoaded(cardID)&&hand.contains(cardID)&&getActive()&&findCardById(cardID).getController().equals(main.getPID())){ //HOLY IF STATEMENT BATMAN
 			main.sendData("PLAY;"+getID()+";"+cardID);
 		}
-		if(hasCardLoaded(cardID)&&field.contains(findCardById(cardID))&&getActive()&&findCardById(cardID).getController().equals(main.getPID())){ //HOLY IF STATEMENT BATMAN
+		if(hasCardLoaded(cardID)&&field.contains(cardID)&&getActive()&&findCardById(cardID).getController().equals(main.getPID())){ //HOLY IF STATEMENT BATMAN
 			this.targeting=true; // we are now ready to attack
 			lblActionhelp.setText("Select a target.");
 			this.curattacker=cardID;
