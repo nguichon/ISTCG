@@ -90,6 +90,8 @@ public class ClientCardTemplate {
     public void Render(GC targetGC, CardRenderSize size, ArrayList<StatBlock> stats, int damageTaken) {
     	Image toRender = ImageManager.get().GetImage( m_BGImage );
     	
+    	stats = null;
+    	
     	switch( size ) {
     	case LARGE:
     		//Draw Image
