@@ -179,10 +179,17 @@ public class GameInstance {
 					ServerCardInstance DEFENDER = m_Directory.get( Integer.valueOf( message[3] ));
 					switch( m_GameInstanceState ) {
 					case ACTIVE:
-						if( m_Players.get( origin.getUserID() ).getState() == GamePlayer.PlayerStates.ACTIVE ) {
-							PutAttackOnStack( new Attack( this, ATTACKER, DEFENDER ) );
-							StartStacking();
+						if( !(m_Players.get( origin.getUserID() ).getState() == GamePlayer.PlayerStates.ACTIVE) ) {
+							m_Players.get( origin.getUserID() ).SendMessageFromGame( ClientMessages.GAME_ERROR, String.valueOf( ATTACKER.GetCardUID() ) + " cannot attack at this time, not your turn.");
+							break;
 						}
+						if( !( ATTACKER.getController() != DEFENDER.getController() ) ) {
+							m_Players.get( origin.getUserID() ).SendMessageFromGame( ClientMessages.GAME_ERROR, String.valueOf( ATTACKER.GetCardUID() ) + " cannot attack your own ship.");
+							break;
+						}
+						
+						PutAttackOnStack( new Attack( this, ATTACKER, DEFENDER ) );
+						StartStacking();
 						break;
 					default:
 						m_Players.get( origin.getUserID() ).SendMessageFromGame( ClientMessages.GAME_ERROR, String.valueOf( ATTACKER.GetCardUID() ) + " cannot attack at this time.");

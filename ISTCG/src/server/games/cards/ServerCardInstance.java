@@ -10,6 +10,7 @@ import server.games.events.ResolutionEvent;
 import server.games.stack.StackObject;
 
 
+import NewClient.ClientCardInstance;
 import Shared.CardTypes;
 import Shared.ClientMessages;
 import Shared.GameZones;
@@ -87,7 +88,11 @@ public class ServerCardInstance extends StackObject {
 		MoveCardTo( e.locationAfterResolution );
 		m_Targets.clear();
 	}
-
+	public void MakeAttack( ServerCardInstance t  ) {
+		
+	}
+	public void CheckStatus() { }
+	
 	private void MoveCardTo(GameZones locationAfterResolution) {
 		switch( locationAfterResolution ) {
 		case GRAVEYARD:

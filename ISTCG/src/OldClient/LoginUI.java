@@ -34,7 +34,7 @@ public class LoginUI extends GameStateUI {
 
 			@Override
 			public void paintControl(PaintEvent e) {
-				ClientCardTemplateManager.get().GetClientCardTemplate( 2 ).Render( e.gc, ClientCardTemplate.CardRenderSize.MEDIUM, null );
+				ClientCardTemplateManager.get().GetClientCardTemplate( 2 ).Render( e.gc, ClientCardTemplate.CardRenderSize.MEDIUM, null, 0 );
 				
 			}
 			

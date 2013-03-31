@@ -21,7 +21,7 @@ public class Attack extends StackObject {
 	@Override
 	public void Resolve(ResolutionEvent e) {
 		if( isValid() ) {
-			// TODO Resolve attack.
+			
 		}
 	}
 	

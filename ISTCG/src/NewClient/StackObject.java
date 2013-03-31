@@ -199,7 +199,7 @@ public class StackObject extends Canvas {
 	}
 	public void Render(GC gc){
 		if(template!=null) {
-			template.Render(gc, size, getStatBlock());
+			template.Render(gc, size, getStatBlock(),0);
 			//RenderStats(gc);
 		} else {
 			ClientCardTemplate.RenderBlack( gc, size, getStatBlock());

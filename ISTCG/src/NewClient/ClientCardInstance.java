@@ -39,6 +39,7 @@ public class ClientCardInstance extends Canvas {
 	Game game;
 	String owner = "";
 	String controller = "";
+	int m_DamageTaken = 0;
 	public enum GameZone {
 		HAND,FIELD,STACK,GRAVEYARD,VIEWER,UNKNOWN;
 		
@@ -236,7 +237,7 @@ public class ClientCardInstance extends Canvas {
 	}
 	public void Render(GC gc){
 		if(template!=null) {
-			template.Render(gc, size, getStatBlock());
+			template.Render(gc, size, getStatBlock(), m_DamageTaken);
 			//RenderStats(gc);
 		} else {
 			ClientCardTemplate.RenderBlack( gc, size, getStatBlock());

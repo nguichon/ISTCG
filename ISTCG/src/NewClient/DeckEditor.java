@@ -64,7 +64,7 @@ public class DeckEditor extends Composite {
 					if( m_CardPreviewType == -1 ) {
 						ClientCardTemplate.RenderBlack( e.gc, ClientCardTemplate.CardRenderSize.MEDIUM, null );
 					} else {
-						ClientCardTemplateManager.get().GetClientCardTemplate( m_CardPreviewType ).Render( e.gc, ClientCardTemplate.CardRenderSize.MEDIUM, null );
+						ClientCardTemplateManager.get().GetClientCardTemplate( m_CardPreviewType ).Render( e.gc, ClientCardTemplate.CardRenderSize.MEDIUM, null, 0 );
 					}
 				}
 			});

@@ -651,7 +651,7 @@ public class Game extends Composite {
 	}
 	public void setViewer(String cardID){
 		if(hasCardLoaded(cardID)){
-			findCardById(cardID).template.Render(vcgc, CardRenderSize.LARGE, findCardById(cardID).getStatBlock());
+			findCardById(cardID).template.Render(vcgc, CardRenderSize.LARGE, findCardById(cardID).getStatBlock(), 0);
 			vcard = cardID;
 		}
 	}

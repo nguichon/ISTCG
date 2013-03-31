@@ -84,8 +84,9 @@ public class ClientCardTemplate {
      * @param stats
      *            StatBlocks to overwrite, can be empty or have previously
      *            unknown StatBlocks.
+     * @param damageTaken 
      */
-    public void Render(GC targetGC, CardRenderSize size, ArrayList<StatBlock> stats) {
+    public void Render(GC targetGC, CardRenderSize size, ArrayList<StatBlock> stats, int damageTaken) {
     	Image toRender = ImageManager.get().GetImage( m_BGImage );
     	
     	switch( size ) {
@@ -123,6 +124,9 @@ public class ClientCardTemplate {
     				break;
     			}
     		}
+    		if( damageTaken > 0 ) {
+    			RenderDamage( targetGC, damageTaken, size );
+    		}
 	    	break;
     	default:
     		targetGC.drawImage( toRender, 0, 0, toRender.getBounds().width, toRender.getBounds().height, 0, 0, size.getWidth(), size.getHeight() );
@@ -133,7 +137,25 @@ public class ClientCardTemplate {
     	}
     }
     
-    private static final Font NAME_FONT = new Font( Display.getDefault(), "Monospaced", 16, SWT.BOLD);
+    private void RenderDamage( GC targetGC, int damageTaken, CardRenderSize size ) {
+    	if( size == CardRenderSize.LARGE && damageTaken != 0 ) {
+    		Image icon =  ImageManager.get().GetImage("icon-structure-bad.png");
+    		for( int i = 0; i < damageTaken; i++ ) {
+    			if( i % 2 == 0 ) {
+    				targetGC.drawImage( icon,
+	    							0, 0, icon.getBounds().width, icon.getBounds().height,
+	    							0 + frameBounds.width - 8, size.getHeight() - ((frameBounds.height + 2) * ((i/2) + 2)) + 8, 24, 24 );
+    			} else {
+    				targetGC.drawImage( icon,
+							0, 0, icon.getBounds().width, icon.getBounds().height,
+							0 + frameBounds.width - 8 + 26, size.getHeight() - ((frameBounds.height + 2) * ((i/2) + 2)) + 8 - 12, 24, 24 );
+    				
+    			}
+    		}
+    	}
+	}
+
+	private static final Font NAME_FONT = new Font( Display.getDefault(), "Monospaced", 16, SWT.BOLD);
     private static final Font TEXT_FONT = new Font( Display.getDefault(), "Monospaced", 12, SWT.NONE);
     private static final Font FLAVOR_FONT = new Font( Display.getDefault(), "Monospaced", 9, SWT.ITALIC);
     private void RenderName( GC targetGC, CardRenderSize size ) {
