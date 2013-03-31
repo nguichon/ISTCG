@@ -18,7 +18,7 @@ public class GamePlayer {
 									DONE,			// Player is ready to let stack resolve.
 									DISCONNECTED, 	// Disconnected, do not send messages pl0x.
 									READING,
-									DEAD; }			// This guy is dead, what a scrub.
+									DEAD; }			// This guy is dead, what a scrub like that Magnus.
 		
 	// Configuration variables
 		private GameInstance m_Game;

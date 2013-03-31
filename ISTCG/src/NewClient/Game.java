@@ -3,6 +3,8 @@ package NewClient;
 import java.util.ArrayList;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.GC;
@@ -18,6 +20,9 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.TabItem;
+
+import server.games.GamePlayer;
+import sun.tools.tree.ThisExpression;
 
 import NewClient.ClientCardInstance.GameZone;
 import NewClient.ClientCardTemplate.CardRenderSize;
@@ -60,6 +65,14 @@ public class Game extends Composite {
 	Group group;
 	Canvas viewcanvas;
 	GC vcgc;
+	String vcard;
+	boolean active;
+	boolean waiting;
+	Group group_1;
+	Group grpEnemy;
+	boolean targeting = false;
+	Label lblActionhelp;
+	String curattacker = "";
 	/**
 	 * Create the composite.
 	 * @param parent
@@ -99,7 +112,6 @@ public class Game extends Composite {
 		
 		btnPass = new Button(this, SWT.NONE);
 		FormData fd_btnPass = new FormData();
-		fd_btnPass.right = new FormAttachment(0, 104);
 		fd_btnPass.top = new FormAttachment(0, 10);
 		fd_btnPass.left = new FormAttachment(0, 10);
 		btnPass.setLayoutData(fd_btnPass);
@@ -113,8 +125,9 @@ public class Game extends Composite {
 		btnPass.setText("PASS");
 		
 		btnEnd = new Button(this, SWT.NONE);
+		fd_btnPass.right = new FormAttachment(btnEnd, 0, SWT.RIGHT);
 		FormData fd_btnEnd = new FormData();
-		fd_btnEnd.right = new FormAttachment(0, 104);
+		fd_btnEnd.right = new FormAttachment(0, 88);
 		fd_btnEnd.top = new FormAttachment(0, 43);
 		fd_btnEnd.left = new FormAttachment(0, 10);
 		btnEnd.setLayoutData(fd_btnEnd);
@@ -247,7 +260,56 @@ public class Game extends Composite {
 		group.setLayoutData(fd_group);
 		
 		viewcanvas = new Canvas(group, SWT.NONE);
+		vcard = "";
 		vcgc = new GC(viewcanvas);
+		
+		group_1 = new Group(this, SWT.NONE);
+		group_1.setLayout(new GridLayout(1, false));
+		FormData fd_group_1 = new FormData();
+		fd_group_1.top = new FormAttachment(grpHand, -200, SWT.TOP);
+		fd_group_1.right = new FormAttachment(group, -6);
+		fd_group_1.bottom = new FormAttachment(grpHand, -6);
+		fd_group_1.left = new FormAttachment(grpStack, 6);
+		group_1.setLayoutData(fd_group_1);
+		
+		grpEnemy = new Group(this, SWT.NONE);
+		grpEnemy.setText("ENEMY");
+		grpEnemy.setLayout(new GridLayout(1, false));
+		FormData fd_grpEnemy = new FormData();
+		fd_grpEnemy.top = new FormAttachment(btnPass, 0, SWT.TOP);
+		fd_grpEnemy.left = new FormAttachment(grpStack, 6);
+		fd_grpEnemy.bottom = new FormAttachment(group_1, -6);
+		fd_grpEnemy.right = new FormAttachment(group, -6);
+		grpEnemy.setLayoutData(fd_grpEnemy);
+		
+		lblActionhelp = new Label(this, SWT.NONE);
+		FormData fd_lblActionhelp = new FormData();
+		fd_lblActionhelp.bottom = new FormAttachment(lblEhandsize, 0, SWT.BOTTOM);
+		fd_lblActionhelp.left = new FormAttachment(group, 0, SWT.LEFT);
+		lblActionhelp.setLayoutData(fd_lblActionhelp);
+		lblActionhelp.setText("ACTIONHELP");
+		viewcanvas.addMouseListener(new MouseListener(){
+
+			@Override
+			public void mouseDoubleClick(MouseEvent arg0) {
+				//play the card in the viewer
+				playCard(vcard);
+				
+			}
+
+			@Override
+			public void mouseDown(MouseEvent arg0) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void mouseUp(MouseEvent arg0) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+		});
 
 		/*
 		 * Finally start game stuff
@@ -257,6 +319,24 @@ public class Game extends Composite {
 		cards = new ArrayList<ClientCardInstance>();
 		hand = new ArrayList<String>();
 		field = new ArrayList<String>();
+	}
+	
+	public void playCard(String cardID){
+		if(!targeting){
+		if(hasCardLoaded(cardID)&&hand.contains(findCardById(cardID))&&getActive()&&findCardById(cardID).getController().equals(main.getPID())){ //HOLY IF STATEMENT BATMAN
+			main.sendData("PLAY;"+getID()+";"+cardID);
+		}
+		if(hasCardLoaded(cardID)&&field.contains(findCardById(cardID))&&getActive()&&findCardById(cardID).getController().equals(main.getPID())){ //HOLY IF STATEMENT BATMAN
+			this.targeting=true; // we are now ready to attack
+			lblActionhelp.setText("Select a target.");
+			this.curattacker=cardID;
+		}
+		} else {
+			if(hasCardLoaded(cardID)&&field.contains(findCardById(cardID))&&getActive()&&findCardById(cardID).getController().equals(this.eID)){ //HOLY IF STATEMENT BATMAN
+				this.targeting=false; // we are now ready to attack
+				main.sendData("ATTACK;"+this.ID+";"+curattacker+";"+cardID);
+			}
+		}
 	}
 
 	@Override
@@ -344,15 +424,36 @@ public class Game extends Composite {
 	public void addToStack(String cardID){
 		if(!hasCardLoaded(cardID))
 			createCard(cardID);
-		findCardById(cardID).setBounds(stackPos.x, stackPos.y, ClientCardTemplate.CardRenderSize.SMALL.getWidth(), ClientCardTemplate.CardRenderSize.SMALL.getHeight());
-		findCardById(cardID).setZone(GameZone.STACK);
-		stack.add(cardID);
-		manageStack();
-		//handPos.x+=64;
+		ClientCardInstance card = findCardById(cardID);
+		card.setZone(GameZone.STACK);
+		card.setParent(this.grpStack);
+		card.setBounds(grpStack.getBounds().x,grpStack.getBounds().y,card.size.getWidth(),card.size.getWidth());
+		card.redraw();
+		grpStack.layout();
+		card.redraw();
 	}
+	
+	public void addStack(String oID, String[] args){
+		StackObject s = new StackObject(this,0,main,oID,this);
+		//if attack
+		if(args[0].equals("ATTACK")){
+			s.setParentCard(args[1]);
+			s.setTargetCard(args[2]);
+		} else if(args[0].equals("ABILITY")){
+			s.setParentCard(args[1]);
+			s.setAbilityIndex(args[2]);
+			if(args.length>3)
+				s.setTargetCard(args[3]);
+		} else if(args[0].equals("EVENT")){
+			s.setText(args[1]);
+		}
+		
+	}
+	
 	
 	public void removeFromStack(String cardID){
 		if(hasCardLoaded(cardID)){
+			findCardById(cardID).dispose();
 			stack.remove(cardID);
 		}
 	}
@@ -377,33 +478,30 @@ public class Game extends Composite {
 	}
 	public void removeFromHand(String cardID){
 		if(hasCardLoaded(cardID)){
+			findCardById(cardID).dispose();
 			hand.remove(cardID);
 		}
 	}
 	
 	public void addToField(String cardID){
 		if(!hasCardLoaded(cardID))
-			createCard(cardID);
-		findCardById(cardID).setBounds(fieldPos.x,fieldPos.y,ClientCardTemplate.CardRenderSize.SMALL.getWidth(),ClientCardTemplate.CardRenderSize.SMALL.getHeight());
-		findCardById(cardID).setZone(GameZone.FIELD);
-		field.add(cardID);
-		manageField();
+			createCard(cardID,GameZone.FIELD);
+		ClientCardInstance card = findCardById(cardID);
+		card.setZone(GameZone.FIELD);
+		Group g = findCardById(cardID).getController().equals(main.getPID())?group_1:this.grpEnemy;
+		card.setParent(g);
+		card.setBounds(g.getBounds().x,g.getBounds().y,card.size.getWidth(),card.size.getWidth());
+		card.redraw();
+		g.layout();
+		card.redraw();
 	}
 	public void removeFromField(String cardID){
 		if(hasCardLoaded(cardID))
+			findCardById(cardID).dispose();
 			field.remove(cardID);
 	}
 	public void manageField(){
-		if(!(field.size()>1))
-			return;
-		for(int i=0;i<field.size()-1;i++){
-			ClientCardInstance card1 = findCardById(field.get(i));
-			ClientCardInstance card2 = findCardById(field.get(i+1));
-			while(card1.getBounds().intersects(card2.getBounds())){
-				card2.getBounds().x+=2;
-				card2.getBounds().y-=2;
-			}
-		}
+		
 	}
 	public void manageHand(){
 		//Try to beautify the shit out of dis hand
@@ -411,15 +509,7 @@ public class Game extends Composite {
 		
 	}
 	public void manageStack(){
-		if(!(stack.size()>1))
-			return;
-		for(int i=0;i<stack.size()-1;i++){
-			ClientCardInstance card1 = findCardById(stack.get(i));
-			ClientCardInstance card2 = findCardById(stack.get(i+1));
-			while(card1.getBounds().intersects(card2.getBounds())){
-				card2.getBounds().y+=2;
-			}
-		}
+		
 	}
 	
 	public void disposeCard(String cardID){
@@ -492,11 +582,13 @@ public class Game extends Composite {
 		card.setZone(zone);
 		cards.add(card);
 	}
-	public void setCard(String templateID, String cardID){
+	public void setCard(String templateID, String cardID, String owner, String controller){
 		System.out.println("hue");
 		if(hasCardLoaded(cardID)){
 			//CardTemplateManager.get().GetCardTemplate(Integer.valueOf(templateID));
 			findCardById(cardID).setTemplate(templateID);
+			findCardById(cardID).setOwner(owner);
+			findCardById(cardID).setController(controller);
 			findCardById(cardID).redraw();
 		}
 	}
@@ -532,9 +624,56 @@ public class Game extends Composite {
 		
 	}
 	
+	public void setActive(){
+		this.active=active?false:true;
+	}
+	public void setActive(boolean t){
+		active=t;
+		if(active)
+			this.enablePass();
+		else
+			this.disablePass();
+	}
+	public boolean getActive(){
+		return active;
+	}
+	public void setWaiting(){
+		waiting = waiting?false:true;
+	}
+	public void setWaiting(boolean t){
+		waiting = t;
+	}
+	public boolean getWaiting(){
+		return waiting;
+	}
 	public void setViewer(String cardID){
 		if(hasCardLoaded(cardID)){
 			findCardById(cardID).template.Render(vcgc, CardRenderSize.LARGE, findCardById(cardID).getStatBlock());
 		}
+	}
+
+	public void setPlayerState(String pid, String state) {
+		switch(GamePlayer.PlayerStates.valueOf(state)){
+		
+		case JOINED:
+			if(pid.equals(main.getPID())){
+				main.sendData(main.getDeck());
+			} break;
+		case READY:
+			break;
+		case ACTIVE:
+			setActive(true);
+			setWaiting(false);
+			break;
+		case WAITING:
+			setActive(false);
+			setWaiting(true);
+			break;
+		case DONE:
+			setActive(false);
+			break;
+		default: break;
+		}
+		
 	}
 }

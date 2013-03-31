@@ -23,7 +23,7 @@ import NewClient.Game;
 import OldClient.CardTemplateManager;
 import Shared.StatBlock;
 
-public class ClientCardInstance extends Canvas {
+public class StackObject extends Canvas {
 
 	String name;
 	String[] description;
@@ -36,22 +36,24 @@ public class ClientCardInstance extends Canvas {
 	PaintListener pl;
 	Rectangle lastBounds;
 	Composite lastParent;
+	String parentCard = "";
+	String targetCard = "";
+	String ability = "";
 	Game game;
-	String owner = "";
-	String controller = "";
+	String text = "";
 	public enum GameZone {
 		HAND,FIELD,STACK,GRAVEYARD,VIEWER,UNKNOWN;
 		
 	}
 	GameZone zone;
-	public ClientCardInstance(Composite parent, int style, ClientMain main, String ID, Game game) {
+	public StackObject(Composite parent, int style, ClientMain main, String ID, Game game) {
 		super(parent, style);
 		this.main=main;
 		this.id=ID;
 		this.game=game;
 		this.lastParent=parent;
 		size = CardRenderSize.SMALL;
-		zone = GameZone.UNKNOWN;
+		zone = GameZone.STACK;
 		lastBounds = this.getBounds();
 		pl = new PaintListener(){
 			@Override
@@ -82,11 +84,29 @@ public class ClientCardInstance extends Canvas {
 		});
 	}
 	
-	public void setZone(String zone){
-		this.zone = GameZone.valueOf(zone);
+	public void setParentCard(String cardID){
+		this.parentCard=cardID;
 	}
-	public void setZone(GameZone zone){
-		this.zone=zone;
+	public String getParentCard(){
+		
+		return parentCard;
+	}
+	public void setTargetCard(String cardID){
+		
+		this.targetCard=cardID;
+	}
+	public String getTargetCard(){
+		return targetCard;
+	}
+
+	public void setAbilityIndex(int i){
+		ability = String.valueOf(i);
+	}
+	public void setAbilityIndex(String i){
+		ability = i;
+	}
+	public String getAbilityIndex(){
+		return ability;
 	}
 	
 	public void setLastParent(Composite parent){
@@ -104,12 +124,6 @@ public class ClientCardInstance extends Canvas {
 		case LARGE:
 			size = lastSize;
 			redraw();
-//			if(zone==GameZone.VIEWER){
-//				setBounds(lastBounds);
-//				size = CardRenderSize.SMALL;
-//				setParent(this.lastParent);
-//				redraw();
-//			}
 			break;
 		default:
 			lastSize = size;
@@ -123,64 +137,14 @@ public class ClientCardInstance extends Canvas {
 		//get current size
 		switch(size){
 		case SMALL:
-			//Enlarge the card
 			lastBounds = getBounds();
-			//Rectangle curBounds = getBounds();
-			//setBounds(curBounds.x,curBounds.y-64,CardRenderSize.LARGE.getWidth(),CardRenderSize.LARGE.getHeight());
-//			size = CardRenderSize.LARGE;
-//			setParent(game.group);
-//			game.group.layout();
-//			redraw();
-//			game.group.layout();
 			game.setViewer(this.getID());
 			break;
 			
 		case MEDIUM:
 			break;
 		case LARGE:
-			String aM = "ABILITY;" + game.getID() + ";" + id + ";"; 
-			if(mouse.x >= 235){
-				if (35<= mouse.y && mouse.y < 60){
-					if (stats.size() >= 1){
-						main.sendData(aM + "0");
-					}
-				}
-				if (60<= mouse.y && mouse.y < 85){
-					if (stats.size() >= 2){
-						main.sendData(aM + "1");
-					}
-				}
-				if (85<= mouse.y && mouse.y < 110){
-					if (stats.size() >= 3){
-						main.sendData(aM + "2");
-					}
-				}
-				if (110<= mouse.y && mouse.y < 135){
-					if (stats.size() >= 4){
-						main.sendData(aM + "3");
-					}
-				}
-				if (135<= mouse.y && mouse.y < 160){
-					if (stats.size() >= 5){
-						main.sendData(aM + "4");
-					}
-				}
-				if (160<= mouse.y && mouse.y < 185){
-					if (stats.size() >= 6){
-						main.sendData(aM + "5");
-					}
-				}
-				if (185<= mouse.y && mouse.y < 210){
-					if (stats.size() >= 7){
-						main.sendData(aM + "6");
-					}
-				}
-				if (235<= mouse.y && mouse.y < 260){
-					if (stats.size() >= 8){
-						main.sendData(aM + "7");
-					}
-				}
-			}
+			
 			//play card or what have you
 			break;
 		default: redraw(); break;
@@ -189,7 +153,7 @@ public class ClientCardInstance extends Canvas {
 	
 	
 	public void setTemplate(String ID){
-		template = ClientCardTemplateManager.get().GetClientCardTemplate(Integer.valueOf(ID));
+		template = ClientCardTemplateManager.get().GetClientCardTemplate(Integer.valueOf(parentCard));
 		this.redraw();
 	}
 	public ArrayList<String> getStats(){
@@ -268,18 +232,11 @@ public class ClientCardInstance extends Canvas {
 		this.size=size;
 	}
 
-	public void setOwner(String owner) {
-		
-		this.owner=owner;
+	public void setText(String text) {
+		this.text=text;
 	}
-	public String getOwner(){
-		return owner;
-	}
-	public void setController(String controller) {
-		this.controller=controller;
-	}
-	public String getController(){
-		return controller;
+	public String getText(){
+		return text;
 	}
 
 }

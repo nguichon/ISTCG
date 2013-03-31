@@ -1,33 +1,26 @@
 package NewClient;
 
 import java.io.IOException;
+import java.util.Arrays;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
-import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.PaletteData;
-import org.eclipse.swt.graphics.PathData;
 import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.graphics.Rectangle;
-import org.eclipse.swt.layout.FillLayout;
-import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
-import org.omg.PortableInterceptor.SYSTEM_EXCEPTION;
-
-//import server.games.cards.ServerCardTemplateManager;
 
 import OldClient.CardTemplateManager;
 import OldClient.ImageManager;
 import Shared.ClientResponses;
 import Shared.ThreadedConnectionDevice;
+//import server.games.cards.ServerCardTemplateManager;
 
 public class ClientMain {
 
@@ -37,6 +30,7 @@ public class ClientMain {
 	private Shell shell = null;
 	private Composite composite = null;
 	private String ID = "";
+	String deck = "";
 	public ClientMain(){
 		CardTemplateManager.get().Initialize();
 		//ClientCardTemplateManager.get().Initialize();
@@ -291,9 +285,40 @@ public class ClientMain {
 		case CARD_INFO:
 			System.out.println("noooo");
 			if(composite instanceof Lobby){
-				((Lobby)composite).findGameById(inputs[1]).setCard(inputs[3], inputs[2]);
+				((Lobby)composite).findGameById(inputs[1]).setCard(inputs[3], inputs[2],inputs[4],inputs[5]);
 			}
 			break;
+		case GAME_ERROR:
+			System.err.println("Game error in game "+inputs[1]+". Error: "+inputs[2]); break;
+		case PLAYER_STATE:
+			if(composite instanceof Lobby){
+				if(((Lobby)composite).findGameById(inputs[1])!=null){
+					((Lobby)composite).findGameById(inputs[1]).setPlayerState(inputs[2],inputs[3]);
+				}
+			}
+			break;
+		case COLLECTION:
+			if(composite instanceof Lobby){
+				
+				
+			} break;
+		case STACK_OBJECT:
+			if(composite instanceof Lobby){
+				if(((Lobby)composite).findGameById(inputs[1])!=null){
+					
+					
+					((Lobby)composite).findGameById(inputs[1]).addStack(inputs[2],Arrays.copyOfRange(inputs,3,inputs.length-1));
+				}
+				
+			} break;
+		case REMOVE_STACK_OBJECT:
+			if(composite instanceof Lobby){
+				if(((Lobby)composite).findGameById(inputs[1])!=null){
+					
+					//((Lobby)composite).findGameById(inputs[1]).addStack(inputs[2],)
+				}
+				
+			} break;
 		default:
 			break;
 		}
@@ -326,5 +351,9 @@ public class ClientMain {
 		//shell.pack();
 		//shell.open();
 		//shell.layout();
+	}
+	public String getDeck() {
+		
+		return deck;
 	}
 }
