@@ -464,7 +464,7 @@ public class Game extends Composite {
 //		hand.add(cardID);
 //		manageHand();
 //		//handPos.x+=64;
-		
+		hand.add(cardID);
 		ClientCardInstance card = findCardById(cardID);
 		card.setZone(GameZone.HAND);
 		card.setParent(grpHand);
@@ -485,6 +485,7 @@ public class Game extends Composite {
 		if(!hasCardLoaded(cardID))
 			createCard(cardID,GameZone.FIELD);
 		ClientCardInstance card = findCardById(cardID);
+		field.add(cardID);
 		card.setZone(GameZone.FIELD);
 		Group g = findCardById(cardID).getController().equals(main.getPID())?group_1:this.grpEnemy;
 		card.setParent(g);
