@@ -274,7 +274,11 @@ public class GameInstance {
 	}
 	
 	private void SetActivePlayer() {
-		SetAllPlayersToWaiting();
+		for( Integer i : m_PlayerList ) { 
+			if( i != m_CurrentPlayer.getClientAccount().getUserID() ) {
+				m_Players.get(i).setWaiting();
+			}
+		}
 		m_ActivePlayerIndex = m_CurrentPlayerIndex;
 		m_CurrentPlayer.setActive();
 	}
