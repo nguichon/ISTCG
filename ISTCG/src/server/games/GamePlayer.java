@@ -86,8 +86,7 @@ public class GamePlayer {
                             newDeck.Add(toAdd);
                     }
             }
-            
-            m_CommandUnit = new ServerCardInstance( m_Game, this, commandUnit );
+     
             newDeck.Shuffle();
             
             if(  newDeck.Validate() ) {
