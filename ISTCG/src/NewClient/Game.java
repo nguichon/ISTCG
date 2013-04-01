@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
+import org.eclipse.swt.events.PaintEvent;
+import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.GC;
@@ -19,8 +21,11 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.TabItem;
 
 import server.games.GamePlayer;
@@ -93,7 +98,6 @@ public class Game extends Composite {
 		fieldPos = new Point(100, 365);
 		stackPos = new Point(10,33);
 		viewPos= new Point(630,200);
-		setLayout(new FormLayout());
 		lblUsername = new Label(this, SWT.NONE);
 		FormData fd_lblUsername = new FormData();
 		fd_lblUsername.right = new FormAttachment(0, 69);
@@ -282,7 +286,7 @@ public class Game extends Composite {
 		grpEnemy.setText("ENEMY");
 		grpEnemy.setLayout(new GridLayout(1, false));
 		
-		lblActionhelp = new Label(this, SWT.NONE);
+		lblActionhelp = new Label(this, SWT.CENTER);
 		FormData fd_lblActionhelp = new FormData();
 		fd_lblActionhelp.top = new FormAttachment(0, 74);
 		fd_lblActionhelp.left = new FormAttachment(0, 527);
@@ -291,7 +295,7 @@ public class Game extends Composite {
 		
 		
 		
-		Group grpViewer = new Group(this, SWT.NONE);
+		final Group grpViewer = new Group(this, SWT.NONE);
 		fd_group_1.right = new FormAttachment(grpViewer, -153);
 		grpViewer.setText("VIEWER");
 		grpViewer.setLayout(new FillLayout(SWT.HORIZONTAL));
@@ -307,7 +311,7 @@ public class Game extends Composite {
 		//viewcanvas.setLayoutData(new FormData());
 		//viewcanvas.setBounds(new Rectangle(viewcanvas.getParent().getBounds().width-CardRenderSize.LARGE.getWidth(),viewcanvas.getParent().getBounds().height-CardRenderSize.LARGE.getHeight(),CardRenderSize.LARGE.getWidth(),CardRenderSize.LARGE.getHeight()));
 		vcgc = new GC(viewcanvas);
-		viewcanvas.setLayout(new FillLayout(SWT.HORIZONTAL));
+		//viewcanvas.setLayout(new FillLayout(SWT.HORIZONTAL));
 		
 		canvas = new Canvas(this, SWT.NONE);
 		canvas.setBackgroundImage(ImageManager.get().GetImage("resource_deck_icon.png"));
@@ -321,7 +325,7 @@ public class Game extends Composite {
 		
 		canvas_1 = new Canvas(this, SWT.NONE);
 		fd_lblHandsize.right = new FormAttachment(canvas_1, -6);
-		canvas_1.setBackgroundImage(ImageManager.get().GetImage("resource_hand_icon.png"));
+		//canvas_1.setBackgroundImage(ImageManager.get().GetImage("resource_hand_icon.png"));
 		canvas_1.setBounds(this.lblHandsize.getBounds().x+this.lblHandsize.getBounds().width-5,this.lblHandsize.getBounds().y+this.lblHandsize.getBounds().height,16,16);
 		FormData fd_canvas_1 = new FormData();
 		fd_canvas_1.bottom = new FormAttachment(canvas, -4);
@@ -329,9 +333,20 @@ public class Game extends Composite {
 		fd_canvas_1.right = new FormAttachment(btnPass, -25, SWT.RIGHT);
 		fd_canvas_1.left = new FormAttachment(0, 45);
 		canvas_1.setLayoutData(fd_canvas_1);
+		canvas_1.addPaintListener( new PaintListener() {
+
+			@Override
+			public void paintControl(PaintEvent e) {
+				Image toDraw = ImageManager.get().GetImage("resource_hand_icon.png");
+				e.gc.drawImage( toDraw,
+								0, 0, toDraw.getBounds().width, toDraw.getBounds().height,
+								0, 0, canvas_1.getBounds().width, canvas_1.getBounds().height);
+			}
+			
+		});
 		
 		canvas_2 = new Canvas(this, SWT.NONE);
-		canvas_2.setBackgroundImage(ImageManager.get().GetImage("resource_metal_icon.png"));
+		//canvas_2.setBackgroundImage(ImageManager.get().GetImage("resource_metal_icon.png"));
 		canvas_2.setBounds(this.lblMetal.getBounds().x+this.lblMetal.getBounds().width-5,this.lblMetal.getBounds().y+this.lblMetal.getBounds().height,16,16);
 		canvas_2.setLayout(new FormLayout());
 		FormData fd_canvas_2 = new FormData();
@@ -340,9 +355,20 @@ public class Game extends Composite {
 		fd_canvas_2.right = new FormAttachment(grpHand, -31);
 		fd_canvas_2.left = new FormAttachment(lblMetal, 6);
 		canvas_2.setLayoutData(fd_canvas_2);
+		canvas_2.addPaintListener( new PaintListener() {
+
+			@Override
+			public void paintControl(PaintEvent e) {
+				Image toDraw = ImageManager.get().GetImage("resource_metal_icon.png");
+				e.gc.drawImage( toDraw,
+								0, 0, toDraw.getBounds().width, toDraw.getBounds().height,
+								0, 0, canvas_1.getBounds().width, canvas_1.getBounds().height);
+			}
+			
+		});
 		
 		canvas_3 = new Canvas(this, SWT.NONE);
-		canvas_3.setBackgroundImage(ImageManager.get().GetImage("resource_energy_icon.png"));
+		//canvas_3.setBackgroundImage(ImageManager.get().GetImage("resource_energy_icon.png"));
 		canvas_3.setBounds(this.lblEnergy.getBounds().x+this.lblEnergy.getBounds().width-5,this.lblEnergy.getBounds().y+this.lblEnergy.getBounds().height,16,16);
 		canvas_3.setLayout(new FormLayout());
 		FormData fd_canvas_3 = new FormData();
@@ -352,10 +378,22 @@ public class Game extends Composite {
 		fd_canvas_3.right = new FormAttachment(grpHand, -31);
 		fd_canvas_3.left = new FormAttachment(lblEnergy, 6);
 		canvas_3.setLayoutData(fd_canvas_3);
+		canvas_3.addPaintListener( new PaintListener() {
+
+			@Override
+			public void paintControl(PaintEvent e) {
+				Image toDraw = ImageManager.get().GetImage("resource_energy_icon.png");
+				e.gc.drawImage( toDraw,
+								0, 0, toDraw.getBounds().width, toDraw.getBounds().height,
+								0, 0, canvas_1.getBounds().width, canvas_1.getBounds().height);
+			}
+			
+		});
+		lblActionhelp.setForeground( Display.getDefault().getSystemColor( SWT.COLOR_RED));
 		
 		canvas_4 = new Canvas(this, SWT.NONE);
 		//fd_canvas_3.bottom = new FormAttachment(canvas_4, -19);
-		canvas_4.setBackgroundImage(ImageManager.get().GetImage("resource_tech_icon.png"));
+		//canvas_4.setBackgroundImage(ImageManager.get().GetImage("resource_tech_icon.png"));
 		canvas_4.setBounds(this.lblTech.getBounds().x+this.lblTech.getBounds().width-5,this.lblTech.getBounds().y+this.lblTech.getBounds().height,16,16);
 		canvas_4.setLayout(new FormLayout());
 		FormData fd_canvas_4 = new FormData();
@@ -364,6 +402,18 @@ public class Game extends Composite {
 		fd_canvas_4.right = new FormAttachment(grpHand, -31);
 		fd_canvas_4.left = new FormAttachment(lblTech, 6);
 		canvas_4.setLayoutData(fd_canvas_4);
+		canvas_4.addPaintListener( new PaintListener() {
+
+			@Override
+			public void paintControl(PaintEvent e) {
+				Image toDraw = ImageManager.get().GetImage("resource_tech_icon.png");
+				e.gc.drawImage( toDraw,
+								0, 0, toDraw.getBounds().width, toDraw.getBounds().height,
+								0, 0, canvas_1.getBounds().width, canvas_1.getBounds().height);
+			}
+			
+		});
+		
 		viewcanvas.addMouseListener(new MouseListener(){
 
 			@Override
@@ -386,6 +436,14 @@ public class Game extends Composite {
 			}
 			
 		});
+		viewcanvas.addPaintListener( new PaintListener() {
+
+			@Override
+			public void paintControl(PaintEvent e) {
+				
+			}
+			
+		});
 
 		/*
 		 * Finally start game stuff
@@ -396,6 +454,72 @@ public class Game extends Composite {
 		stacks = new ArrayList<StackObject>();
 		hand = new ArrayList<String>();
 		field = new ArrayList<String>();
+		
+		
+		this.addListener( SWT.Resize, new Listener() {
+
+			@Override
+			public void handleEvent(Event event) {
+				Rectangle area = getClientArea();
+				CardRenderSize size = ClientCardTemplate.CardRenderSize.LARGE;
+				
+				Point currentReference = new Point(0, area.height - (area.height / 3));
+				int textHeight = 18;
+				int spacer = ( area.height / 3 ) / 8;
+				lblUsername.setBounds( currentReference.x, currentReference.y + (spacer - textHeight) / 2, area.width / 6, 23 );
+				canvas_1.setBounds( currentReference.x, currentReference.y + spacer, spacer,  spacer );
+				lblHandsize.setBounds( currentReference.x + spacer + 10, currentReference.y + spacer  + (spacer - textHeight) / 2, (area.width / 6) - spacer - 10,  spacer);
+				lblDecksize.setBounds( currentReference.x +  spacer + 10, currentReference.y + spacer * 2  + (spacer - textHeight) / 2, (area.width / 6) - spacer - 10,  spacer);
+				lblGravesize.setBounds( currentReference.x +  spacer + 10, currentReference.y + spacer * 3  + (spacer - textHeight) / 2, (area.width / 6) - spacer - 10, spacer);
+				canvas_2.setBounds( currentReference.x, currentReference.y + spacer * 4, spacer,  spacer );
+				lblMetal.setBounds( currentReference.x +  spacer + 10, currentReference.y + spacer * 4  + (spacer - textHeight) / 2, (area.width / 6) - spacer - 10,  spacer);
+				canvas_3.setBounds( currentReference.x, currentReference.y + spacer * 5, spacer,  spacer );
+				lblEnergy.setBounds( currentReference.x +  spacer + 10, currentReference.y + spacer * 5  + (spacer - textHeight) / 2, (area.width / 6) - spacer - 10, spacer);
+				canvas_4.setBounds( currentReference.x, currentReference.y + spacer * 5, spacer,  spacer );
+				lblTech.setBounds( currentReference.x +  spacer + 10, currentReference.y + spacer * 6  + (spacer - textHeight) / 2, (area.width / 6) - spacer - 10, spacer);
+				grpHand.setBounds( area.width / 6, area.height - area.height / 3, area.width - area.width / 6 - size.getWidth() - 6, area.height / 3 );
+
+				currentReference = new Point( area.width - size.getWidth(), 0);
+				lblEnemy.setBounds( currentReference.x, currentReference.y, size.getWidth(), 23 );			
+				lblEhandsize.setBounds( currentReference.x + spacer + 10, currentReference.y + spacer  + (spacer - textHeight) / 2, size.getWidth() - spacer - 10,  spacer);
+				lblEdecksize.setBounds( currentReference.x +  spacer + 10, currentReference.y + spacer * 2  + (spacer - textHeight) / 2, size.getWidth() - spacer - 10,  spacer);
+				lblEgravesize.setBounds( currentReference.x +  spacer + 10, currentReference.y + spacer * 3  + (spacer - textHeight) / 2, size.getWidth() - spacer - 10, spacer);
+				lblEmetal.setBounds( currentReference.x +  spacer + 10, currentReference.y + spacer * 4  + (spacer - textHeight) / 2, size.getWidth() - spacer - 10,  spacer);
+				lblEenergy.setBounds( currentReference.x +  spacer + 10, currentReference.y + spacer * 5  + (spacer - textHeight) / 2, size.getWidth() - spacer - 10, spacer);
+				lblEtech.setBounds( currentReference.x +  spacer + 10, currentReference.y + spacer * 6  + (spacer - textHeight) / 2, size.getWidth() - spacer - 10, spacer);
+
+				grpViewer.setBounds( area.width - (size.getWidth() + 6), area.height - size.getHeight() - 18, size.getWidth() + 6, size.getHeight() + 18 );
+				viewcanvas.setBounds( 0, 0, size.getWidth(), size.getHeight() );
+	
+				
+				btnPass.setBounds( 0, 0, area.width / 6, 23 );
+				btnEnd.setBounds( 0, 23, area.width / 6, 23 );
+				lblActionhelp.setBounds( 0, 46, area.width / 6, 23 );
+				grpStack.setBounds( 0, 69, area.width / 6, area.height - (area.height / 3) - 69 );
+				
+				grpEnemy.setBounds( area.width / 6, 0, area.width - (area.width / 6) - size.getWidth() - 6, (area.height / 3));
+				group_1.setBounds(  area.width / 6, (area.height / 3), area.width - (area.width / 6) - size.getWidth() - 6, (area.height / 3) );
+
+				
+//				//start at 100 x 465
+//				Point handPos;
+//				Point fieldPos;
+//				Point stackPos;
+//				Point viewPos;
+//				ArrayList<ClientCardInstance> cards;
+//				ArrayList<String> hand;
+//				ArrayList<String> field;
+//				ArrayList<String> stack;
+//				Group grpStack;
+//				Group grpHand;
+//				Group group;
+//				Group group_1;
+//				Group grpEnemy;
+//				boolean targeting = false;
+//				Label lblActionhelp;
+			}
+			
+		});
 	}
 	
 	public void playCard(String cardID){
