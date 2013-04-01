@@ -24,4 +24,8 @@ public class ServerStore {
 		}
 		return -1;
 	}
+	public static void Buy(ClientAccount ca, Integer valueOf) {
+		// TODO Auto-generated method stub
+		
+	}
 }

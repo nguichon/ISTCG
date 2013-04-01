@@ -99,7 +99,15 @@ public class ServerCardInstance extends StackObject {
 	public void MakeAttack( ServerCardInstance t  ) {
 		t.TakeAttack( this, m_Template.getStat( StatType.ATTACK ).m_Value, m_Template.getStat( StatType.POWER ).m_Value );
 	}
-	public void CheckStatus() { }
+	public void CheckStatus() {
+		if( m_DamageTaken >= m_Template.getStat( StatType.STRUCTURE ).m_Value ) {
+			m_Host.GameMessage( String.format( "%s's %s has been destroyed.", 
+					m_Controller.getClientAccount().getUserName(), 
+					ClientCardTemplateManager.get().GetClientCardTemplate( GetCardTemplate().getCardTemplateID() ).getCardName() ));
+			this.MoveCardTo( GameZones.GRAVEYARD );
+		}
+		
+	}
 	
 	private void MoveCardTo(GameZones locationAfterResolution) {
 		switch( locationAfterResolution ) {
