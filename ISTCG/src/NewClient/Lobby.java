@@ -23,6 +23,7 @@ public class Lobby extends Composite {
 	private TabFolder m_TabFolder;
 	private Button m_SendChatButton;
 
+	DeckEditor d;
 	ArrayList<Game> games;
 	ClientMain main;
 	/**
@@ -69,8 +70,8 @@ public class Lobby extends Composite {
 			@Override
 			public void handleEvent(Event event) {
 				Rectangle new_size = main.rShell().getClientArea();
-				int width_1 = (int)((new_size.width - 30) * 0.6);
-				int width_2 = (int)((new_size.width - 30) * 0.4);
+				int width_1 = (int)((new_size.width - 30) * 0.8);
+				int width_2 = (int)((new_size.width - 30) * 0.2);
 				
 				m_TabFolder.setBounds( 10, 10, width_1, new_size.height - 20);
 				m_ReceivedMessagesStyledText.setBounds( new_size.width - width_2, 10, width_2 - 20, new_size.height - 74);
@@ -98,8 +99,11 @@ public class Lobby extends Composite {
 	public void addDeckEditor(){
 		TabItem t = new TabItem(m_TabFolder, SWT.NULL);
 		t.setText("Deck Editor");
-		DeckEditor d = new DeckEditor(t.getParent(),SWT.None,main,t);
+		d = new DeckEditor(t.getParent(),SWT.None,main,t);
 		t.setControl(d);
+	}
+	public DeckEditor getDeckEditor(){
+		return d;
 	}
 	public void addGame(String gID){
 		//Make a game

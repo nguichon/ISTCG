@@ -17,10 +17,11 @@ import org.eclipse.swt.widgets.Listener;
 
 import NewClient.ClientCardTemplate.CardRenderSize;
 
-import Client.CardTemplateManager;
 import NewClient.ClientCardTemplateManager;
 import NewClient.ClientMain;
 import NewClient.Game;
+import OldClient.CardTemplateManager;
+import OldClient.ImageManager;
 import Shared.StatBlock;
 
 public class ClientCardInstance extends Canvas {
@@ -37,6 +38,11 @@ public class ClientCardInstance extends Canvas {
 	Rectangle lastBounds;
 	Composite lastParent;
 	Game game;
+	String owner = "";
+	String controller = "";
+	int m_DamageTaken = 0;
+	boolean m_Active = true;
+	int tid = 0;
 	public enum GameZone {
 		HAND,FIELD,STACK,GRAVEYARD,VIEWER,UNKNOWN;
 		
@@ -92,29 +98,31 @@ public class ClientCardInstance extends Canvas {
 	}
 	
 	public void cardDClicked(){
-		switch(size){
-		
-		//case SMALL:
-		//	break;
-			
-		//case MEDIUM:
-		//	break;
-		case LARGE:
-			size = lastSize;
-			redraw();
-//			if(zone==GameZone.VIEWER){
-//				setBounds(lastBounds);
-//				size = CardRenderSize.SMALL;
-//				setParent(this.lastParent);
-//				redraw();
-//			}
-			break;
-		default:
-			lastSize = size;
-			size = CardRenderSize.LARGE;
-			redraw();
-			break;
-		}
+//		switch(size){
+//		
+//		//case SMALL:
+//		//	break;
+//			
+//		//case MEDIUM:
+//		//	break;
+//		case LARGE:
+//			size = lastSize;
+//			redraw();
+////			if(zone==GameZone.VIEWER){
+////				setBounds(lastBounds);
+////				size = CardRenderSize.SMALL;
+////				setParent(this.lastParent);
+////				redraw();
+////			}
+//			break;
+//		default:
+//			lastSize = size;
+//			size = CardRenderSize.LARGE;
+//			redraw();
+//			break;
+//		}
+		game.playCard(this.id);
+		game.setAssistText(this.controller);
 	}
 	
 	public void cardClicked(MouseEvent mouse){
@@ -130,7 +138,9 @@ public class ClientCardInstance extends Canvas {
 //			game.group.layout();
 //			redraw();
 //			game.group.layout();
-			game.setViewer(this.getID());
+			if(this.template!=null)
+				game.setViewer(this.getID());
+			game.vcard=this.getID();
 			break;
 			
 		case MEDIUM:
@@ -188,7 +198,11 @@ public class ClientCardInstance extends Canvas {
 	
 	public void setTemplate(String ID){
 		template = ClientCardTemplateManager.get().GetClientCardTemplate(Integer.valueOf(ID));
+		tid = Integer.valueOf(ID);
 		this.redraw();
+	}
+	public int getTID(){
+		return tid;
 	}
 	public ArrayList<String> getStats(){
 		return stats;
@@ -233,7 +247,11 @@ public class ClientCardInstance extends Canvas {
 	}
 	public void Render(GC gc){
 		if(template!=null) {
-			template.Render(gc, size, getStatBlock());
+			System.out.println("RENDERING: " + this.getID());
+			template.Render(gc, size, getStatBlock(), m_DamageTaken);
+			if( !m_Active ) {
+				gc.drawImage( ImageManager.get().GetImage( "filter-disabled.png" ), 0, 0, 16, 16, 0, 0, size.getWidth(), size.getHeight() );
+			}
 			//RenderStats(gc);
 		} else {
 			ClientCardTemplate.RenderBlack( gc, size, getStatBlock());
@@ -259,11 +277,40 @@ public class ClientCardInstance extends Canvas {
 	public String getID(){
 		return id;
 	}
-	public src.NewClient.CardRenderSize getRenderSize(){
+	public CardRenderSize getRenderSize(){
 		return size;
 	}
 	public void setRenderSize(ClientCardTemplate.CardRenderSize size){
 		this.size=size;
+	}
+
+	public void setOwner(String owner) {
+		
+		this.owner=owner;
+	}
+	public String getOwner(){
+		return owner;
+	}
+	public void setController(String controller) {
+		this.controller=controller;
+	}
+	public String getController(){
+		return controller;
+	}
+
+	public void setDamage(String val) {
+		this.m_DamageTaken=Integer.valueOf(val);
+		System.out.println("DAMAGED: " + this.getID());
+	}
+
+	public void setActive(boolean active) {
+		this.m_Active = active;
+		this.redraw();
+		this.setBounds( this.getBounds() );
+	}
+	
+	public int getDamageTaken() {
+		return m_DamageTaken;
 	}
 
 }

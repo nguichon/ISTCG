@@ -1,35 +1,46 @@
 package server.games.cards;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Random;
 
 import server.games.GameInstance;
 import server.games.GamePlayer;
+import server.games.cards.abilities.Target;
+import server.games.events.DamageEvent;
 import server.games.events.GameEvent;
+import server.games.events.ResolutionEvent;
+import server.games.stack.StackObject;
 
 
+import NewClient.ClientCardInstance;
+import NewClient.ClientCardTemplateManager;
+import Shared.CardTypes;
 import Shared.ClientMessages;
 import Shared.GameZones;
-import Shared.StatBlock;
+import Shared.StatBlock.StatType;
 
-public class ServerCardInstance {
+public class ServerCardInstance extends StackObject {
 	private static final int CARD_TEMPLATE_INVISIBLE = -1;
 	
 	//Instance information
 	private ServerCardTemplate m_Template;
-	private int m_UID;
+	private ArrayList<Target> m_Targets = new ArrayList<Target>();
+	private ArrayList<ServerCardInstance> m_Attachments = new ArrayList<ServerCardInstance>();
 	
 	//Game information
-	private GameInstance m_Host;
 	private GameZones m_Location;
 	
 	//Player information
 	private GamePlayer m_Owner, m_Controller;
+
+	private int m_TimesMoved = 0;
+	private int m_DamageTaken = 0;
+	private boolean m_Active = true;
 	
 	public ServerCardInstance( GameInstance host, GamePlayer owner, int template_id ) {
-		m_Host = host; m_Owner = owner; m_Controller = owner;
+		super( host );
+		m_Owner = owner; m_Controller = owner;
 		
-		m_UID = m_Host.CreateNewCardID();
 		m_Location = GameZones.UNKNOWN;
 		
 		m_Template = ServerCardTemplateManager.get().GetCardTemplate( template_id );
@@ -37,8 +48,15 @@ public class ServerCardInstance {
 		host.AddToDirectory( this );
 	}
 	
-	public void SetLocation( GameZones location ) { m_Location = location; }
+	public synchronized void SetLocation( GameZones location ) { 
+		if( m_Location != location ) { 
+			++m_TimesMoved; 
+			m_Location = location;
+		}
+	}
 	public void Reset() { m_Controller = m_Owner; }
+	public GamePlayer getController() { return m_Controller; }
+	public GamePlayer getOwner() { return m_Owner; };
 	
 	/**
 	 * Sends the id of this CardInstance's CardTemplate.
@@ -52,7 +70,9 @@ public class ServerCardInstance {
 			requester.SendMessageFromGame( 
 					ClientMessages.CARD_INFO, 
 					String.valueOf( m_UID ), 
-					String.valueOf( m_Template.getCardTemplateID()) );
+					String.valueOf( m_Template.getCardTemplateID() ), 
+					String.valueOf( m_Owner.getClientAccount().getUserID() ), 
+					String.valueOf( m_Controller.getClientAccount().getUserID() ) );
 		} else {
 			requester.SendMessageFromGame( 
 					ClientMessages.CARD_INFO, 
@@ -61,12 +81,109 @@ public class ServerCardInstance {
 		}
 	}
 	
-	public int GetCardUID() { return m_UID; }
+	public int GetCardUID() { return getStackObjectID(); }
 	public ServerCardTemplate GetCardTemplate() { return m_Template; }
 
-	public void resolve(GameEvent e) {
-		e.m_SourcePlayer = m_Controller;
-		e.m_SourceCard = this;
-		m_Template.onPlay( e );
+	@Override
+	public void Resolve(ResolutionEvent e) {
+		e.resolvingCard = this;
+		e.targets = m_Targets;
+		if( m_Template.getCardType() == CardTypes.UNIT || m_Template.getCardType() == CardTypes.GEAR ) {
+			e.locationAfterResolution = GameZones.FIELD;
+		} else {
+			e.locationAfterResolution = GameZones.GRAVEYARD;
+		}
+		m_Template.Resolve( e );
+		MoveCardTo( e.locationAfterResolution );
+		m_Targets.clear();
+	}
+	public void MakeAttack( ServerCardInstance t  ) {
+		t.TakeAttack( this, m_Template.getStat( StatType.ATTACK ).m_Value, m_Template.getStat( StatType.POWER ).m_Value );
+	}
+	public void CheckStatus() {
+		if( m_DamageTaken >= m_Template.getStat( StatType.STRUCTURE ).m_Value ) {
+			m_Host.GameMessage( String.format( "%s's %s has been destroyed.", 
+					m_Controller.getClientAccount().getUserName(), 
+					ClientCardTemplateManager.get().GetClientCardTemplate( GetCardTemplate().getCardTemplateID() ).getCardName() ));
+			this.MoveCardTo( GameZones.GRAVEYARD );
+		}
+		
+	}
+	
+	private void MoveCardTo(GameZones locationAfterResolution) {
+		switch( locationAfterResolution ) {
+		case GRAVEYARD:
+			m_Owner.putCardInZone( this, GameZones.GRAVEYARD );
+			break;
+		case FIELD:
+			m_Host.PutCardOntoField( this );
+			break;
+		default:
+			break;
+		}
+	}
+	
+	public void TakeDamage( DamageEvent e ) {
+		m_Template.HandleDamage( e );
+		m_DamageTaken += e.amount;
+		m_Host.GameMessage( String.format( "%s's %s takes %d damage from %s's %s.", 
+				m_Controller.getClientAccount().getUserName(), 
+				ClientCardTemplateManager.get().GetClientCardTemplate( GetCardTemplate().getCardTemplateID() ).getCardName() ,
+				e.amount,
+				e.sourceCard.getController().getClientAccount().getUserName(),
+				ClientCardTemplateManager.get().GetClientCardTemplate( e.sourceCard.GetCardTemplate().getCardTemplateID() ).getCardName() ));
+		m_Host.SendMessageToAllPlayers( ClientMessages.SET_CARD_DAMAGE, String.valueOf(this.GetCardUID()), String.valueOf(this.m_DamageTaken) );
+	}
+	private static final Random m_Generator = new Random();
+	public void TakeAttack( ServerCardInstance source, int attack, int power ) {
+		int roll = m_Generator.nextInt( 10 ) + 1;
+		boolean hit = false;
+		if( roll == 10 ) hit = true;
+		if( roll + attack >= m_Template.getStat( StatType.DEFENSE ).m_Value ) hit = true;
+		
+		if( hit = true ) {
+			DamageEvent e = new DamageEvent( m_Host);
+			e.damagedCard = this;
+			e.amount = power;
+			e.sourceCard = source;
+			TakeDamage( e );
+		}
+	}
+
+	public GameZones getLocation() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public int TimesMoved() {
+		return m_TimesMoved ;
+	}
+
+	@Override
+	public boolean isValid() {
+		return true;
+	}
+
+	public void clearTargets() {
+		m_Targets.clear();
+	}
+	
+	public void addTarget( Target t ) {
+		m_Targets.add( t );
+	}
+	
+	public boolean ValidateTargets() {
+		//TODO Validate targets
+		return true;
+	}
+	
+	public void ChangeState( boolean b ) {
+		if( b != m_Active ) {
+			m_Active = b;
+			m_Host.SendMessageToAllPlayers( ClientMessages.UNIT_ACTIVE_STATE, String.valueOf(this.GetCardUID()), String.valueOf( m_Active ) );
+		}
+	}
+	public boolean getActive( ) {
+		return m_Active;
 	}
 }

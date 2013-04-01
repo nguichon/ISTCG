@@ -6,13 +6,13 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.Scanner;
 
-import Client.LoginUI;
-import Client.ClientMain.GameState;
+import OldClient.LoginUI;
+import OldClient.ClientMain.GameState;
 import Shared.ConnectionDevice;
 import Shared.ThreadedConnectionDevice;
 
 public class FalseClient {
-	private final static String HOST_IP = "127.0.0.1";
+	private final static String HOST_IP = "169.254.61.75";
 	private final static int HOST_PORT = 4567;
 	
 	private static Scanner input;

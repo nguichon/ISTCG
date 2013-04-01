@@ -61,7 +61,6 @@ public class ServerCardTemplateManager {
 			URL uri = null;
 			try {
 				uri = new URL(  "file://" + DEFAULT_CARD_PATH );
-				System.out.println( uri.toString() );
 			} catch (MalformedURLException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -72,13 +71,14 @@ public class ServerCardTemplateManager {
 		}
 		
 		try {
+			@SuppressWarnings("unchecked")
 			Class<ServerCardTemplate> loadedCard = (Class<ServerCardTemplate>)m_TemplateLoader.loadClass( card.getString("name").replaceAll(" ", ""));
 			ServerCardTemplate sct = loadedCard.newInstance();
 			sct.Initialize( card );
 			m_LoadedCards.put( sct.getCardTemplateID(), sct );
 		} catch (ClassNotFoundException e1) {
 			ServerMain.ConsoleMessage( '!', "Class was not found." );
-			e1.printStackTrace();
+			//e1.printStackTrace();
 		} catch (SQLException e1) {
 			ServerMain.ConsoleMessage( '!', "SQL Error, couldn't find some column in result." );
 			e1.printStackTrace();

@@ -2,7 +2,7 @@ package FalseClient;
 
 import org.eclipse.swt.widgets.Display;
 
-import Client.ClientMain;
+import OldClient.ClientMain;
 
 public class AutoClient {
 

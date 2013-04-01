@@ -14,7 +14,7 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
-import Client.ClientMain.MessageType;
+import OldClient.ClientMain.MessageType;
 
 public class LoginUI extends GameStateUI {
 	Label m_Error;

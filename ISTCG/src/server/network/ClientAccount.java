@@ -20,6 +20,7 @@ import server.Database;
 import server.LobbyManager;
 import server.ServerMain;
 import server.games.GameManager;
+import server.store.ServerStore;
 
 /**
  * @author Nicholas Guichon
@@ -58,7 +59,7 @@ public class ClientAccount extends Thread {
 	private Scanner m_Input;
 	private boolean m_Connected;
 
-	public void SendMessage(ClientMessages messageType, String ... parameters ) {
+	public synchronized void SendMessage(ClientMessages messageType, String ... parameters ) {
 		String parameterString = "";
 		for( int i = 0; i < parameters.length; i++ ) {
 			parameterString += parameters[i] + ";";
@@ -67,6 +68,12 @@ public class ClientAccount extends Thread {
 		synchronized(m_Output){
 			m_Output.println(messageType.name() + ";" + parameterString);
 			m_Output.flush();
+			try {
+				Thread.sleep( 5 );
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 	}
 
@@ -118,10 +125,24 @@ public class ClientAccount extends Thread {
 						// Drop through
 					case CANCEL:
 						// Drop through
+					case PASS:
+						// Drop through
+					case ATTACK:
+						// Drop through
 					case END:
 						GameManager.get().SendMessageToGame( Integer.valueOf(command[1]), this, command );
 						break;
+					case BALANCE:
+						ServerStore.SendBalance( this );
+						break;
+					case PURCHASE:
+						ServerStore.Buy( this, Integer.valueOf( command[1] ));
+						break;
+					case PRODUCTINFO:
+						ServerStore.GetInfo( this, Integer.valueOf( command[1] ) );
+						break;
 					default:
+						System.out.println( "UNHANDLED: " + line );
 						break;
 					}
 				}
@@ -238,9 +259,7 @@ public class ClientAccount extends Thread {
 				Database.get().quickInsert(
 						"UPDATE Users SET last_login = NOW() WHERE Users.id = "
 								+ m_UserID + ";");
-				// m_AdminAccount = rs.getBoolean("is_admin");
-				// TODO fix the check for admin, so not everyone is an admin :P
-				m_AdminAccount = true;
+				m_AdminAccount = rs.getBoolean( "is_admin" );
 			} else {
 				m_UserID = -1;
 				return false;
