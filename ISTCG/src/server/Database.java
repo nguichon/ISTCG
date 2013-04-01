@@ -49,4 +49,13 @@ public class Database {
 		}
 	}
 	
+	public void close() {
+		try {
+			m_DBConnection.close();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
 }
