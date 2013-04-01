@@ -138,6 +138,9 @@ public class ClientAccount extends Thread {
 					case PURCHASE:
 						ServerStore.Buy( this, Integer.valueOf( command[1] ));
 						break;
+					case PRODUCTINFO:
+						ServerStore.GetInfo( this, Integer.valueOf( command[1] ) );
+						break;
 					default:
 						System.out.println( "UNHANDLED: " + line );
 						break;
