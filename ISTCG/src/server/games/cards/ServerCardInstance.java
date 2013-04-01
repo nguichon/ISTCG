@@ -13,6 +13,7 @@ import server.games.stack.StackObject;
 
 
 import NewClient.ClientCardInstance;
+import NewClient.ClientCardTemplateManager;
 import Shared.CardTypes;
 import Shared.ClientMessages;
 import Shared.GameZones;
@@ -98,7 +99,15 @@ public class ServerCardInstance extends StackObject {
 	public void MakeAttack( ServerCardInstance t  ) {
 		t.TakeAttack( this, m_Template.getStat( StatType.ATTACK ).m_Value, m_Template.getStat( StatType.POWER ).m_Value );
 	}
-	public void CheckStatus() { }
+	public void CheckStatus() {
+		if( m_DamageTaken >= m_Template.getStat( StatType.STRUCTURE ).m_Value ) {
+			m_Host.GameMessage( String.format( "%s's %s has been destroyed.", 
+					m_Controller.getClientAccount().getUserName(), 
+					ClientCardTemplateManager.get().GetClientCardTemplate( GetCardTemplate().getCardTemplateID() ).getCardName() ));
+			this.MoveCardTo( GameZones.GRAVEYARD );
+		}
+		
+	}
 	
 	private void MoveCardTo(GameZones locationAfterResolution) {
 		switch( locationAfterResolution ) {
@@ -116,6 +125,12 @@ public class ServerCardInstance extends StackObject {
 	public void TakeDamage( DamageEvent e ) {
 		m_Template.HandleDamage( e );
 		m_DamageTaken += e.amount;
+		m_Host.GameMessage( String.format( "%s's %s takes %d damage from %s's %s.", 
+				m_Controller.getClientAccount().getUserName(), 
+				ClientCardTemplateManager.get().GetClientCardTemplate( GetCardTemplate().getCardTemplateID() ).getCardName() ,
+				e.amount,
+				e.sourceCard.getController().getClientAccount().getUserName(),
+				ClientCardTemplateManager.get().GetClientCardTemplate( e.sourceCard.GetCardTemplate().getCardTemplateID() ).getCardName() ));
 		m_Host.SendMessageToAllPlayers( ClientMessages.SET_CARD_DAMAGE, String.valueOf(this.GetCardUID()), String.valueOf(this.m_DamageTaken) );
 	}
 	private static final Random m_Generator = new Random();

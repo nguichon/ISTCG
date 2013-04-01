@@ -20,6 +20,7 @@ import server.Database;
 import server.LobbyManager;
 import server.ServerMain;
 import server.games.GameManager;
+import server.store.ServerStore;
 
 /**
  * @author Nicholas Guichon
@@ -58,7 +59,7 @@ public class ClientAccount extends Thread {
 	private Scanner m_Input;
 	private boolean m_Connected;
 
-	public void SendMessage(ClientMessages messageType, String ... parameters ) {
+	public synchronized void SendMessage(ClientMessages messageType, String ... parameters ) {
 		String parameterString = "";
 		for( int i = 0; i < parameters.length; i++ ) {
 			parameterString += parameters[i] + ";";
@@ -125,7 +126,14 @@ public class ClientAccount extends Thread {
 					case END:
 						GameManager.get().SendMessageToGame( Integer.valueOf(command[1]), this, command );
 						break;
+					case BALANCE:
+						ServerStore.SendBalance( this );
+						break;
+					case PURCHASE:
+						ServerStore.Buy( this, Integer.valueOf( command[1] ));
+						break;
 					default:
+						System.out.println( "UNHANDLED: " + line );
 						break;
 					}
 				}

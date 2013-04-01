@@ -78,7 +78,7 @@ public class ServerCardTemplateManager {
 			m_LoadedCards.put( sct.getCardTemplateID(), sct );
 		} catch (ClassNotFoundException e1) {
 			ServerMain.ConsoleMessage( '!', "Class was not found." );
-			e1.printStackTrace();
+			//e1.printStackTrace();
 		} catch (SQLException e1) {
 			ServerMain.ConsoleMessage( '!', "SQL Error, couldn't find some column in result." );
 			e1.printStackTrace();
