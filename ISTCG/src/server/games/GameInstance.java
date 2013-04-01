@@ -195,7 +195,12 @@ public class GameInstance {
 							m_Players.get( origin.getUserID() ).SendMessageFromGame( ClientMessages.GAME_ERROR, String.valueOf( ATTACKER.GetCardUID() ) + " cannot attack your own ship.");
 							break;
 						}
+						if( !ATTACKER.getActive() ) {
+							m_Players.get( origin.getUserID() ).SendMessageFromGame( ClientMessages.GAME_ERROR, String.valueOf( ATTACKER.GetCardUID() ) + " cannot attack, because it already has.");
+							break;
+						}
 						
+						ATTACKER.ChangeState( false );
 						PutAttackOnStack( new Attack( this, ATTACKER, DEFENDER ) );
 						StartStacking();
 						break;
@@ -286,6 +291,11 @@ public class GameInstance {
 		SetActivePlayer();
 		//Set game state.
 		ChangeState(GameStates.ACTIVE);
+		for( ServerCardInstance sci : m_Directory.values() ) {
+			if( sci.getController() == m_CurrentPlayer ) {
+				sci.ChangeState( true );
+			}
+		}
 	}
 	
 	private void SetActivePlayer() {

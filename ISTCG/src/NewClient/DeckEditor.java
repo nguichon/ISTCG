@@ -137,7 +137,7 @@ public class DeckEditor extends Composite {
 			m_LabelTotalCount.setText("Total Count");
 		m_SpinnerToMove = new Spinner(this, SWT.BORDER);
 		m_CardPreview = new Canvas( this, SWT.NONE );
-			m_CardPreviewType = 3;
+			m_CardPreviewType = 5;
 			m_CardPreview.addPaintListener( new PaintListener() {
 	
 				@Override
@@ -145,7 +145,7 @@ public class DeckEditor extends Composite {
 					if( m_CardPreviewType == -1 ) {
 						ClientCardTemplate.RenderBlack( e.gc, ClientCardTemplate.CardRenderSize.LARGE, null );
 					} else {
-						ClientCardTemplateManager.get().GetClientCardTemplate( m_CardPreviewType ).Render( e.gc, ClientCardTemplate.CardRenderSize.LARGE, null, 5 );
+						ClientCardTemplateManager.get().GetClientCardTemplate( m_CardPreviewType ).Render( e.gc, ClientCardTemplate.CardRenderSize.LARGE, null, 0 );
 					}
 				}
 			});

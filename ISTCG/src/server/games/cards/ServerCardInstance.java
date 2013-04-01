@@ -35,6 +35,7 @@ public class ServerCardInstance extends StackObject {
 
 	private int m_TimesMoved = 0;
 	private int m_DamageTaken = 0;
+	private boolean m_Active = true;
 	
 	public ServerCardInstance( GameInstance host, GamePlayer owner, int template_id ) {
 		super( host );
@@ -174,5 +175,15 @@ public class ServerCardInstance extends StackObject {
 	public boolean ValidateTargets() {
 		//TODO Validate targets
 		return true;
+	}
+	
+	public void ChangeState( boolean b ) {
+		if( b != m_Active ) {
+			m_Active = b;
+			m_Host.SendMessageToAllPlayers( ClientMessages.UNIT_ACTIVE_STATE, String.valueOf(this.GetCardUID()), String.valueOf( m_Active ) );
+		}
+	}
+	public boolean getActive( ) {
+		return m_Active;
 	}
 }

@@ -124,6 +124,15 @@ public class ClientCardTemplate {
     			case STRUCTURE:
     				RenderStructure( toUse, targetGC, size );
     				break;
+    			case METAL:
+    				RenderMetal( toUse, targetGC, size );
+    				break;
+    			case ENERGY:
+    				RenderEnergy( toUse, targetGC, size );
+    				break;
+    			case TECH:
+    				RenderTech( toUse, targetGC, size );
+    				break;
     			default:
     				break;
     			}
@@ -186,6 +195,8 @@ public class ClientCardTemplate {
 		targetGC.drawImage( textBox,
 							0, 0, textBox.getBounds().width, textBox.getBounds().height,
 							75, size.getHeight() - size.getHeight() / 3 - size.getHeight() / 9, size.getWidth() - 75, size.getHeight() / 3);
+		
+		
 
     }
     private void RenderCardText( GC targetGC, CardRenderSize size ) {
@@ -273,46 +284,94 @@ public class ClientCardTemplate {
 														frameBounds.width, size.getHeight() - frameBounds.height, size.getWidth() - 2*frameBounds.width, frameBounds.height );
     }
    //TODO Relativevise this
+    private static void RenderMetal( StatBlock toRender, GC targetGC, CardRenderSize size ) {
+    	if( toRender.m_Type == StatBlock.StatType.METAL && size == CardRenderSize.LARGE && toRender.m_Value != -1 ) {
+    		Image icon =  ImageManager.get().GetImage("resource_metal_icon.png");
+    		Image box = ImageManager.get().GetImage("card-element-stat-bubble.png");
+    		int y =  (size.getHeight() - size.getHeight() / 3 - size.getHeight() / 9) - 26;
+    		targetGC.drawImage( icon,
+    							0, 0, icon.getBounds().width, icon.getBounds().height,
+    							75, y, 24, 24 );
+    		targetGC.drawImage( box,
+					0, 0, box.getBounds().width, box.getBounds().height,
+					75 + 26, y, 32, 24 );
+    		targetGC.setFont( NAME_FONT );
+    		targetGC.drawText( String.valueOf( toRender.m_Value), 75+26+5, y, true);
+    	}
+    }
+    private static void RenderEnergy( StatBlock toRender, GC targetGC, CardRenderSize size ) {
+    	if( toRender.m_Type == StatBlock.StatType.ENERGY && size == CardRenderSize.LARGE && toRender.m_Value != -1 ) {
+    		Image icon =  ImageManager.get().GetImage("resource_energy_icon.png");
+    		Image box = ImageManager.get().GetImage("card-element-stat-bubble.png");
+    		int y =  (size.getHeight() - size.getHeight() / 3 - size.getHeight() / 9) - 26;
+    		targetGC.drawImage( icon,
+    							0, 0, icon.getBounds().width, icon.getBounds().height,
+    							75 + 60,y, 24, 24 );
+    		targetGC.drawImage( box,
+					0, 0, box.getBounds().width, box.getBounds().height,
+					75 + 60 + 26, y, 32, 24 );
+    		targetGC.setFont( NAME_FONT );
+    		targetGC.drawText( String.valueOf( toRender.m_Value),  75 + 60 + 26 + 5, y, true);
+    	}
+    }
+    private static void RenderTech( StatBlock toRender, GC targetGC, CardRenderSize size ) {
+    	if( toRender.m_Type == StatBlock.StatType.TECH && size == CardRenderSize.LARGE && toRender.m_Value != -1 ) {
+    		Image icon =  ImageManager.get().GetImage("resource_tech_icon.png");
+    		Image box = ImageManager.get().GetImage("card-element-stat-bubble.png");
+    		int y =  (size.getHeight() - size.getHeight() / 3 - size.getHeight() / 9) - 26;
+    		targetGC.drawImage( icon,
+    							0, 0, icon.getBounds().width, icon.getBounds().height,
+    							75 + 60 + 60, y, 24, 24 );
+    		targetGC.drawImage( box,
+					0, 0, box.getBounds().width, box.getBounds().height,
+					75 + 60 + 60 + 26, y, 32, 24 );
+    		targetGC.setFont( NAME_FONT );
+    		targetGC.drawText( String.valueOf( toRender.m_Value), 75 + 60 + 60 + 26 + 5, y, true);
+    	}
+    }
     private static void RenderAttack( StatBlock toRender, GC targetGC, CardRenderSize size ) {
     	if( toRender.m_Type == StatBlock.StatType.ATTACK && size == CardRenderSize.LARGE && toRender.m_Value != -1 ) {
     		Image icon =  ImageManager.get().GetImage("icon-attack-inverse.png");
     		Image box = ImageManager.get().GetImage("card-element-stat-bubble.png");
+    		int y = size.getHeight() - 40;
     		targetGC.drawImage( icon,
     							0, 0, icon.getBounds().width, icon.getBounds().height,
-    							75, (size.getHeight() - size.getHeight() / 3 - size.getHeight() / 9) - 26, 24, 24 );
+    							75, y, 24, 24 );
     		targetGC.drawImage( box,
 					0, 0, box.getBounds().width, box.getBounds().height,
-					75 + 26, (size.getHeight() - size.getHeight() / 3 - size.getHeight() / 9) - 26, 32, 24 );
+					75 + 26, y, 32, 24 );
     		targetGC.setFont( NAME_FONT );
-    		targetGC.drawText( String.valueOf( toRender.m_Value), 75 + 26 + 5, (size.getHeight() - size.getHeight() / 3 - size.getHeight() / 9) - 26 + 0, true);
+    		targetGC.drawText( String.valueOf( toRender.m_Value), 75 + 26 + 5, y, true);
     	}
     }
     private static void RenderPower( StatBlock toRender, GC targetGC, CardRenderSize size ) {
     	if( toRender.m_Type == StatBlock.StatType.POWER && size == CardRenderSize.LARGE && toRender.m_Value != -1 ) {
     		Image icon =  ImageManager.get().GetImage("icon-damage-inverse.png");
     		Image box = ImageManager.get().GetImage("card-element-stat-bubble.png");
+    		int y = size.getHeight() - 40;
     		targetGC.drawImage( icon,
     							0, 0, icon.getBounds().width, icon.getBounds().height,
-    							75 + 60, (size.getHeight() - size.getHeight() / 3 - size.getHeight() / 9) - 26, 24, 24 );
+    							75 + 60, y, 24, 24 );
     		targetGC.drawImage( box,
 					0, 0, box.getBounds().width, box.getBounds().height,
-					75 + 60 + 26, (size.getHeight() - size.getHeight() / 3 - size.getHeight() / 9) - 26, 32, 24 );
+					75 + 60 + 26, y, 32, 24 );
     		targetGC.setFont( NAME_FONT );
-    		targetGC.drawText( String.valueOf( toRender.m_Value), 75 + 60 + 26 + 5, (size.getHeight() - size.getHeight() / 3 - size.getHeight() / 9) - 26 + 0, true);
+    		targetGC.drawText( String.valueOf( toRender.m_Value), 75 + 60 + 26 + 5,y, true);
     	}
     }
     private static void RenderDefense( StatBlock toRender, GC targetGC, CardRenderSize size ) {
     	if( toRender.m_Type == StatBlock.StatType.DEFENSE && size == CardRenderSize.LARGE && toRender.m_Value != -1 ) {
     		Image icon =  ImageManager.get().GetImage("icon-defense-inverse.png");
     		Image box = ImageManager.get().GetImage("card-element-stat-bubble.png");
+    		int y = size.getHeight() - 40;
     		targetGC.drawImage( icon,
     							0, 0, icon.getBounds().width, icon.getBounds().height,
-    							75 + 60 + 60, (size.getHeight() - size.getHeight() / 3 - size.getHeight() / 9) - 26, 24, 24 );
+    							75 + 60 + 60, y, 24, 24 );
     		targetGC.drawImage( box,
 					0, 0, box.getBounds().width, box.getBounds().height,
-					75 + 60 + 60 + 26, (size.getHeight() - size.getHeight() / 3 - size.getHeight() / 9) - 26, 32, 24 );
+					75 + 60 + 60 + 26, y, 32, 24 );
     		targetGC.setFont( NAME_FONT );
-    		targetGC.drawText( String.valueOf( toRender.m_Value), 75 + 60 + 60 + 26 + 5, (size.getHeight() - size.getHeight() / 3 - size.getHeight() / 9) - 26 + 0, true);
+    		targetGC.drawText( String.valueOf( toRender.m_Value), 75 + 60 + 60 + 26 + 5, y, true);
     	}
     }
     private static void RenderStructure( StatBlock toRender, GC targetGC, CardRenderSize size ) {

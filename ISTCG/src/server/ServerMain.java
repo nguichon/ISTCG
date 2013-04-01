@@ -9,6 +9,7 @@ import NewClient.ClientCardTemplateManager;
 import server.admin.AdminCommands;
 import server.games.cards.ServerCardTemplateManager;
 import server.network.ConnectionsHandler;
+import server.store.ServerStore;
 
 /**
  * Main class for the Server.
@@ -48,6 +49,7 @@ public class ServerMain {
 
 		ClientCardTemplateManager.get().Initialize();
 		ServerCardTemplateManager.get().Initialize();
+		ServerStore.Initialize();
 
 		ConsoleMessage('-', "Finished intializing cards...");
 
