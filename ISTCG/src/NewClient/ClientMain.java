@@ -146,7 +146,7 @@ public class ClientMain {
 	
 	private boolean MakeConnection() {
 		int port = 4567;
-  		String host = "169.254.125.206";
+  		String host = "127.0.0.1";
 		try {
 			//m_Server = new ConnectionDevice( host, port );
 			m_Server = new ThreadedConnectionDevice( host, port);
@@ -212,6 +212,7 @@ public class ClientMain {
 			composite = new Lobby(shell, SWT.NONE,this);
 			//shell.setBackgroundImage( null );
 			((Lobby)composite).addDeckEditor();
+			((Lobby)composite).addStore();
 			Rectangle r = shell.getClientArea();
 			composite.setBounds(r);
 			break;

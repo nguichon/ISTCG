@@ -8,7 +8,7 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 
-import Client.ImageManager;
+import OldClient.ImageManager;
 
 public class StoreItem extends Canvas {
 	

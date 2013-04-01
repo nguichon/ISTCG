@@ -91,6 +91,7 @@ public class StoreUI extends Composite {
 		
 		//TODO preview
 		//preview text
+		curItem = new StoreItem(this, SWT.None, "0", 0, "NULL", "NULL", this);
 		lbl_pv_Text = new Label(this, SWT.WRAP);
 		lbl_pv_Text.setLocation(pv_TextLoc);
 		lbl_pv_Text.setSize(pv_TextSize);

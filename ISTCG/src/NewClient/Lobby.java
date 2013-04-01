@@ -105,6 +105,11 @@ public class Lobby extends Composite {
 	public DeckEditor getDeckEditor(){
 		return d;
 	}
+	public void addStore(){
+		TabItem t = new TabItem(m_TabFolder, SWT.NULL);
+		t.setText("Store");
+		StoreUI s = new StoreUI(t.getParent(), SWT.None, main, t);
+	}
 	public void addGame(String gID){
 		//Make a game
 		TabItem t = new TabItem(m_TabFolder,SWT.NULL);
