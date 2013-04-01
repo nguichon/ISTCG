@@ -626,7 +626,7 @@ public class Game extends Composite {
 	//3,100
 	public void loadDeck(){
 		//default for now
-		main.sendData("DECKLIST;"+this.getID()+";3;0,15|1,15|2,10|5,10|15,10");
+		main.sendData("DECKLIST;"+this.getID()+";3;0,15|1,15|2,10|5,10|19,10");
 	}
 
 	public void addToStack(String cardID){
