@@ -1,5 +1,8 @@
 package NewClient;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -64,28 +67,39 @@ public class DeckEditor extends Composite {
 				public void widgetSelected(SelectionEvent arg0) {
 					// TODO Auto-generated method stub
 					m_CardPreviewType = Integer.valueOf(cards[m_MyCollectionList.getSelectionIndex()][0]);
+					m_CardPreview.redraw();
 				}
 				
 			});
 		m_MyDeckList = new List(this, SWT.BORDER);
+//			m_MyDeckList.addSelectionListener(new SelectionListener(){
+//
+//				@Override
+//				public void widgetDefaultSelected(SelectionEvent arg0) {
+//					// TODO Auto-generated method stub
+//					
+//				}
+//
+//				@Override
+//				public void widgetSelected(SelectionEvent arg0) {
+//					// TODO Auto-generated method stub
+//					m_CardPreviewType = Integer.valueOf(cards[m_MyCollectionList.get][0]);
+//					m_CardPreview.redraw();
+//				}
+//				
+//			});
 		m_AddCardButton = new Button(this, SWT.NONE);
 			m_AddCardButton.setText("Add Card");
-			m_AddCardButton.addMouseListener(new MouseListener(){
+			m_AddCardButton.addSelectionListener(new SelectionListener(){
 
 				@Override
-				public void mouseDoubleClick(MouseEvent arg0) {
+				public void widgetDefaultSelected(SelectionEvent arg0) {
 					// TODO Auto-generated method stub
 					
 				}
 
 				@Override
-				public void mouseDown(MouseEvent arg0) {
-					// TODO Auto-generated method stub
-					
-				}
-
-				@Override
-				public void mouseUp(MouseEvent arg0) {
+				public void widgetSelected(SelectionEvent arg0) {
 					// TODO Auto-generated method stub
 					String[] s = m_MyCollectionList.getSelection();
 					for(String c:s){
@@ -195,17 +209,23 @@ public class DeckEditor extends Composite {
 	public void addCardToDeck(String s){
 		//confirm we have this card
 		boolean confirm=false;
+		String s0="";
+		System.out.println("Adding");
 		for(String[] a:cards){
-			if(a[0].equals(s)){
-				if(Integer.valueOf(a[1])<=this.m_SpinnerToMove.getSelection())
+			if(ClientCardTemplateManager.get().GetClientCardTemplate(Integer.valueOf(a[0])).getCardName().equals(s)){
+				System.out.println("has card");
+				if(Integer.valueOf(a[1])>=this.m_SpinnerToMove.getSelection()){
 					confirm = true;
+					System.out.println("Has amount");
+					s0=a[0];
+				}
 			}
 		}
 		if(!confirm)
 			return;
 		//add the card to list_1
 		m_MyDeckList.add(s);
-		deck.add(new String[]{s,String.valueOf(m_SpinnerToMove.getSelection())});
+		deck.add(new String[]{s0,String.valueOf(m_SpinnerToMove.getSelection())});
 	}
 	
 	public void removeCardFromDeck(){
@@ -222,6 +242,21 @@ public class DeckEditor extends Composite {
 	
 	public void writeDeck(){
 		//Deck writer method
+		try {
+			FileWriter fw = new FileWriter("deck.txt");
+			BufferedWriter bw = new BufferedWriter(fw);
+			String tmp = "";
+			int i=0;
+			for(String[] c:deck){
+				tmp+=(i==0?"":"|")+c[0]+","+c[1];
+			}
+			bw.write(tmp);
+			bw.flush();
+			
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
 	}
 }
