@@ -471,6 +471,19 @@ public class Game extends Composite {
 		
 	}
 	
+	public StackObject findStackById(String oID){
+		for(StackObject s : stacks){
+			if(s.getID().equals(oID))
+				return s;
+		}
+		return null;
+	}
+	
+	public void removeStack(String oID){
+		if(findStackById(oID)!=null){
+			findStackById(oID).dispose();
+		}
+	}
 	
 	
 	public void removeFromStack(String cardID){
