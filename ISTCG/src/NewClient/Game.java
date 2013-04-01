@@ -474,6 +474,7 @@ public class Game extends Composite {
 		s.setTemplate(String.valueOf(findCardById(args[1]).getTID()));
 		s.setBounds(grpStack.getBounds().x,grpStack.getBounds().y,s.size.getWidth(),s.size.getWidth());
 		s.redraw();
+		stacks.add(s);
 		
 	}
 	
