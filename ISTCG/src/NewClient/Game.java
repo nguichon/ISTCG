@@ -487,7 +487,9 @@ public class Game extends Composite {
 	
 	public void removeStack(String oID){
 		if(findStackById(oID)!=null){
+			System.out.println("Disposing");
 			findStackById(oID).dispose();
+			grpStack.layout();
 		}
 	}
 	
