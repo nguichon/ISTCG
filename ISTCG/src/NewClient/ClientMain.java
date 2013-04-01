@@ -319,7 +319,7 @@ public class ClientMain {
 			if(composite instanceof Lobby){
 				if(((Lobby)composite).findGameById(inputs[1])!=null){
 					
-					//((Lobby)composite).findGameById(inputs[1]).remove
+					((Lobby)composite).findGameById(inputs[1]).removeStack(inputs[2]);
 				}
 				
 			} break;
