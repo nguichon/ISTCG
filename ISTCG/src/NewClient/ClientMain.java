@@ -310,7 +310,7 @@ public class ClientMain {
 				if(((Lobby)composite).findGameById(inputs[1])!=null){
 					
 					
-					((Lobby)composite).findGameById(inputs[1]).addStack(inputs[2],Arrays.copyOfRange(inputs,3,inputs.length-1));
+					((Lobby)composite).findGameById(inputs[1]).addStack(inputs[2],Arrays.copyOfRange(inputs,3,inputs.length));
 				}
 				
 			} break;

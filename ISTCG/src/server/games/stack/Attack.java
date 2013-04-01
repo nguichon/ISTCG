@@ -16,13 +16,20 @@ public class Attack extends StackObject {
 	
 	public Attack( GameInstance gi, ServerCardInstance attacker, ServerCardInstance defender ) { 
 		super(gi); 
+		
+		m_Attacker = new Target( attacker );
+		m_AttackTarget = new Target( defender );
 	}
 	
 	@Override
 	public void Resolve(ResolutionEvent e) {
 		if( isValid() ) {
-			
+			getAttacker().MakeAttack( getDefender() );
+			getDefender().MakeAttack( getAttacker() );
 		}
+		
+		getAttacker().CheckStatus();
+		getDefender().CheckStatus();
 	}
 	
 	public ServerCardInstance getAttacker() { return m_Attacker.getTargetCard(); }
