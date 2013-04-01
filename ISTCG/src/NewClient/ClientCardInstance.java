@@ -138,7 +138,8 @@ public class ClientCardInstance extends Canvas {
 //			game.group.layout();
 //			redraw();
 //			game.group.layout();
-			game.setViewer(this.getID());
+			if(this.template!=null)
+				game.setViewer(this.getID());
 			game.vcard=this.getID();
 			break;
 			

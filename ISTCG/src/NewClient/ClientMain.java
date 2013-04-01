@@ -146,7 +146,7 @@ public class ClientMain {
 	
 	private boolean MakeConnection() {
 		int port = 4567;
-  		String host = "127.0.0.1";
+  		String host = "169.254.125.206";
 		try {
 			//m_Server = new ConnectionDevice( host, port );
 			m_Server = new ThreadedConnectionDevice( host, port);
@@ -335,7 +335,7 @@ public class ClientMain {
 			} break;
 		case UNIT_ACTIVE_STATE:
 			if(composite instanceof Lobby){
-				if(((Lobby)composite).findGameById(inputs[1])!=null){
+				if(((Lobby)composite).findGameById(inputs[1])!=null&&((Lobby)composite).findGameById(inputs[1]).findCardById(inputs[2])!=null&&!((Lobby)composite).findGameById(inputs[1]).findCardById(inputs[2]).isDisposed()){
 					
 					((Lobby)composite).findGameById(inputs[1]).findCardById(inputs[2]).setActive( Boolean.valueOf( inputs[3] ) );
 				}
