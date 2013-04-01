@@ -99,7 +99,7 @@ public class Lobby extends Composite {
 	public void addDeckEditor(){
 		TabItem t = new TabItem(m_TabFolder, SWT.NULL);
 		t.setText("Deck Editor");
-		DeckEditor d = new DeckEditor(t.getParent(),SWT.None,main,t);
+		d = new DeckEditor(t.getParent(),SWT.None,main,t);
 		t.setControl(d);
 	}
 	public DeckEditor getDeckEditor(){

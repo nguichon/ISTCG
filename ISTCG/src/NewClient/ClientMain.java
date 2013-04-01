@@ -302,8 +302,10 @@ public class ClientMain {
 			break;
 		case COLLECTION:
 			if(composite instanceof Lobby){
-				((Lobby)composite).getDeckEditor().addCollection(inputs[1]);
-				
+				if(((Lobby)composite).getDeckEditor()!=null)
+					((Lobby)composite).getDeckEditor().addCollection(inputs[1]);
+				else
+					this.sendData("GETCOLLECTION");
 			} break;
 		case STACK_OBJECT:
 			if(composite instanceof Lobby){
