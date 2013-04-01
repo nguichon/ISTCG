@@ -229,7 +229,9 @@ public class Game extends Composite {
 		lblTech.setText("TECH");
 		
 		grpStack = new Group(this, SWT.NONE);
+		grpStack.setLayout(new GridLayout(1, true));
 		FormData fd_grpStack = new FormData();
+		fd_grpStack.right = new FormAttachment(btnPass, 0, SWT.RIGHT);
 		fd_grpStack.bottom = new FormAttachment(0, 445);
 		fd_grpStack.top = new FormAttachment(0, 74);
 		fd_grpStack.left = new FormAttachment(0, 10);
@@ -258,9 +260,8 @@ public class Game extends Composite {
 		
 		group_1 = new Group(this, SWT.NONE);
 		FormData fd_group_1 = new FormData();
+		fd_group_1.left = new FormAttachment(grpHand, 0, SWT.LEFT);
 		fd_group_1.bottom = new FormAttachment(grpHand, -4);
-		fd_group_1.left = new FormAttachment(grpStack, 6);
-		fd_group_1.right = new FormAttachment(0, 521);
 		group_1.setLayoutData(fd_group_1);
 		group_1.setLayout(new GridLayout(1, false));
 		
@@ -285,6 +286,7 @@ public class Game extends Composite {
 		
 		
 		Group grpViewer = new Group(this, SWT.NONE);
+		fd_group_1.right = new FormAttachment(grpViewer, -153);
 		grpViewer.setText("VIEWER");
 		grpViewer.setLayout(new FillLayout(SWT.HORIZONTAL));
 		FormData fd_grpViewer = new FormData();
@@ -458,6 +460,7 @@ public class Game extends Composite {
 		
 		//if attack
 		if(args[0].equals("ATTACK")){
+			System.out.println("ATTACK STACK");
 			s.setParentCard(args[1]);
 			s.setTargetCard(args[2]);
 		} else if(args[0].equals("ABILITY")){
@@ -469,6 +472,7 @@ public class Game extends Composite {
 			s.setText(args[1]);
 		}
 		s.setTemplate(String.valueOf(findCardById(args[1]).getTID()));
+		s.setBounds(grpStack.getBounds().x,grpStack.getBounds().y,s.size.getWidth(),s.size.getWidth());
 		s.redraw();
 		
 	}
