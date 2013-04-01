@@ -82,6 +82,7 @@ public class StackObject extends Canvas {
 			}
 			
 		});
+		this.setTemplate(parentCard);
 	}
 	
 	public void setParentCard(String cardID){
