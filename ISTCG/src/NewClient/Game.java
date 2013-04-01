@@ -346,13 +346,15 @@ public class Game extends Composite {
 		canvas_3.setBounds(this.lblEnergy.getBounds().x+this.lblEnergy.getBounds().width-5,this.lblEnergy.getBounds().y+this.lblEnergy.getBounds().height,16,16);
 		canvas_3.setLayout(new FormLayout());
 		FormData fd_canvas_3 = new FormData();
-		fd_canvas_3.top = new FormAttachment(canvas_2, 24);
+		//fd_canvas_3.top = new FormAttachment(canvas_2, 24);
+		fd_canvas_2.top = new FormAttachment(lblEnergy, -1, SWT.TOP);
+		fd_canvas_2.bottom = new FormAttachment(lblMetal, 0, SWT.BOTTOM);
 		fd_canvas_3.right = new FormAttachment(grpHand, -31);
 		fd_canvas_3.left = new FormAttachment(lblEnergy, 6);
 		canvas_3.setLayoutData(fd_canvas_3);
 		
 		canvas_4 = new Canvas(this, SWT.NONE);
-		fd_canvas_3.bottom = new FormAttachment(canvas_4, -19);
+		//fd_canvas_3.bottom = new FormAttachment(canvas_4, -19);
 		canvas_4.setBackgroundImage(ImageManager.get().GetImage("resource_tech_icon.png"));
 		canvas_4.setBounds(this.lblTech.getBounds().x+this.lblTech.getBounds().width-5,this.lblTech.getBounds().y+this.lblTech.getBounds().height,16,16);
 		canvas_4.setLayout(new FormLayout());
