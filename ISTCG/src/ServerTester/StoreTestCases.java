@@ -52,7 +52,7 @@ public class StoreTestCases {
 		int cost = Integer.valueOf( r[2] );
 		
 		client.SendMessage( ClientResponses.PURCHASE, String.valueOf( 0 ) );
-		r = client.GetResponse();s
+		r = client.GetResponse();
 		Assert.assertEquals( "RECEIPT" , r[0] );
 		Assert.assertTrue( Integer.valueOf( r[1] ) == balance - cost );
 		
