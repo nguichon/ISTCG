@@ -1,6 +1,8 @@
 package NewClient;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.graphics.GC;
@@ -29,7 +31,7 @@ public class DeckEditor extends Composite {
 	Label m_LabelTotalCount;
 	Canvas m_CardPreview;
 	int m_CardPreviewType;
-	
+	String[][] cardsStrings;
 	TabItem tab;
 	Composite m_Parent;
 	String[][] cards;
@@ -48,6 +50,27 @@ public class DeckEditor extends Composite {
 		m_MyDeckList = new List(this, SWT.BORDER);
 		m_AddCardButton = new Button(this, SWT.NONE);
 			m_AddCardButton.setText("Add Card");
+			m_AddCardButton.addMouseListener(new MouseListener(){
+
+				@Override
+				public void mouseDoubleClick(MouseEvent arg0) {
+					// TODO Auto-generated method stub
+					
+				}
+
+				@Override
+				public void mouseDown(MouseEvent arg0) {
+					// TODO Auto-generated method stub
+					
+				}
+
+				@Override
+				public void mouseUp(MouseEvent arg0) {
+					// TODO Auto-generated method stub
+					m_MyCollectionList.getSelection();
+				}
+				
+			});
 		m_RemoveCardButton = new Button(this, SWT.NONE);
 			m_RemoveCardButton.setText("Remove Card");
 		m_LabelDeckCount = new Label(this, SWT.NONE);
@@ -92,6 +115,7 @@ public class DeckEditor extends Composite {
 			
 		});
 
+		main.sendData("GETCOLLECTION");
 	}
 
 	@Override
@@ -114,19 +138,26 @@ public class DeckEditor extends Composite {
 			cards[i]=cg[i].split(",");
 		}
 		
+		//add to list
+		for(String[] c:cards){
+			this.m_MyCollectionList.add(ClientCardTemplateManager.get().GetClientCardTemplate(Integer.valueOf(c[0])).getCardName());
+		}
+		this.m_MyCollectionList.redraw();
+		
 	}
 	public void addCardToDeck(String s){
 		//confirm we have this card
 		boolean confirm=false;
 		for(String[] a:cards){
 			if(a[0].equals(s)){
-				confirm=true;
+				if(Integer.valueOf(a[0])<=this.m_SpinnerToMove.getSelection())
+					confirm = true;
 			}
 		}
 		if(!confirm)
 			return;
 		//add the card to list_1
-		m_MyDeckList.add(s);
+		m_MyDeckList.add(s,this.m_SpinnerToMove.getSelection());
 	}
 	public void writeDeck(){
 		//Deck writer method
