@@ -13,6 +13,7 @@ import server.games.stack.StackObject;
 
 
 import NewClient.ClientCardInstance;
+import NewClient.ClientCardTemplateManager;
 import Shared.CardTypes;
 import Shared.ClientMessages;
 import Shared.GameZones;
@@ -116,6 +117,12 @@ public class ServerCardInstance extends StackObject {
 	public void TakeDamage( DamageEvent e ) {
 		m_Template.HandleDamage( e );
 		m_DamageTaken += e.amount;
+		m_Host.GameMessage( String.format( "%s's %s takes %d damage from %s's %s.", 
+				m_Controller.getClientAccount().getUserName(), 
+				ClientCardTemplateManager.get().GetClientCardTemplate( GetCardTemplate().getCardTemplateID() ).getCardName() ,
+				e.amount,
+				e.sourceCard.getController().getClientAccount().getUserName(),
+				ClientCardTemplateManager.get().GetClientCardTemplate( e.sourceCard.GetCardTemplate().getCardTemplateID() ).getCardName() ));
 		m_Host.SendMessageToAllPlayers( ClientMessages.SET_CARD_DAMAGE, String.valueOf(this.GetCardUID()), String.valueOf(this.m_DamageTaken) );
 	}
 	private static final Random m_Generator = new Random();

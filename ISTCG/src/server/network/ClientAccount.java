@@ -58,7 +58,7 @@ public class ClientAccount extends Thread {
 	private Scanner m_Input;
 	private boolean m_Connected;
 
-	public void SendMessage(ClientMessages messageType, String ... parameters ) {
+	public synchronized void SendMessage(ClientMessages messageType, String ... parameters ) {
 		String parameterString = "";
 		for( int i = 0; i < parameters.length; i++ ) {
 			parameterString += parameters[i] + ";";
