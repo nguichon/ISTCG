@@ -288,7 +288,7 @@ public class ClientCardInstance extends Canvas {
 
 	public void setDamage(String val) {
 		this.m_DamageTaken=Integer.valueOf(val);
-		
+		System.out.println( m_DamageTaken );
 	}
 
 }
