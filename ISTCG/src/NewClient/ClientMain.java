@@ -146,7 +146,7 @@ public class ClientMain {
 	
 	private boolean MakeConnection() {
 		int port = 4567;
-  		String host = "169.254.61.75";
+  		String host = "127.0.0.1";
 		try {
 			//m_Server = new ConnectionDevice( host, port );
 			m_Server = new ThreadedConnectionDevice( host, port);
@@ -302,10 +302,10 @@ public class ClientMain {
 			break;
 		case COLLECTION:
 			if(composite instanceof Lobby){
-				if(((Lobby)composite).getDeckEditor()!=null)
+				/*(((Lobby)composite).getDeckEditor()!=null)
 					((Lobby)composite).getDeckEditor().addCollection(inputs[1]);
 				else
-					this.sendData("GETCOLLECTION");
+					this.sendData("GETCOLLECTION");*/
 			} break;
 		case STACK_OBJECT:
 			if(composite instanceof Lobby){
