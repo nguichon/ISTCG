@@ -40,6 +40,7 @@ public class ClientCardInstance extends Canvas {
 	String owner = "";
 	String controller = "";
 	int m_DamageTaken = 0;
+	int tid = 0;
 	public enum GameZone {
 		HAND,FIELD,STACK,GRAVEYARD,VIEWER,UNKNOWN;
 		
@@ -194,7 +195,11 @@ public class ClientCardInstance extends Canvas {
 	
 	public void setTemplate(String ID){
 		template = ClientCardTemplateManager.get().GetClientCardTemplate(Integer.valueOf(ID));
+		tid = Integer.valueOf(ID);
 		this.redraw();
+	}
+	public int getTID(){
+		return tid;
 	}
 	public ArrayList<String> getStats(){
 		return stats;

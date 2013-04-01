@@ -468,7 +468,7 @@ public class Game extends Composite {
 		} else if(args[0].equals("EVENT")){
 			s.setText(args[1]);
 		}
-		s.setTemplate(String.valueOf(findCardById(args[1]).template.getCardID()));
+		s.setTemplate(String.valueOf(findCardById(args[1]).getTID()));
 		s.redraw();
 		
 	}

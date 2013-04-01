@@ -82,7 +82,7 @@ public class StackObject extends Canvas {
 			}
 			
 		});
-		this.setTemplate(parentCard);
+		//this.setTemplate(parentCard);
 	}
 	
 	public void setParentCard(String cardID){
@@ -154,7 +154,7 @@ public class StackObject extends Canvas {
 	
 	
 	public void setTemplate(String ID){
-		template = ClientCardTemplateManager.get().GetClientCardTemplate(Integer.valueOf(parentCard));
+		template = ClientCardTemplateManager.get().GetClientCardTemplate(Integer.valueOf(ID));
 		this.redraw();
 	}
 	public ArrayList<String> getStats(){
