@@ -244,6 +244,7 @@ public class ClientCardInstance extends Canvas {
 	}
 	public void Render(GC gc){
 		if(template!=null) {
+			System.out.println("RENDERING: " + this.getID());
 			template.Render(gc, size, getStatBlock(), m_DamageTaken);
 			//RenderStats(gc);
 		} else {
@@ -293,7 +294,11 @@ public class ClientCardInstance extends Canvas {
 
 	public void setDamage(String val) {
 		this.m_DamageTaken=Integer.valueOf(val);
-		System.out.println( m_DamageTaken );
+		System.out.println("DAMAGED: " + this.getID());
+	}
+
+	public int getDamageTaken() {
+		return m_DamageTaken;
 	}
 
 }

@@ -96,7 +96,7 @@ public class ServerCardInstance extends StackObject {
 		m_Targets.clear();
 	}
 	public void MakeAttack( ServerCardInstance t  ) {
-		
+		t.TakeAttack( this, m_Template.getStat( StatType.ATTACK ).m_Value, m_Template.getStat( StatType.POWER ).m_Value );
 	}
 	public void CheckStatus() { }
 	
@@ -116,6 +116,7 @@ public class ServerCardInstance extends StackObject {
 	public void TakeDamage( DamageEvent e ) {
 		m_Template.HandleDamage( e );
 		m_DamageTaken += e.amount;
+		m_Host.SendMessageToAllPlayers( ClientMessages.SET_CARD_DAMAGE, String.valueOf(this.GetCardUID()), String.valueOf(this.m_DamageTaken) );
 	}
 	private static final Random m_Generator = new Random();
 	public void TakeAttack( ServerCardInstance source, int attack, int power ) {

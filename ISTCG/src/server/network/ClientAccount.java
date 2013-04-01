@@ -120,6 +120,8 @@ public class ClientAccount extends Thread {
 						// Drop through
 					case PASS:
 						// Drop through
+					case ATTACK:
+						// Drop through
 					case END:
 						GameManager.get().SendMessageToGame( Integer.valueOf(command[1]), this, command );
 						break;
