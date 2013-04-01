@@ -468,6 +468,8 @@ public class Game extends Composite {
 		} else if(args[0].equals("EVENT")){
 			s.setText(args[1]);
 		}
+		s.setTemplate(args[1]);
+		s.redraw();
 		
 	}
 	
