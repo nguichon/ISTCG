@@ -30,6 +30,26 @@ public class GiveCollectionsToEVERYONE {
 	private static void GiveCollection( ResultSet rs ) {
 		try {
 			int user = rs.getInt( "id" );
+			
+			Database.get().quickInsert( "INSERT INTO collections(" +
+					"id, created_at, modified_at, card_id, owner_id, count, is_signed, is_foil, set_id)" +
+					"VALUES (DEFAULT, DEFAULT, DEFAULT, 0, " + user + ", 20, false, false, -1);" );
+			Database.get().quickInsert( "INSERT INTO collections(" +
+					"id, created_at, modified_at, card_id, owner_id, count, is_signed, is_foil, set_id)" +
+					"VALUES (DEFAULT, DEFAULT, DEFAULT, 1, " + user + ", 20, false, false, -1);" );
+			Database.get().quickInsert( "INSERT INTO collections(" +
+					"id, created_at, modified_at, card_id, owner_id, count, is_signed, is_foil, set_id)" +
+					"VALUES (DEFAULT, DEFAULT, DEFAULT, 2, " + user + ", 20, false, false, -1);" );
+			Database.get().quickInsert( "INSERT INTO collections(" +
+					"id, created_at, modified_at, card_id, owner_id, count, is_signed, is_foil, set_id)" +
+					"VALUES (DEFAULT, DEFAULT, DEFAULT, 3, " + user + ", 1, false, false, -1);" );
+			Database.get().quickInsert( "INSERT INTO collections(" +
+					"id, created_at, modified_at, card_id, owner_id, count, is_signed, is_foil, set_id)" +
+					"VALUES (DEFAULT, DEFAULT, DEFAULT, 5, " + user + ", 10, false, false, -1);" );
+			Database.get().quickInsert( "INSERT INTO collections(" +
+					"id, created_at, modified_at, card_id, owner_id, count, is_signed, is_foil, set_id)" +
+					"VALUES (DEFAULT, DEFAULT, DEFAULT, 19, " + user + ", 10, false, false, -1);" );
+			
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
