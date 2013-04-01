@@ -319,7 +319,15 @@ public class ClientMain {
 			if(composite instanceof Lobby){
 				if(((Lobby)composite).findGameById(inputs[1])!=null){
 					
-					//((Lobby)composite).findGameById(inputs[1]).addStack(inputs[2],)
+					//((Lobby)composite).findGameById(inputs[1]).remove
+				}
+				
+			} break;
+		case SET_CARD_DAMAGE:
+			if(composite instanceof Lobby){
+				if(((Lobby)composite).findGameById(inputs[1])!=null){
+					
+					((Lobby)composite).findGameById(inputs[1]).findCardById(inputs[2]).setDamage(inputs[3]);
 				}
 				
 			} break;

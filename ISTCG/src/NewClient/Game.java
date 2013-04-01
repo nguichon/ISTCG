@@ -30,6 +30,7 @@ import Shared.GameZones;
 
 public class Game extends Composite {
 
+	ArrayList<StackObject> stacks;
 	ClientMain main;
 	String ID="";
 	String eID="";
@@ -328,6 +329,7 @@ public class Game extends Composite {
 		//this.loadDeck();
 		this.disablePass();
 		cards = new ArrayList<ClientCardInstance>();
+		stacks = new ArrayList<StackObject>();
 		hand = new ArrayList<String>();
 		field = new ArrayList<String>();
 	}
@@ -452,7 +454,8 @@ public class Game extends Composite {
 	}
 	
 	public void addStack(String oID, String[] args){
-		StackObject s = new StackObject(this,0,main,oID,this);
+		StackObject s = new StackObject(grpStack,0,main,oID,this);
+		
 		//if attack
 		if(args[0].equals("ATTACK")){
 			s.setParentCard(args[1]);
@@ -467,6 +470,7 @@ public class Game extends Composite {
 		}
 		
 	}
+	
 	
 	
 	public void removeFromStack(String cardID){
@@ -562,6 +566,8 @@ public class Game extends Composite {
 				break;
 			case STACK:
 				addToStack(cardID); break;
+			case GRAVEYARD:
+				findCardById(cardID).dispose(); break;
 			default: 
 				break;
 		}
@@ -683,6 +689,7 @@ public class Game extends Composite {
 			System.out.println("Attacking!");
 			targeting = false;
 			curattacker="";
+			this.setAssistText("");
 		}
 	}
 

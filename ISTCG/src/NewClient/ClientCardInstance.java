@@ -286,4 +286,9 @@ public class ClientCardInstance extends Canvas {
 		return controller;
 	}
 
+	public void setDamage(String val) {
+		this.m_DamageTaken=Integer.valueOf(val);
+		
+	}
+
 }
