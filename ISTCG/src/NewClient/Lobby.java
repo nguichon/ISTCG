@@ -23,6 +23,7 @@ public class Lobby extends Composite {
 	private TabFolder m_TabFolder;
 	private Button m_SendChatButton;
 
+	DeckEditor d;
 	ArrayList<Game> games;
 	ClientMain main;
 	/**
@@ -100,6 +101,9 @@ public class Lobby extends Composite {
 		t.setText("Deck Editor");
 		DeckEditor d = new DeckEditor(t.getParent(),SWT.None,main,t);
 		t.setControl(d);
+	}
+	public DeckEditor getDeckEditor(){
+		return d;
 	}
 	public void addGame(String gID){
 		//Make a game
