@@ -4,6 +4,8 @@ import java.sql.SQLException;
 import java.util.Date;
 import java.util.Scanner;
 
+import NewClient.ClientCardTemplateManager;
+
 import server.admin.AdminCommands;
 import server.games.cards.ServerCardTemplateManager;
 import server.network.ConnectionsHandler;
@@ -44,6 +46,7 @@ public class ServerMain {
 		// Initialize Card Templates
 		ConsoleMessage('-', "Initalizing cards...");
 
+		ClientCardTemplateManager.get().Initialize();
 		ServerCardTemplateManager.get().Initialize();
 
 		ConsoleMessage('-', "Finished intializing cards...");

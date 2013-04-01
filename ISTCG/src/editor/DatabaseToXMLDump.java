@@ -12,6 +12,7 @@ import javax.xml.bind.Unmarshaller;
 
 import NewClient.ClientCardTemplate;
 import Shared.StatBlock;
+import Shared.TargetingCondition;
 import Shared.StatBlock.StatType;
 
 import server.Database;
@@ -40,6 +41,8 @@ public class DatabaseToXMLDump {
 			ServerMain.ConsoleMessage('!', "A card failed to load, fatal error");
 			e.printStackTrace();
 		}
+		
+		Database.get().close();
 	}
 	
 	public static void CreateCard( ResultSet rs ) throws SQLException {

@@ -14,12 +14,13 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Display;
 
-import server.games.cards.abilities.TargetingCondition;
 //import org.eclipse.swt.graphics.Image;
 
 import OldClient.ImageManager;
 import Shared.CardTypes;
 import Shared.StatBlock;
+import Shared.TargetingCondition;
+import Shared.StatBlock.StatType;
 
 @XmlRootElement(namespace = "card template")
 public class ClientCardTemplate {
@@ -84,9 +85,13 @@ public class ClientCardTemplate {
      * @param stats
      *            StatBlocks to overwrite, can be empty or have previously
      *            unknown StatBlocks.
+     * @param damageTaken 
      */
-    public void Render(GC targetGC, CardRenderSize size, ArrayList<StatBlock> stats) {
+    public void Render(GC targetGC, CardRenderSize size, ArrayList<StatBlock> stats, int damageTaken) {
+    	System.out.println("RENDERINGIGNIGNIGNIG: " + damageTaken );
     	Image toRender = ImageManager.get().GetImage( m_BGImage );
+    	
+    	stats = null;
     	
     	switch( size ) {
     	case LARGE:
@@ -123,6 +128,9 @@ public class ClientCardTemplate {
     				break;
     			}
     		}
+    		if( damageTaken > 0 ) {
+    			RenderDamage( targetGC, damageTaken, size );
+    		}
 	    	break;
     	default:
     		targetGC.drawImage( toRender, 0, 0, toRender.getBounds().width, toRender.getBounds().height, 0, 0, size.getWidth(), size.getHeight() );
@@ -133,18 +141,44 @@ public class ClientCardTemplate {
     	}
     }
     
-    private static final Font NAME_FONT = new Font( Display.getDefault(), "Monospaced", 16, SWT.BOLD);
+    private void RenderDamage( GC targetGC, int damageTaken, CardRenderSize size ) {
+    	if( size == CardRenderSize.LARGE && damageTaken != 0 ) {
+    		Image icon =  ImageManager.get().GetImage("icon-structure-bad.png");
+    		for( int i = 0; i < damageTaken; i++ ) {
+    			if( i % 2 == 0 ) {
+    				targetGC.drawImage( icon,
+	    							0, 0, icon.getBounds().width, icon.getBounds().height,
+	    							0 + frameBounds.width - 8, size.getHeight() - ((frameBounds.height + 2) * ((i/2) + 2)) + 8, 24, 24 );
+    			} else {
+    				targetGC.drawImage( icon,
+							0, 0, icon.getBounds().width, icon.getBounds().height,
+							0 + frameBounds.width - 8 + 26, size.getHeight() - ((frameBounds.height + 2) * ((i/2) + 2)) + 8 - 12, 24, 24 );
+    				
+    			}
+    		}
+    	}
+	}
+    
+    public int GetStatValue( StatType type ) {
+    	for( StatBlock s : m_Stats ) {
+    		if( s.m_Type == type )
+    			return s.m_Value;
+    	}
+    	return -1;
+    }
+
+	private static final Font NAME_FONT = new Font( Display.getDefault(), "Monospaced", 16, SWT.BOLD);
     private static final Font TEXT_FONT = new Font( Display.getDefault(), "Monospaced", 12, SWT.NONE);
     private static final Font FLAVOR_FONT = new Font( Display.getDefault(), "Monospaced", 9, SWT.ITALIC);
     private void RenderName( GC targetGC, CardRenderSize size ) {
     	if( size == CardRenderSize.LARGE ) {
         	Image textBox = ImageManager.get().GetImage( "card-element-text-box.png" );
     		targetGC.setFont(NAME_FONT);
-    		int length = targetGC.getFontMetrics().getAverageCharWidth() * m_CardName.length();
+    		int length = size.getWidth() - 75;//targetGC.getFontMetrics().getAverageCharWidth() * m_CardName.length();
     		targetGC.drawImage( textBox,
 					0, 0, textBox.getBounds().width, textBox.getBounds().height,
-					size.getWidth() - length - 32, 0, size.getWidth() - length - 20, 36);
-    		targetGC.drawText( m_CardName, size.getWidth() - length - 24, 12, true );
+					size.getWidth() - length, 0, length, 36);
+    		targetGC.drawText( m_CardName, size.getWidth() - length + 5, 12, true );
     	}
     }
     private static void RenderTextBox( GC targetGC, CardRenderSize size ) {

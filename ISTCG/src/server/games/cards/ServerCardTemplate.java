@@ -6,11 +6,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import server.games.cards.abilities.Ability;
-import server.games.cards.abilities.TargetingCondition;
+import server.games.events.DamageEvent;
 import server.games.events.ResolutionEvent;
 
 import Shared.CardTypes;
 import Shared.StatBlock;
+import Shared.TargetingCondition;
 
 public abstract class ServerCardTemplate {
 	private CardTypes m_CardType;
@@ -46,4 +47,5 @@ public abstract class ServerCardTemplate {
 	protected final void setCardType(CardTypes type) { m_CardType = type; }
 	
 	public abstract void Resolve( ResolutionEvent e );
+	public abstract void HandleDamage( DamageEvent e );
 }

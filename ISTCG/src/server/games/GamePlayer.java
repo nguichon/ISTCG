@@ -5,6 +5,7 @@ import server.games.cards.ServerCardInstance;
 import server.games.cards.ServerCardTemplate;
 import server.games.cards.abilities.Target;
 import server.network.ClientAccount;
+import NewClient.ClientCardTemplateManager;
 import Shared.CardTypes;
 import Shared.ClientMessages;
 import Shared.ClientResponses;
@@ -22,7 +23,7 @@ public class GamePlayer {
 									DONE,			// Player is ready to let stack resolve.
 									DISCONNECTED, 	// Disconnected, do not send messages pl0x.
 									READING,
-									DEAD; }			// This guy is dead, what a scrub.
+									DEAD; }			// This guy is dead, what a scrub like that Magnus.
 		
 	// Configuration variables
 		private GameInstance m_Game;
@@ -60,6 +61,9 @@ public class GamePlayer {
 		updateGameZoneCount( GameZones.GRAVEYARD );
 	}
 	public void DrawCards( int number ) {
+		m_Game.GameMessage( String.format("%s draws %d cards.", 
+				m_ClientAccount.getUserName(),
+				number) );
 		for( int i = 0; i < number; i++ ) {
 			ServerCardInstance card = m_Deck.GetTopCard();
 			removeCardFromZone( card, GameZones.DECK );
@@ -67,6 +71,10 @@ public class GamePlayer {
 		}
 	}
 	public void AddResource( GameResources res, int value ) {
+		m_Game.GameMessage( String.format("%s adds %d %s to his/her resource pool.", 
+				m_ClientAccount.getUserName(),
+				value,
+				res.name()));
 		m_Resources[ res.ordinal() ] += value;
 		m_Game.SendMessageToAllPlayers( ClientMessages.UPDATE_PLAYER, 
 										String.valueOf( m_ClientAccount.getUserID() ), 
@@ -86,10 +94,10 @@ public class GamePlayer {
                             newDeck.Add(toAdd);
                     }
             }
-            
+     
             newDeck.Shuffle();
             
-            if( m_CommandUnit.GetCardTemplate().getCardType() == CardTypes.COMMAND_UNIT && newDeck.Validate() ) {
+            if(  newDeck.Validate() ) {
                     m_Deck = newDeck;
                     ChangeState(PlayerStates.READY);
                     m_Game.Ready();
@@ -182,14 +190,16 @@ public class GamePlayer {
 	public boolean PlayCard( ServerCardInstance card, String targets ) {
 		if( m_PlayerState == PlayerStates.ACTIVE && isCardInZone( card, GameZones.HAND ) ) {
 			//Check targets
-			String[] trgts = targets.split("|");
-			card.clearTargets();
-			for( String target : trgts ) {
-				card.addTarget( new Target( m_Game.GetCardInstance(Integer.valueOf(target)) ) );
-			}
-			if( !card.ValidateTargets() ) {
-				SendMessageFromGame( ClientMessages.GAME_ERROR, "Invalid/Incorrect Number of targets.");
-				return false;
+			if( targets != null ) {
+				String[] trgts = targets.split("|");
+				card.clearTargets();
+				for( String target : trgts ) {
+					card.addTarget( new Target( m_Game.GetCardInstance(Integer.valueOf(target)) ) );
+				}
+				if( !card.ValidateTargets() ) {
+					SendMessageFromGame( ClientMessages.GAME_ERROR, "Invalid/Incorrect Number of targets.");
+					return false;
+				}
 			}
 
 			//Check for costs
@@ -216,6 +226,7 @@ public class GamePlayer {
 			if( t != null && t.m_Value != -1 ) m_Resources[GameResources.METAL.ordinal()] -= t.m_Value;
 			
 			//Put onto stack
+			m_Game.GameMessage( String.format( "%s played %s.", m_ClientAccount.getUserName(), ClientCardTemplateManager.get().GetClientCardTemplate( card.GetCardTemplate().getCardTemplateID() ).getCardName() ) );
 			removeCardFromZone( card, GameZones.HAND );
 			m_Game.PutCardOnStack( card );
 			m_Game.StartStacking();
@@ -269,7 +280,7 @@ public class GamePlayer {
 	
 	private void ChangeState( PlayerStates newState ) {
 		m_PlayerState = newState;
-		SendMessageFromGame( ClientMessages.PLAYERSTATE, String.valueOf(m_ClientAccount.getUserID()), m_PlayerState.name() );
+		SendMessageFromGame( ClientMessages.PLAYER_STATE, String.valueOf(m_ClientAccount.getUserID()), m_PlayerState.name() );
 	}
 
 	

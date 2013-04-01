@@ -6,7 +6,8 @@ public enum AdminCommands {
 	GET_USERS		(new AdminCommandNothing()), 
 	SHRINK			(new AdminCommandNothing()), 
 	QUIT			(new AdminCommandQuit()), 
-	NOTHING			(new AdminCommandNothing());
+	NOTHING			(new AdminCommandNothing()),
+	SHOUT			(new AdminCommandShout());
 	
 	private AdminCommand m_Command;
 	

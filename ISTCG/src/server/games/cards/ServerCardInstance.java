@@ -1,18 +1,23 @@
 package server.games.cards;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 import server.games.GameInstance;
 import server.games.GamePlayer;
 import server.games.cards.abilities.Target;
+import server.games.events.DamageEvent;
 import server.games.events.GameEvent;
 import server.games.events.ResolutionEvent;
 import server.games.stack.StackObject;
 
 
+import NewClient.ClientCardInstance;
+import NewClient.ClientCardTemplateManager;
 import Shared.CardTypes;
 import Shared.ClientMessages;
 import Shared.GameZones;
+import Shared.StatBlock.StatType;
 
 public class ServerCardInstance extends StackObject {
 	private static final int CARD_TEMPLATE_INVISIBLE = -1;
@@ -20,6 +25,7 @@ public class ServerCardInstance extends StackObject {
 	//Instance information
 	private ServerCardTemplate m_Template;
 	private ArrayList<Target> m_Targets = new ArrayList<Target>();
+	private ArrayList<ServerCardInstance> m_Attachments = new ArrayList<ServerCardInstance>();
 	
 	//Game information
 	private GameZones m_Location;
@@ -28,6 +34,7 @@ public class ServerCardInstance extends StackObject {
 	private GamePlayer m_Owner, m_Controller;
 
 	private int m_TimesMoved = 0;
+	private int m_DamageTaken = 0;
 	
 	public ServerCardInstance( GameInstance host, GamePlayer owner, int template_id ) {
 		super( host );
@@ -82,19 +89,63 @@ public class ServerCardInstance extends StackObject {
 		e.targets = m_Targets;
 		if( m_Template.getCardType() == CardTypes.UNIT || m_Template.getCardType() == CardTypes.GEAR ) {
 			e.locationAfterResolution = GameZones.FIELD;
+		} else {
+			e.locationAfterResolution = GameZones.GRAVEYARD;
 		}
 		m_Template.Resolve( e );
 		MoveCardTo( e.locationAfterResolution );
 		m_Targets.clear();
 	}
-
+	public void MakeAttack( ServerCardInstance t  ) {
+		t.TakeAttack( this, m_Template.getStat( StatType.ATTACK ).m_Value, m_Template.getStat( StatType.POWER ).m_Value );
+	}
+	public void CheckStatus() {
+		if( m_DamageTaken >= m_Template.getStat( StatType.STRUCTURE ).m_Value ) {
+			m_Host.GameMessage( String.format( "%s's %s has been destroyed.", 
+					m_Controller.getClientAccount().getUserName(), 
+					ClientCardTemplateManager.get().GetClientCardTemplate( GetCardTemplate().getCardTemplateID() ).getCardName() ));
+			this.MoveCardTo( GameZones.GRAVEYARD );
+		}
+		
+	}
+	
 	private void MoveCardTo(GameZones locationAfterResolution) {
 		switch( locationAfterResolution ) {
 		case GRAVEYARD:
 			m_Owner.putCardInZone( this, GameZones.GRAVEYARD );
+			break;
 		case FIELD:
 			m_Host.PutCardOntoField( this );
+			break;
 		default:
+			break;
+		}
+	}
+	
+	public void TakeDamage( DamageEvent e ) {
+		m_Template.HandleDamage( e );
+		m_DamageTaken += e.amount;
+		m_Host.GameMessage( String.format( "%s's %s takes %d damage from %s's %s.", 
+				m_Controller.getClientAccount().getUserName(), 
+				ClientCardTemplateManager.get().GetClientCardTemplate( GetCardTemplate().getCardTemplateID() ).getCardName() ,
+				e.amount,
+				e.sourceCard.getController().getClientAccount().getUserName(),
+				ClientCardTemplateManager.get().GetClientCardTemplate( e.sourceCard.GetCardTemplate().getCardTemplateID() ).getCardName() ));
+		m_Host.SendMessageToAllPlayers( ClientMessages.SET_CARD_DAMAGE, String.valueOf(this.GetCardUID()), String.valueOf(this.m_DamageTaken) );
+	}
+	private static final Random m_Generator = new Random();
+	public void TakeAttack( ServerCardInstance source, int attack, int power ) {
+		int roll = m_Generator.nextInt( 10 ) + 1;
+		boolean hit = false;
+		if( roll == 10 ) hit = true;
+		if( roll + attack >= m_Template.getStat( StatType.DEFENSE ).m_Value ) hit = true;
+		
+		if( hit = true ) {
+			DamageEvent e = new DamageEvent( m_Host);
+			e.damagedCard = this;
+			e.amount = power;
+			e.sourceCard = source;
+			TakeDamage( e );
 		}
 	}
 
