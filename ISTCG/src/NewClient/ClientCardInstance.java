@@ -21,6 +21,7 @@ import NewClient.ClientCardTemplateManager;
 import NewClient.ClientMain;
 import NewClient.Game;
 import OldClient.CardTemplateManager;
+import OldClient.ImageManager;
 import Shared.StatBlock;
 
 public class ClientCardInstance extends Canvas {
@@ -40,6 +41,7 @@ public class ClientCardInstance extends Canvas {
 	String owner = "";
 	String controller = "";
 	int m_DamageTaken = 0;
+	boolean m_Active = true;
 	int tid = 0;
 	public enum GameZone {
 		HAND,FIELD,STACK,GRAVEYARD,VIEWER,UNKNOWN;
@@ -246,6 +248,9 @@ public class ClientCardInstance extends Canvas {
 		if(template!=null) {
 			System.out.println("RENDERING: " + this.getID());
 			template.Render(gc, size, getStatBlock(), m_DamageTaken);
+			if( !m_Active ) {
+				gc.drawImage( ImageManager.get().GetImage( "filter-disabled.png" ), 0, 0, 16, 16, 0, 0, size.getWidth(), size.getHeight() );
+			}
 			//RenderStats(gc);
 		} else {
 			ClientCardTemplate.RenderBlack( gc, size, getStatBlock());
@@ -297,6 +302,12 @@ public class ClientCardInstance extends Canvas {
 		System.out.println("DAMAGED: " + this.getID());
 	}
 
+	public void setActive(boolean active) {
+		this.m_Active = active;
+		this.redraw();
+		this.setBounds( this.getBounds() );
+	}
+	
 	public int getDamageTaken() {
 		return m_DamageTaken;
 	}
