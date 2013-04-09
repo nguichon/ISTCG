@@ -68,12 +68,6 @@ public class ClientAccount extends Thread {
 		synchronized(m_Output){
 			m_Output.println(messageType.name() + ";" + parameterString);
 			m_Output.flush();
-			try {
-				Thread.sleep( 5 );
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
 		}
 	}
 

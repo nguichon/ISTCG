@@ -270,8 +270,9 @@ public class GamePlayer {
 		ChangeState(PlayerStates.READING);
 	}
 	
+	private int m_MessagesSent = 0;
 	public void SendMessageFromGame( ClientMessages messageType, String...args ) {
-		String argString = String.valueOf(m_Game.GetGameID()) + ";";
+		String argString = String.valueOf(m_Game.GetGameID()) + ";" + m_MessagesSent++ + ";";
 		for( int i = 0; i < args.length; i++ ) {
 			argString += args[i] + ";";
 		}

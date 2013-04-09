@@ -17,6 +17,8 @@ import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.swt.widgets.Text;
 
+import NewClient.games.GameV2;
+
 public class Lobby extends Composite {
 	private StyledText m_ReceivedMessagesStyledText;
 	private Text m_SendChatText;
@@ -24,7 +26,7 @@ public class Lobby extends Composite {
 	private Button m_SendChatButton;
 
 	DeckEditor d;
-	ArrayList<Game> games;
+	ArrayList<GameV2> games;
 	ClientMain main;
 	/**
 	 * Create the composite.
@@ -35,7 +37,7 @@ public class Lobby extends Composite {
 	public Lobby(Composite parent, int style, final ClientMain main) {
 		super(parent, style);
 		this.main = main;
-		games = new ArrayList<Game>();
+		games = new ArrayList<GameV2>();
 		m_ReceivedMessagesStyledText = new StyledText(this, SWT.BORDER | SWT.READ_ONLY|SWT.WRAP|SWT.MULTI|SWT.V_SCROLL);
 		
 		m_SendChatButton = new Button(this, SWT.NONE);
@@ -114,16 +116,16 @@ public class Lobby extends Composite {
 		//Make a game
 		TabItem t = new TabItem(m_TabFolder,SWT.NULL);
 		t.setText("Game "+gID);
-		Game g = new Game(t.getParent(), SWT.None,main,t);
-		g.setID(gID);
-		g.loadDeck();
+		GameV2 g = new GameV2(t.getParent(), SWT.None, Integer.valueOf( gID ), main, t);
+		g.LoadDeck( 3, "0,15|1,15|2,10|5,10|19,10" );
 		games.add(g);
 		t.setControl(g);
 		
+		m_TabFolder.setSelection( t );
 	}
-	public Game findGameById(String gID){
-		for(Game g : games){
-			if(g.getID().equals(gID)){
+	public GameV2 findGameById(Integer integer){
+		for(GameV2 g : games){
+			if(g.getID() == integer){
 				return g;
 			}
 		}

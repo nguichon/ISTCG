@@ -16,6 +16,7 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 
+import NewClient.games.GameV2;
 import OldClient.CardTemplateManager;
 import OldClient.ImageManager;
 import Shared.ClientResponses;
@@ -187,12 +188,12 @@ public class ClientMain {
 		}
 	}
 	public void Login( String login, String password ) {
-		shell.setText( "Intersteller TCG - " + login );
+		shell.setText( "Coils TCG - " + login );
 		if(MakeConnection())
 			m_Server.sendData( "LOGIN;" + login + ";" + password );
 	}
 	public void ParseMessage( String input ) {
-		System.out.println( "Magic man! - " + input );
+		//System.out.println( "Magic man! - " + input );
 		//System.out.println(input);
 		String[] inputs = input.split(";");
 		switch( Shared.ClientMessages.valueOf(inputs[0].toUpperCase()) ) {
@@ -225,81 +226,11 @@ public class ClientMain {
 		case JOIN:
 			//check the lobby for games
 			if(composite instanceof Lobby)
-				if(((Lobby)composite).findGameById(inputs[1])!=null){
+				if(((Lobby)composite).findGameById( Integer.valueOf(inputs[1]) )!=null){
 					//WUT
 				} else {
 					((Lobby)composite).addGame(inputs[1]);
 				}
-			break;
-		case PLAYER_JOINED:
-			if(composite instanceof Lobby)
-			if(((Lobby)composite).findGameById(inputs[1])!=null){
-				((Lobby)composite).findGameById(inputs[1]).setEnemy(inputs[2]);
-				((Lobby)composite).findGameById(inputs[1]).setEnemyID(inputs[3]);
-			} else {
-				//Wut
-			}
-			break;
-		case UPDATE_ZONE:
-			if(composite instanceof Lobby)
-				if(((Lobby)composite).findGameById(inputs[1])!=null){
-					((Lobby)composite).findGameById(inputs[1]).updateZone(inputs[2], inputs[3], inputs[4]);
-				} else {
-					//Wut
-				}
-			break;
-		case PRIVATE_MESSAGE:
-			if(composite instanceof Lobby){
-				((Lobby)(composite)).addMessageBox(inputs[1]+": "+inputs[2]);
-				}
-			break;
-		case USER_LOGGED_IN:
-			if(composite instanceof Lobby){
-				((Lobby)(composite)).addMessageBox(inputs[1]+" has logged in.");
-				}
-			break;
-		case SERVER:
-			break;
-		case PLAYER_TURN:
-			if(composite instanceof Lobby)
-				if(((Lobby)composite).findGameById(inputs[1])!=null){
-					((Lobby)composite).findGameById(inputs[1]).setTurn(inputs[2]);
-				} else {
-					//Wut
-				}
-			break;
-		case WAITING:
-			if(composite instanceof Lobby){
-				if(((Lobby)composite).findGameById(inputs[1])!=null){
-					((Lobby)composite).findGameById(inputs[1]).enablePass();
-				}
-			}
-		case UPDATE_PLAYER:
-			if(composite instanceof Lobby){
-				if(((Lobby)composite).findGameById(inputs[1])!=null){
-					((Lobby)composite).findGameById(inputs[1]).setResource(inputs[2],inputs[3],inputs[4]);
-				}
-			}
-			break;
-		case MOVE:
-			if(composite instanceof Lobby){
-				((Lobby)composite).findGameById(inputs[1]).moveCard(inputs[2], inputs[3]);
-			}
-			break;
-		case CARD_INFO:
-			System.out.println("noooo");
-			if(composite instanceof Lobby){
-				((Lobby)composite).findGameById(inputs[1]).setCard(inputs[3], inputs[2],inputs[4],inputs[5]);
-			}
-			break;
-		case GAME_ERROR:
-			System.err.println("Game error in game "+inputs[1]+". Error: "+inputs[2]); break;
-		case PLAYER_STATE:
-			if(composite instanceof Lobby){
-				if(((Lobby)composite).findGameById(inputs[1])!=null){
-					((Lobby)composite).findGameById(inputs[1]).setPlayerState(inputs[2],inputs[3]);
-				}
-			}
 			break;
 		case COLLECTION:
 			if(composite instanceof Lobby){
@@ -308,39 +239,37 @@ public class ClientMain {
 				else
 					this.sendData("GETCOLLECTION");*/
 			} break;
-		case STACK_OBJECT:
+		case USER_LOGGED_IN:
 			if(composite instanceof Lobby){
-				if(((Lobby)composite).findGameById(inputs[1])!=null){
-					
-					
-					((Lobby)composite).findGameById(inputs[1]).addStack(inputs[2],Arrays.copyOfRange(inputs,3,inputs.length));
+				((Lobby)(composite)).addMessageBox(inputs[1]+" has logged in.");
 				}
-				
-			} break;
-		case REMOVE_STACK_OBJECT:
-			System.out.println("REMOVE STACK OBJECT");
+			break;
+		case SERVER:
+			break;
+		case PRIVATE_MESSAGE:
 			if(composite instanceof Lobby){
-				if(((Lobby)composite).findGameById(inputs[1])!=null){
-					
-					((Lobby)composite).findGameById(inputs[1]).removeStack(inputs[2]);
+				((Lobby)(composite)).addMessageBox(inputs[1]+": "+inputs[2]);
 				}
-				
-			} break;
-		case SET_CARD_DAMAGE:
-			if(composite instanceof Lobby){
-				if(((Lobby)composite).findGameById(inputs[1])!=null){
-					
-					((Lobby)composite).findGameById(inputs[1]).findCardById(inputs[2]).setDamage(inputs[3]);
-				}
-				
-			} break;
+			break;
+		case PLAYER_JOINED: //Fall through
+		case UPDATE_ZONE: //Fall through
+		case PLAYER_TURN: //Fall through
+		case WAITING: //Fall through
+		case UPDATE_PLAYER: //Fall through
+		case MOVE: //Fall through
+		case CARD_INFO: //Fall through
+		case GAME_ERROR: //Fall through
+		case GAME_STATE: //Fall through
+		case PLAYER_STATE: //Fall through
+		case STACK_OBJECT: //Fall through
+		case REMOVE_STACK_OBJECT: //Fall through
+		case SET_CARD_DAMAGE: //Fall through
 		case UNIT_ACTIVE_STATE:
-			if(composite instanceof Lobby){
-				if(((Lobby)composite).findGameById(inputs[1])!=null&&((Lobby)composite).findGameById(inputs[1]).findCardById(inputs[2])!=null&&!((Lobby)composite).findGameById(inputs[1]).findCardById(inputs[2]).isDisposed()){
-					
-					((Lobby)composite).findGameById(inputs[1]).findCardById(inputs[2]).setActive( Boolean.valueOf( inputs[3] ) );
+			if( Lobby.class.isInstance( composite ) ) {
+				GameV2 receiverGame = ((Lobby) composite).findGameById( Integer.valueOf( inputs[1] ) );
+				if( receiverGame != null ) {
+					receiverGame.HandleMessage( inputs );
 				}
-				
 			}
 			break;
 		default:
