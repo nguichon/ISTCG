@@ -8,6 +8,7 @@ import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
@@ -49,6 +50,27 @@ public class ClientGameCardInstance extends Composite {
 			}
 		});
 		
+		this.addMouseListener( new MouseListener() {
+
+			@Override
+			public void mouseDoubleClick(MouseEvent e) {
+				m_HostGame.clicked( (ClientGameCardInstance)e.getSource() );
+			}
+
+			@Override
+			public void mouseDown(MouseEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void mouseUp(MouseEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+		});
+		
 		this.addMouseTrackListener( new MouseTrackListener() {
 
 			@Override
@@ -75,9 +97,24 @@ public class ClientGameCardInstance extends Composite {
 		MoveThisCard( m_Zone );
 	}
 	public void MoveThisCard( GameZones newZone ) {
-		m_HostGame.RemoveCardFrom( this, newZone, m_Controller  );
-		m_HostGame.AddCardTo( this, newZone, m_Controller );
+		GameCardStorage gcz = m_HostGame.RemoveCardFrom( this, m_Zone, m_Controller  );
+		
 		m_Zone = newZone;
+		m_HostGame.AddCardTo( this, newZone, m_Controller );
+		
+		gcz.RemoveCard( this );
+	}
+	public int GetTemplateID(  ) {
+		return m_TemplateID;
+	}
+	public void RenderToSurface( GC gc, CardRenderSize large ) {
+		if( m_TemplateID == -1 ) {
+			ClientCardTemplate.RenderBlack( gc, large, null );
+		} else  {
+			ClientCardTemplateManager.get().
+				GetClientCardTemplate( m_TemplateID ).
+				Render( gc, large, null, m_DamageTaken );
+		}
 	}
 	
 	public void UpdateCardTemplate( int newTemplateID ) {
@@ -92,5 +129,13 @@ public class ClientGameCardInstance extends Composite {
 	
 	public int GetID() {
 		return m_InstanceID;
+	}
+
+	public GameZones getZone() {
+		return m_Zone;
+	}
+
+	public int getController() {
+		return m_Controller;
 	}
 }

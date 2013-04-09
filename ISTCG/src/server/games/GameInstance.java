@@ -17,7 +17,9 @@ import server.games.events.ResolutionEvent;
 import server.games.stack.Attack;
 import server.games.stack.StackObject;
 import server.network.ClientAccount;
-import server.network.ConnectionsHandler;
+import Shared.GameStates;
+
+import Shared.PlayerStates;
 
 /**
  * This is a specific game. I'll write more documentation later...
@@ -26,14 +28,6 @@ import server.network.ConnectionsHandler;
 public class GameInstance {
 	//GAME CONSTANTS
 	private static final int STARTING_HAND_SIZE = 7;
-	private enum GameStates { 	CREATED, 			// Game has been created, waiting for players to submit decks.
-								STARTING, 			// Decks submited, commencing setup.
-								ACTIVE, 			// Turn is waiting for main player.
-								STACKING, 			// Cards are on stack, waiting for responses
-								WAITING, 			// Waiting for passed input from a player while stacking
-								RESOLVING, 			// Resolving cards on the stack
-								BETWEEN_TURNS, 		// Switching active players
-								ENDED; }			// Game is over. Done. Finished.
 	
 	//GameInstance Variables
 	private final int m_GameInstanceID;
@@ -187,7 +181,7 @@ public class GameInstance {
 					ServerCardInstance DEFENDER = m_Directory.get( Integer.valueOf( message[3] ));
 					switch( m_GameInstanceState ) {
 					case ACTIVE:
-						if( !(m_Players.get( origin.getUserID() ).getState() == GamePlayer.PlayerStates.ACTIVE) ) {
+						if( !(m_Players.get( origin.getUserID() ).getState() == PlayerStates.ACTIVE) ) {
 							m_Players.get( origin.getUserID() ).SendMessageFromGame( ClientMessages.GAME_ERROR, String.valueOf( ATTACKER.GetCardUID() ) + " cannot attack at this time, not your turn.");
 							break;
 						}
@@ -215,12 +209,12 @@ public class GameInstance {
 					if( message.length == 4 ) { TARGETING_SOLUTION = message[4]; }
 					switch( m_GameInstanceState ) {
 					case ACTIVE:
-						if( m_Players.get( origin.getUserID() ).getState() == GamePlayer.PlayerStates.ACTIVE ) {
+						if( m_Players.get( origin.getUserID() ).getState() == PlayerStates.ACTIVE ) {
 							m_Players.get( origin.getUserID() ).PlayCard( CARD_TO_PLAY, TARGETING_SOLUTION );
 						}
 						break;
 					case STACKING:
-						if( m_Players.get( origin.getUserID() ).getState() == GamePlayer.PlayerStates.ACTIVE ) {
+						if( m_Players.get( origin.getUserID() ).getState() == PlayerStates.ACTIVE ) {
 							m_Players.get( origin.getUserID() ).PlayCard( CARD_TO_PLAY, TARGETING_SOLUTION );
 							/*for( Integer p : m_PlayerList ) {
 								if( p != origin.getUserID() ) { m_Players.get( p ).setWaiting(); }
@@ -325,7 +319,7 @@ public class GameInstance {
 
 		boolean start_resolving = true;
 		for( Integer id : m_PlayerList ) {
-			if( m_Players.get(id).getState() != GamePlayer.PlayerStates.DONE ) {
+			if( m_Players.get(id).getState() != PlayerStates.DONE ) {
 				start_resolving = false;
 			}
 		}
@@ -336,7 +330,7 @@ public class GameInstance {
 			if( ++m_ActivePlayerIndex >= m_Players.size() ) { m_ActivePlayerIndex = 0; }
 			gp = m_Players.get(m_PlayerList.get( m_ActivePlayerIndex ));
 			
-			if( gp.getState() == GamePlayer.PlayerStates.WAITING ) {
+			if( gp.getState() == PlayerStates.WAITING ) {
 				gp = m_Players.get(m_PlayerList.get( m_ActivePlayerIndex ));
 				gp.setActive();
 			} else {
@@ -352,7 +346,7 @@ public class GameInstance {
 	public void CheckForResolution() {
 		boolean resolve = true;
 		for( Integer id : m_PlayerList ) {
-			if( m_Players.get(id).getState() != GamePlayer.PlayerStates.WAITING ) {
+			if( m_Players.get(id).getState() != PlayerStates.WAITING ) {
 				resolve = false;
 			}
 		}
@@ -363,7 +357,9 @@ public class GameInstance {
 			if( m_ObjectsOnStack.isEmpty() ) {
 				System.out.println( "DONE RESOLVING" );
 				ChangeState(GameStates.ACTIVE);
+				System.out.println( "fewf" );
 				SetActivePlayer();
+				System.out.println( "DONfafafNG" );
 			}
 		}
 	}
@@ -436,7 +432,7 @@ public class GameInstance {
 		boolean start_the_game = true;
 		for( Integer i : m_PlayerList ) { 
 			GamePlayer player = m_Players.get(i);
-			if( player.getState() == GamePlayer.PlayerStates.JOINED ) {
+			if( player.getState() == PlayerStates.JOINED ) {
 				start_the_game = false;
 			}
 		}

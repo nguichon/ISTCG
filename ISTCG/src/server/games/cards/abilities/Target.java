@@ -1,5 +1,6 @@
 package server.games.cards.abilities;
 
+import Shared.PlayerStates;
 import server.ServerMain;
 import server.games.GamePlayer;
 import server.games.cards.ServerCardInstance;
@@ -37,7 +38,7 @@ public class Target {
 		case CARD:
 			return m_Key == ((ServerCardInstance)m_Target).TimesMoved();
 		case PLAYER:
-			return ((GamePlayer)m_Target).getState() != GamePlayer.PlayerStates.DEAD;
+			return ((GamePlayer)m_Target).getState() != PlayerStates.DEAD;
 		case STACK_OBJECT:
 			return ((StackObject)m_Target).isValid();
 		default:

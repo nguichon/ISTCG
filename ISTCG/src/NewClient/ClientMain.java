@@ -194,7 +194,7 @@ public class ClientMain {
 	}
 	public void ParseMessage( String input ) {
 		//System.out.println( "Magic man! - " + input );
-		//System.out.println(input);
+		System.out.println("INPUT RECEIVED: " + input);
 		String[] inputs = input.split(";");
 		switch( Shared.ClientMessages.valueOf(inputs[0].toUpperCase()) ) {
 		case MESSAGE:
@@ -257,6 +257,7 @@ public class ClientMain {
 		case WAITING: //Fall through
 		case UPDATE_PLAYER: //Fall through
 		case MOVE: //Fall through
+		case HIDE: //Fall through
 		case CARD_INFO: //Fall through
 		case GAME_ERROR: //Fall through
 		case GAME_STATE: //Fall through

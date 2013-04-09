@@ -11,20 +11,11 @@ import Shared.ClientMessages;
 import Shared.ClientResponses;
 import Shared.GameResources;
 import Shared.GameZones;
+import Shared.PlayerStates;
 import Shared.StatBlock;
 import Shared.StatBlock.StatType;
 
 public class GamePlayer {
-	// GAME CONSTANTS
-		public enum PlayerStates { JOINED, 		// Player joined, needs to submit decklist.
-									READY, 			// Decks submited, waiting for other players.
-									ACTIVE, 		// Waiting for this player to do things.
-									WAITING, 		// This player is waiting for things to happen.
-									DONE,			// Player is ready to let stack resolve.
-									DISCONNECTED, 	// Disconnected, do not send messages pl0x.
-									READING,
-									DEAD; }			// This guy is dead, what a scrub like that Magnus.
-		
 	// Configuration variables
 		private GameInstance m_Game;
 		private ClientAccount m_ClientAccount;

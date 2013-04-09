@@ -88,7 +88,6 @@ public class ClientCardTemplate {
      * @param damageTaken 
      */
     public void Render(GC targetGC, CardRenderSize size, ArrayList<StatBlock> stats, int damageTaken) {
-    	System.out.println("RENDERINGIGNIGNIGNIG: " + damageTaken );
     	Image toRender = ImageManager.get().GetImage( m_BGImage );
     	
     	stats = null;
