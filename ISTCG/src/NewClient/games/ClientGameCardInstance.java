@@ -138,4 +138,9 @@ public class ClientGameCardInstance extends Composite {
 	public int getController() {
 		return m_Controller;
 	}
+
+	public void SetDamage(Integer valueOf) {
+		m_DamageTaken = valueOf;
+		this.redraw();
+	}
 }

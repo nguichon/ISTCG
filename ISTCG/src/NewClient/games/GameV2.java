@@ -20,8 +20,7 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.TabItem;
-
-import com.oracle.jrockit.jfr.InvalidValueException;
+import org.eclipse.swt.widgets.Text;
 
 import NewClient.ClientCardTemplate;
 import NewClient.ClientCardTemplate.CardRenderSize;
@@ -36,7 +35,8 @@ import Shared.PlayerStates;
 public class GameV2 extends Composite {
 	private static final int PLAYER_BAR_HEIGHT = 24;
 	private static final int BOTTOM_BAR_AREA_HEIGHT = CardRenderSize.SMALL.getHeight() + 15;
-	private static final int STACK_WIDTH = CardRenderSize.SMALL.getWidth() + 10;
+	private static final int STACK_WIDTH = CardRenderSize.SMALL.getWidth() + 8;
+	private static final int HELPER_HEIGHT = 24;
 	
 	private static final Point SCRAPYARD_SIZE = new Point( CardRenderSize.SMALL.getWidth() + 10, CardRenderSize.SMALL.getHeight() + 10 );
 	private static final Point BUTTON_SIZE = new Point( BOTTOM_BAR_AREA_HEIGHT, BOTTOM_BAR_AREA_HEIGHT );
@@ -48,6 +48,7 @@ public class GameV2 extends Composite {
 	private PlayerStates m_PlayerState = PlayerStates.JOINED;
 	
 	private HashMap< Integer, ClientGameCardInstance > m_LoadedCards = new HashMap< Integer, ClientGameCardInstance>();
+	private HashMap< Integer, StackObject > m_StackObjects = new HashMap< Integer, StackObject>();
 	private VisibleHand m_PlayerHand;
 	private TheVoid m_Unknown = new TheVoid( this, SWT.NONE, this );
 	private Scrapyard m_PlayerScrapyard = new Scrapyard( this, SWT.NONE, this );
@@ -58,6 +59,7 @@ public class GameV2 extends Composite {
 	private PreviewBox m_Preview;
 	private Button m_MainButton;
 	private Stack m_Stack = new Stack( this, SWT.BORDER, this );
+	private Label m_HelperText = new Label( this, SWT.BORDER | SWT.CENTER );
 	
 	private int m_OpponentID;
 	
@@ -79,9 +81,11 @@ public class GameV2 extends Composite {
 		m_MainButton = new Button( this, SWT.NONE );
 		m_MainButton.setText("END TURN");
 		m_PlayerScrapyard.setBackground( Display.getDefault().getSystemColor( SWT.COLOR_BLACK ) );
+		m_HelperText.setForeground( Display.getDefault().getSystemColor( SWT.COLOR_RED ) );
+		m_HelperText.moveBelow( m_PlayerField );
 		
-		m_OpponentField.setBackground( Display.getDefault().getSystemColor( SWT.COLOR_RED ) );
-		m_PlayerField.setBackground( Display.getDefault().getSystemColor( SWT.COLOR_BLUE ) );
+		//m_OpponentField.setBackground( Display.getDefault().getSystemColor( SWT.COLOR_RED ) );
+		//m_PlayerField.setBackground( Display.getDefault().getSystemColor( SWT.COLOR_BLUE ) );
 		m_MainButton.addSelectionListener( new SelectionListener() {
 
 			@Override
@@ -105,13 +109,13 @@ public class GameV2 extends Composite {
 						area.width - BUTTON_SIZE.x - SCRAPYARD_SIZE.x,
 						BOTTOM_BAR_AREA_HEIGHT);
 				m_PlayerField.setBounds( STACK_WIDTH,
-						PLAYER_BAR_HEIGHT + (area.height - (BOTTOM_BAR_AREA_HEIGHT + 2 * PLAYER_BAR_HEIGHT)) / 2,
+						PLAYER_BAR_HEIGHT + HELPER_HEIGHT + (area.height - (BOTTOM_BAR_AREA_HEIGHT + 2 * PLAYER_BAR_HEIGHT + HELPER_HEIGHT)) / 2,
 						area.width - STACK_WIDTH,
-						(area.height - (BOTTOM_BAR_AREA_HEIGHT + 2 * PLAYER_BAR_HEIGHT)) / 2);
+						(area.height - (BOTTOM_BAR_AREA_HEIGHT + 2 * PLAYER_BAR_HEIGHT + HELPER_HEIGHT)) / 2);
 				m_OpponentField.setBounds( STACK_WIDTH,
 						PLAYER_BAR_HEIGHT,
 						area.width - STACK_WIDTH,
-						(area.height - (BOTTOM_BAR_AREA_HEIGHT + 2 * PLAYER_BAR_HEIGHT)) / 2);
+						(area.height - (BOTTOM_BAR_AREA_HEIGHT + 2 * PLAYER_BAR_HEIGHT + HELPER_HEIGHT)) / 2);
 				m_PlayerBar.setBounds( 0,
 						area.height - BOTTOM_BAR_AREA_HEIGHT - PLAYER_BAR_HEIGHT,
 						area.width,
@@ -132,6 +136,10 @@ public class GameV2 extends Composite {
 						PLAYER_BAR_HEIGHT,
 						STACK_WIDTH,
 						area.height - PLAYER_BAR_HEIGHT * 2 - BOTTOM_BAR_AREA_HEIGHT );
+				m_HelperText.setBounds(  STACK_WIDTH,
+						PLAYER_BAR_HEIGHT + (area.height - (BOTTOM_BAR_AREA_HEIGHT + 2 * PLAYER_BAR_HEIGHT + HELPER_HEIGHT)) / 2,
+						area.width - STACK_WIDTH,
+						HELPER_HEIGHT );
 			}
 		});
 	}
@@ -227,6 +235,9 @@ public class GameV2 extends Composite {
 					SetPlayerState(PlayerStates.valueOf( message[4].toUpperCase() ));
 				}
 				break;
+			case GAME_ERROR:
+				m_HelperText.setText( message[3] );
+				break;
 			case PLAYER_JOINED:
 				PlayerStatusBar psb = m_PlayerBar;
 				
@@ -235,6 +246,22 @@ public class GameV2 extends Composite {
 				}
 				
 				psb.UpdateName( message[3] );
+				break;
+			case SET_CARD_DAMAGE:
+				m_LoadedCards.get( Integer.valueOf( message[3] ) ).SetDamage( Integer.valueOf( message[4] ) );
+				break;
+			case STACK_OBJECT:
+				if( message[4].equals("ATTACK") ) {
+					//Type of stack object is an attack.
+					StackObject so = new StackObject( m_Stack, SWT.NONE, m_LoadedCards.get( Integer.valueOf(message[5])), "Attacking");
+					m_StackObjects.put( Integer.valueOf( message[3] ), so );
+					m_Stack.OptimizeLayout();
+				} else {
+					System.out.println(" UNKNOWN STACK OBJECT TYPE " + message[4] );
+				}
+				break;
+			case REMOVE_STACK_OBJECT:
+				m_StackObjects.remove( Integer.valueOf( message[3] ) ).dispose();
 				break;
 			case UPDATE_ZONE:
 				psb = m_PlayerBar;
@@ -286,11 +313,20 @@ public class GameV2 extends Composite {
 		m_PlayerState = ps;
 		System.out.println( "PLAYER SET TO " + ps.name() );
 		switch( ps ) {
-		case ACTIVE:
 		case READING:
+			m_HelperText.setText( "Pass priority to let card resolve." );
+			m_MainButton.setEnabled( true );
+			break;
+		case ACTIVE:
+			if( m_State == GameStates.ACTIVE ) {
+				m_HelperText.setText( "Play a card, attack with a ship, or end your turn." );
+			} else {
+				m_HelperText.setText( "Play a card or pass priority." );
+			}
 			m_MainButton.setEnabled( true );
 			break;
 		default:
+			m_HelperText.setText( "Wait." );
 			m_MainButton.setEnabled( false );
 			break;
 		}
@@ -401,6 +437,7 @@ public class GameV2 extends Composite {
 				String.valueOf(toPlay.GetID()));
 	}
 	private void AttackWith( ClientGameCardInstance toAttackWith ) {
+		m_HelperText.setText( "Select a target to attack." );
 		m_TargetingType = ClientResponses.ATTACK;
 		m_SourceOfTargeting = toAttackWith;
 		m_TargetCount = 1;
@@ -423,6 +460,7 @@ public class GameV2 extends Composite {
 		}
 	}
 	private void Cancel() {
+		m_HelperText.setText( "Canceled." );
 		m_TargetingMode = false;
 		SetGameState( m_State );
 	}
