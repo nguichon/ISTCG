@@ -145,6 +145,7 @@ public class GameV2 extends Composite {
 	}
 	
 	protected void MainButtonClicked() {
+		if( m_TargetingMode ) { Cancel(); return; }
 		switch( m_State ) {
 		case ACTIVE:
 			SendMessageFromGame( ClientResponses.END );
