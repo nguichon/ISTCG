@@ -3,6 +3,7 @@ package editor;
 import java.io.File;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -32,6 +33,7 @@ import NewClient.ClientCardTemplate;
 import NewClient.ClientCardTemplateManager;
 import OldClient.ImageManager;
 import Shared.CardTypes;
+import Shared.StatBlock;
 import Shared.StatBlock.StatType;
 import Shared.TargetingCondition;
 
@@ -40,20 +42,21 @@ import server.ServerMain;
 
 public class CardEditor {
 	private static String DEFAULT_CARD_PATH = System.getProperty("user.dir") + "/data/cards/card_";
-	
+
 	public static final Display display = Display.getDefault();
 	public static final Shell shell = new Shell( SWT.NO_REDRAW_RESIZE | SWT.SHELL_TRIM );
 	public static Canvas big_info;
 	public static int current_card = -1;
 	private static int count = 0;
-	
+
 	private static final Composite m_AllCards = new Composite( shell, SWT.BORDER );
 	private static final Composite m_CurrentCard = new Composite( shell, SWT.BORDER );
 	private static final Composite m_MainInfo = new Composite( m_CurrentCard, SWT.BORDER );
 	private static final Composite m_SubInfo = new Composite( m_CurrentCard, SWT.BORDER );
-	
+
 	private static final List m_ListOfCards = new List( m_AllCards, SWT.V_SCROLL );
 	private static final Button m_SaveAllButton = new Button( m_AllCards, SWT.NONE );
+	private static final Button m_NewCardButton = new Button( m_AllCards, SWT.NONE );
 
 	private static final Text m_Name = new Text( m_MainInfo, SWT.NONE );
 	private static final Text m_Description = new Text( m_MainInfo, SWT.MULTI | SWT.WRAP );
@@ -66,17 +69,24 @@ public class CardEditor {
 	private static final Canvas m_AttackIcon = new Canvas( m_MainInfo, SWT.NONE );
 	private static final Spinner m_Defense = new Spinner( m_MainInfo, SWT.NONE );
 	private static final Canvas m_DefenseIcon = new Canvas( m_MainInfo, SWT.NONE );
+	private static final Spinner m_Metal = new Spinner( m_MainInfo, SWT.NONE );
+	private static final Canvas m_MetalIcon = new Canvas( m_MainInfo, SWT.NONE );
+	private static final Spinner m_Energy = new Spinner( m_MainInfo, SWT.NONE );
+	private static final Canvas m_EnergyIcon = new Canvas( m_MainInfo, SWT.NONE );
+	private static final Spinner m_Tech = new Spinner( m_MainInfo, SWT.NONE );
+	private static final Canvas m_TechIcon = new Canvas( m_MainInfo, SWT.NONE );
 	private static final Combo m_CardType = new Combo( m_MainInfo, SWT.NONE );
 	private static final Button m_SaveButton = new Button( m_MainInfo, SWT.NONE );
-	
+
 	private static final List m_ListOfTargets = new List( m_SubInfo, SWT.V_SCROLL );
 	private static final Button[] m_Conditions = new Button[ CardTypes.values().length ];
 	private static final Button m_NewTargetButton = new Button( m_SubInfo, SWT.NONE );
+	private static final Button m_RemoveTargetButton = new Button( m_SubInfo, SWT.NONE );
 	private static final Button m_SaveTargetButton = new Button( m_SubInfo, SWT.NONE );
-	
+
 	private static ClientCardTemplate m_CurrentCardToEdit = null;
 	private static TargetingCondition m_CurrentTargetCondition = null;
-	
+
 	/**
 	 * @param args
 	 */
@@ -87,14 +97,14 @@ public class CardEditor {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		
+
 		populateCards();
 		for( CardTypes ct : CardTypes.values() ) {
 			m_CardType.add( ct.name() );
 			m_Conditions[ct.ordinal()] = new Button( m_SubInfo, SWT.TOGGLE );
 			m_Conditions[ct.ordinal()].setText( ct.name() );
 		}
-		m_NewTargetButton.setText( "New" );
+		m_NewTargetButton.setText( "+" );
 		m_NewTargetButton.addSelectionListener( new SelectionListener() {
 
 			@Override
@@ -105,10 +115,11 @@ public class CardEditor {
 			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
 				// TODO Auto-generated method stub
-				
+
 			}
-			
+
 		});
+		m_RemoveTargetButton.setText( "-" );
 		m_SaveTargetButton.setText( "Save" );
 		m_SaveTargetButton.addSelectionListener( new SelectionListener() {
 
@@ -120,9 +131,9 @@ public class CardEditor {
 			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
 				// TODO Auto-generated method stub
-				
+
 			}
-			
+
 		});
 		m_SaveButton.setText( "Save Changes" );
 		m_SaveButton.addSelectionListener( new SelectionListener() {
@@ -135,9 +146,9 @@ public class CardEditor {
 			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
 				// TODO Auto-generated method stub
-				
+
 			}
-			
+
 		});
 		m_Damage.setMinimum( -1 );
 		m_DamageIcon.addPaintListener( new PaintListener() {
@@ -146,7 +157,7 @@ public class CardEditor {
 			public void paintControl(PaintEvent e) {
 				e.gc.drawImage( ImageManager.get().GetImage( "icon-damage-inverse.png"), 0, 0 );
 			}
-			
+
 		});
 		m_Attack.setMinimum( -1 );
 		m_AttackIcon.addPaintListener( new PaintListener() {
@@ -155,7 +166,7 @@ public class CardEditor {
 			public void paintControl(PaintEvent e) {
 				e.gc.drawImage( ImageManager.get().GetImage( "icon-attack-inverse.png"), 0, 0 );
 			}
-			
+
 		});
 		m_Defense.setMinimum( -1 );
 		m_DefenseIcon.addPaintListener( new PaintListener() {
@@ -164,9 +175,45 @@ public class CardEditor {
 			public void paintControl(PaintEvent e) {
 				e.gc.drawImage( ImageManager.get().GetImage( "icon-defense-inverse.png"), 0, 0 );
 			}
-			
+
 		});
-		
+		m_Metal.setMinimum( 0 );
+		m_MetalIcon.addPaintListener( new PaintListener() {
+
+			@Override
+			public void paintControl(PaintEvent e) {
+				e.gc.drawImage( ImageManager.get().GetImage( "resource_metal_icon.png"), 0, 0 );
+			}
+
+		});
+		m_Tech.setMinimum( 0 );
+		m_TechIcon.addPaintListener( new PaintListener() {
+
+			@Override
+			public void paintControl(PaintEvent e) {
+				e.gc.drawImage( ImageManager.get().GetImage( "resource_tech_icon.png"), 0, 0 );
+			}
+
+		});
+		m_Structure.setMinimum( -1 );
+		m_StructureIcon.addPaintListener( new PaintListener() {
+
+			@Override
+			public void paintControl(PaintEvent e) {
+				e.gc.drawImage( ImageManager.get().GetImage( "icon-structure-good.png"), 0, 0 );
+			}
+
+		});
+		m_Energy.setMinimum( 0 );
+		m_EnergyIcon.addPaintListener( new PaintListener() {
+
+			@Override
+			public void paintControl(PaintEvent e) {
+				e.gc.drawImage( ImageManager.get().GetImage( "resource_energy_icon.png"), 0, 0 );
+			}
+
+		});
+
 		m_SaveAllButton.setText( "Save All Card Files" );
 		m_SaveAllButton.addSelectionListener( new SelectionListener() {
 
@@ -178,11 +225,26 @@ public class CardEditor {
 			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
 				// TODO Auto-generated method stub
-				
+
 			}
-			
+
 		});
-		
+		m_NewCardButton.setText( "New Card" );
+		m_NewCardButton.addSelectionListener( new SelectionListener() {
+
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				NewCard();
+			}
+
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {
+				// TODO Auto-generated method stub
+
+			}
+
+		});
+
 		m_ListOfCards.addSelectionListener( new SelectionListener() {
 
 			@Override
@@ -194,11 +256,11 @@ public class CardEditor {
 			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
 				// TODO Auto-generated method stub
-				
+
 			}
-			
+
 		});
-		
+
 		shell.addListener( SWT.Resize, new Listener() {
 			@Override
 			public void handleEvent(Event arg0) {
@@ -207,14 +269,15 @@ public class CardEditor {
 				m_CurrentCard.setBounds( ca.width / 3, 0, 2 * ca.width / 3, ca.height );
 			}
 		});
-		
+
 		m_AllCards.addListener(SWT.Resize, new Listener() {
 			@Override
 			public void handleEvent(Event arg0) {
 				Rectangle ca = m_AllCards.getClientArea();
 				m_ListOfCards.setBounds( 0,0,ca.width,ca.height-23 );
 				m_ListOfCards.getVerticalBar().setVisible( true );
-				m_SaveAllButton.setBounds( 0, ca.height - 23, ca.width, 23 );
+				m_SaveAllButton.setBounds( 0, ca.height - 23, ca.width / 2, 23 );
+				m_NewCardButton.setBounds( ca.width / 2, ca.height - 23, ca.width / 2, 23 );
 			}
 		});
 		m_SubInfo.addListener(SWT.Resize, new Listener() {
@@ -223,8 +286,9 @@ public class CardEditor {
 				Rectangle ca = m_SubInfo.getClientArea();
 				m_ListOfTargets.setBounds( 0,0,ca.width / 3,ca.height-23 );
 				m_ListOfTargets.getVerticalBar().setVisible( true );
-				m_NewTargetButton.setBounds( 0,ca.height-23,ca.width / 6,23 );
-				m_SaveTargetButton.setBounds( ca.width / 6,ca.height-23,ca.width / 6,23 );
+				m_SaveTargetButton.setBounds( 0,ca.height-23,ca.width / 6,23 );
+				m_NewTargetButton.setBounds( ca.width / 6,ca.height-23,ca.width / 12,23 );
+				m_RemoveTargetButton.setBounds( ca.width / 6 + ca.width / 12,ca.height-23,ca.width / 12,23 );
 				//m_SaveAllButton.setBounds( 0, ca.height - 23, ca.width, 23 );
 				for( CardTypes ct : CardTypes.values() ) {
 					m_Conditions[ct.ordinal()].setBounds( ca.width / 3 + 1, ct.ordinal() * 23, 100, 23 );
@@ -244,23 +308,29 @@ public class CardEditor {
 			public void handleEvent(Event arg0) {
 				Rectangle ca = m_MainInfo.getClientArea();
 				m_SaveButton.setBounds( ca.width - 100, ca.height - 23, 100, 23 );
-				
+
 				m_Name.setBounds( 0, 0, ca.width / 2, 17 );
 				m_Description.setBounds( ca.width / 2 + 1, 0, ca.width / 2 - 1, 17 * 4 + 1 );
 				m_Flavor.setBounds(  0, 17 + 1, ca.width / 2, 17 * 3 );
-				m_Damage.setBounds( 96, 17 * 4 + 2, 48, 24);
-				m_DamageIcon.setBounds( 72, 17 * 4 + 2, 24, 24);
 				m_Attack.setBounds( 24, 17 * 4 + 2, 48, 24);
 				m_AttackIcon.setBounds( 0, 17 * 4 + 2, 24, 24);
+				m_Damage.setBounds( 96, 17 * 4 + 2, 48, 24);
+				m_DamageIcon.setBounds( 72, 17 * 4 + 2, 24, 24);
 				m_Defense.setBounds( 168, 17 * 4 + 2, 48, 24);
 				m_DefenseIcon.setBounds( 144, 17 * 4 + 2, 24, 24);
-//				m_Structure
-//				m_StructureIcon
+				m_Structure.setBounds( 240, 17 * 4 + 2, 48, 24);
+				m_StructureIcon.setBounds( 216, 17 * 4 + 2, 24, 24);
+				m_Metal.setBounds( 24, 17 * 4 + 26, 48, 24);
+				m_MetalIcon.setBounds( 0, 17 * 4 + 26, 24, 24);
+				m_Energy.setBounds( 96, 17 * 4 + 26, 48, 24);
+				m_EnergyIcon.setBounds( 72, 17 * 4 + 26, 24, 24);
+				m_Tech.setBounds( 168, 17 * 4 + 26, 48, 24);
+				m_TechIcon.setBounds( 144, 17 * 4 + 26, 24, 24);
 				m_CardType.setBounds( 0, ca.height - 23, ca.width - 100, 23 );
 			}
 		});
-		
-		
+
+
 		shell.setSize(585, 500);
 		shell.setMinimumSize( 100, 200 );
 		shell.setText("Card Editor");
@@ -271,7 +341,13 @@ public class CardEditor {
 			}
 		}
 	}
-	
+
+	static int m_NewCardCounter = 0;
+	protected static void NewCard() {
+		ClientCardTemplate ct = ClientCardTemplateManager.get().NewTemplate( -1 * ++m_NewCardCounter );
+		m_ListOfCards.add( String.format("%05d - %s", ct.getCardID(), ct.getCardName() ) );
+	}
+
 	protected static void SaveTarget() {
 		if( m_CurrentTargetCondition != null ) {
 			for( CardTypes ct : CardTypes.values() ) {
@@ -284,12 +360,12 @@ public class CardEditor {
 		TargetingCondition t = new TargetingCondition();
 		m_CurrentCardToEdit.getTargets().add( t );
 		m_ListOfTargets.add( String.format("%02d", m_CurrentCardToEdit.getTargets().size() - 1) );
-		
+
 	}
 
 	public static void populateCards() {
 		ResultSet rs = Database.get().quickQuery( "SELECT * FROM CARDS ORDER BY id;" );
-		
+
 		try {
 			while(rs.next()) {
 				CreateCard(rs);
@@ -299,7 +375,7 @@ public class CardEditor {
 			e.printStackTrace();
 		}
 	}
-	
+
 	public static void CreateCard( ResultSet rs ) {
 		try {
 			ClientCardTemplate ct = ClientCardTemplateManager.get().GetClientCardTemplate( rs.getInt("id") );
@@ -309,7 +385,7 @@ public class CardEditor {
 			e.printStackTrace();
 		}
 	}
-	
+
 	public static void UpdateField() {
 		m_Name.setText( m_CurrentCardToEdit.getCardName() );
 		m_Description.setText( m_CurrentCardToEdit.getCardText() );
@@ -317,16 +393,19 @@ public class CardEditor {
 		m_Damage.setSelection( Integer.valueOf(m_CurrentCardToEdit.GetStatValue( StatType.POWER )));
 		m_Attack.setSelection( Integer.valueOf(m_CurrentCardToEdit.GetStatValue( StatType.ATTACK )));
 		m_Defense.setSelection( Integer.valueOf(m_CurrentCardToEdit.GetStatValue( StatType.DEFENSE )));
-//		m_Structure
+		m_Structure.setSelection( Integer.valueOf(m_CurrentCardToEdit.GetStatValue( StatType.STRUCTURE )));
+		m_Metal.setSelection( Integer.valueOf(m_CurrentCardToEdit.GetStatValue( StatType.METAL )));
+		m_Energy.setSelection( Integer.valueOf(m_CurrentCardToEdit.GetStatValue( StatType.ENERGY )));
+		m_Tech.setSelection( Integer.valueOf(m_CurrentCardToEdit.GetStatValue( StatType.TECH )));
 		m_CardType.setText( m_CurrentCardToEdit.getCardType().name() );
-		
+
 		m_ListOfTargets.removeAll();
 		int i = 0;
 		for( TargetingCondition tc : m_CurrentCardToEdit.getTargets() ) {
 			m_ListOfTargets.add( String.format("%02d", i++) );
 		}
 	}
-	
+
 	public static void Save() { 
 		if( m_CurrentCardToEdit != null ) {
 			m_CurrentCardToEdit.setCardName( m_Name.getText() );
@@ -334,40 +413,103 @@ public class CardEditor {
 			m_CurrentCardToEdit.setCardFlavor( m_Flavor.getText() );
 			m_CurrentCardToEdit.setCardType( CardTypes.valueOf( m_CardType.getText() ) );
 
+			ArrayList<StatBlock> stats = new ArrayList<StatBlock>();
+
+			if( m_Damage.getSelection() >= 0 ) {
+				stats.add( new StatBlock( StatType.POWER, m_Damage.getSelection()));
+			}
+			if( m_Attack.getSelection() >= 0 ) {
+				stats.add( new StatBlock( StatType.ATTACK, m_Attack.getSelection()));
+			}
+			if( m_Defense.getSelection() >= 0 ) {
+				stats.add( new StatBlock( StatType.DEFENSE, m_Defense.getSelection()));
+			}
+			if( m_Structure.getSelection() >= 0 ) {
+				stats.add( new StatBlock( StatType.STRUCTURE, m_Structure.getSelection()));
+			}
+			if( m_Metal.getSelection() > 0 ) {
+				stats.add( new StatBlock( StatType.METAL, m_Metal.getSelection()));
+			}
+			if( m_Energy.getSelection() > 0 ) {
+				stats.add( new StatBlock( StatType.ENERGY, m_Energy.getSelection()));
+			}
+			if( m_Tech.getSelection() > 0 ) {
+				stats.add( new StatBlock( StatType.TECH, m_Tech.getSelection()));
+			}
+
+			m_CurrentCardToEdit.setStats( stats );
+
+
 			m_ListOfTargets.removeAll();
-			int i = 0;
+			
+			/*int i = 0;
 			for( TargetingCondition tc : m_CurrentCardToEdit.getTargets() ) {
 				m_ListOfTargets.add( String.format("%02d", i++) );
-			}
+			}*/
 		}
 	}
 	public static void SaveAll() {
 		ClientCardTemplate cct = null;
-		
-		ResultSet rs = Database.get().quickQuery( "SELECT * FROM CARDS;" );
+
+		ArrayList< ClientCardTemplate > cardTemplates = ClientCardTemplateManager.get().GetAllCards();
+
+		Marshaller writer = null;
 		try {
-			while(rs.next()) {
-				try {
-					cct = ClientCardTemplateManager.get().GetClientCardTemplate( rs.getInt( "id" ) );
-				} catch (SQLException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
-				
-				Marshaller writer;
-				try {
-					writer = JAXBContext.newInstance(
-							ClientCardTemplate.class).createMarshaller();
-					writer.marshal( cct, new File(DEFAULT_CARD_PATH + cct.getCardID() + ".xml" ) );
-				} catch (JAXBException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-		} catch (SQLException e) {
+			writer = JAXBContext.newInstance(
+					ClientCardTemplate.class).createMarshaller();
+		} catch (JAXBException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+
+		for( ClientCardTemplate ct : cardTemplates ) {
+			ResultSet rs = Database.get().quickQuery( "SELECT * FROM CARDS WHERE id = " + ct.getCardID() + ";" );
+			try {
+				if( rs.next() ) {
+					//edit
+					String query = String.format( "UPDATE cards SET name = '%s', description = '%s', flavor_text = '%s', attack = %d, power = %d, defense = %d, structure = %d, metal = %d, energy = %d, tech = %d, type = '%s' WHERE id = %d;", 
+							ct.getCardName(),
+							ct.getCardText(),
+							ct.getCardFlavor(),
+							ct.GetStatValue( StatType.ATTACK ),
+							ct.GetStatValue( StatType.POWER ),
+							ct.GetStatValue( StatType.DEFENSE ),
+							ct.GetStatValue( StatType.STRUCTURE ),
+							ct.GetStatValue( StatType.METAL ),
+							ct.GetStatValue( StatType.ENERGY ),
+							ct.GetStatValue( StatType.TECH ),
+							ct.getCardType().name(),
+							ct.getCardID());
+					System.out.println( query );
+					Database.get().quickInsert( query );
+				} else {
+					String query = String.format( "INSERT INTO cards( id, created_at, modified_at, name, description, flavor_text, attack, power, defense, structure, hard_points, delay, metal, energy, tech, type)" + 
+							"VALUES (DEFAULT, DEFAULT, DEFAULT, '%s', '%s', '%s', %d, %d, %d, %d, -1, -1, %d, %d, %d, '%s') RETURNING id;", 
+							ct.getCardName(),
+							ct.getCardText(),
+							ct.getCardFlavor(),
+							ct.GetStatValue( StatType.ATTACK ),
+							ct.GetStatValue( StatType.POWER ),
+							ct.GetStatValue( StatType.DEFENSE ),
+							ct.GetStatValue( StatType.STRUCTURE ),
+							ct.GetStatValue( StatType.METAL ),
+							ct.GetStatValue( StatType.ENERGY ),
+							ct.GetStatValue( StatType.TECH ),
+							ct.getCardType().name());
+					System.out.println( query );
+					rs = Database.get().quickQuery( query );
+					if( rs.next() ) {
+						ct.setCardID( rs.getInt( "id") );
+					}
+				}
+				writer.marshal( ct, new File(DEFAULT_CARD_PATH + ct.getCardID() + ".xml" ) );
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (JAXBException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 	}
 }

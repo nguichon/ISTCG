@@ -19,6 +19,7 @@ import Shared.ClientResponses;
 import server.Database;
 import server.LobbyManager;
 import server.ServerMain;
+import server.admin.AdminCommands;
 import server.games.GameManager;
 import server.store.ServerStore;
 
@@ -96,6 +97,18 @@ public class ClientAccount extends Thread {
 						break;
 					case DISCONNECT:
 						DisconnectMe();
+						break;
+					case CREATE_ACCOUNT:
+						if( m_UserID == -1 ) {
+							String response = AdminCommands.CREATE_ACCOUNT.Activate(new String[]{"CREATE_ACCOUNT", command[1],command[2],command[3]});
+							if( response.split(" ")[0].equals("Failed") ) {
+								SendMessage(ClientMessages.ACCOUNT_CREATION_STATUS, "-1");
+							}
+							if( response.split(" ")[0].equals("User")) {
+								SendMessage(ClientMessages.ACCOUNT_CREATION_STATUS, "1");
+								LoginAttempt( command[1], command[2] );
+							}
+						}
 						break;
 					case CHALLENGE:
 						if (m_UserID != -1) {

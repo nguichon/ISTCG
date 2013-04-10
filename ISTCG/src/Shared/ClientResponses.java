@@ -22,6 +22,7 @@ public enum ClientResponses {
 		GETCARDINFO, 
 		CANCEL,
 		PRODUCTINFO, 
-		PURCHASE, 
+		PURCHASE,
+		CREATE_ACCOUNT,
 		BALANCE;
 }

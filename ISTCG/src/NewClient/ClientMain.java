@@ -245,6 +245,12 @@ public class ClientMain {
 				}
 			break;
 		case SERVER:
+			 break;
+		case ACCOUNT_CREATION_STATUS:
+			if(composite instanceof Login){
+				if( Integer.valueOf( inputs[1] ) == -1 )
+					((Login)composite).CreationFailed();
+			}
 			break;
 		case PRIVATE_MESSAGE:
 			if(composite instanceof Lobby){
@@ -309,5 +315,9 @@ public class ClientMain {
 	public String getDeck() {
 		
 		return deck;
+	}
+	public void createAccount(String login, String password) {
+		if(MakeConnection())
+			m_Server.sendData( "CREATE_ACCOUNT;" + login + ";" + password + ";none@void.com" );
 	}
 }
