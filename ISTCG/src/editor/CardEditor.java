@@ -28,6 +28,7 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Spinner;
 import org.eclipse.swt.widgets.Text;
+import Shared.GameZones;
 
 import NewClient.ClientCardTemplate;
 import NewClient.ClientCardTemplateManager;
@@ -80,9 +81,14 @@ public class CardEditor {
 
 	private static final List m_ListOfTargets = new List( m_SubInfo, SWT.V_SCROLL );
 	private static final Button[] m_Conditions = new Button[ CardTypes.values().length ];
+	private static final Button[] m_ConditionsLocation = new Button[ GameZones.values().length ];
+	private static final Button m_ConditionsMine = new Button( m_SubInfo, SWT.TOGGLE );
+	private static final Button m_ConditionsOpp = new Button( m_SubInfo, SWT.TOGGLE );
 	private static final Button m_NewTargetButton = new Button( m_SubInfo, SWT.NONE );
 	private static final Button m_RemoveTargetButton = new Button( m_SubInfo, SWT.NONE );
 	private static final Button m_SaveTargetButton = new Button( m_SubInfo, SWT.NONE );
+	private static ArrayList<TargetingCondition> m_CurrentListOfConditions;
+	private static TargetingCondition m_CurrentCondition;
 
 	private static ClientCardTemplate m_CurrentCardToEdit = null;
 	private static TargetingCondition m_CurrentTargetCondition = null;
@@ -104,6 +110,13 @@ public class CardEditor {
 			m_Conditions[ct.ordinal()] = new Button( m_SubInfo, SWT.TOGGLE );
 			m_Conditions[ct.ordinal()].setText( ct.name() );
 		}
+		for( GameZones gz : GameZones.values() ) {
+			m_CardType.add( gz.name() );
+			m_ConditionsLocation[gz.ordinal()] = new Button( m_SubInfo, SWT.TOGGLE );
+			m_ConditionsLocation[gz.ordinal()].setText( gz.name() );
+		}
+		m_ConditionsMine.setText( "Player's" );
+		m_ConditionsOpp.setText( "Opponent's" );
 		m_NewTargetButton.setText( "+" );
 		m_NewTargetButton.addSelectionListener( new SelectionListener() {
 
@@ -114,12 +127,43 @@ public class CardEditor {
 
 			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
+				// 
+
+			}
+
+		});
+		m_ListOfTargets.addSelectionListener( new SelectionListener() {
+
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				if( m_ListOfTargets.getSelectionIndex() >= 0 && m_ListOfTargets.getSelectionIndex() < m_CurrentListOfConditions.size() ) {
+					m_CurrentTargetCondition = m_CurrentListOfConditions.get( m_ListOfTargets.getSelectionIndex());
+					UpdateTarget();
+				}
+			}
+
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {
+				// 
+				
+			}
+			
+		});
+		m_RemoveTargetButton.setText( "-" );
+		m_RemoveTargetButton.addSelectionListener( new SelectionListener() {
+
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				RemoveTarget();
+			}
+
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {
 				// TODO Auto-generated method stub
 
 			}
 
 		});
-		m_RemoveTargetButton.setText( "-" );
 		m_SaveTargetButton.setText( "Save" );
 		m_SaveTargetButton.addSelectionListener( new SelectionListener() {
 
@@ -130,7 +174,7 @@ public class CardEditor {
 
 			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
-				// TODO Auto-generated method stub
+				// 
 
 			}
 
@@ -145,7 +189,7 @@ public class CardEditor {
 
 			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
-				// TODO Auto-generated method stub
+				// 
 
 			}
 
@@ -224,7 +268,7 @@ public class CardEditor {
 
 			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
-				// TODO Auto-generated method stub
+				// 
 
 			}
 
@@ -239,7 +283,7 @@ public class CardEditor {
 
 			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
-				// TODO Auto-generated method stub
+				// 
 
 			}
 
@@ -255,7 +299,6 @@ public class CardEditor {
 
 			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
-				// TODO Auto-generated method stub
 
 			}
 
@@ -293,6 +336,11 @@ public class CardEditor {
 				for( CardTypes ct : CardTypes.values() ) {
 					m_Conditions[ct.ordinal()].setBounds( ca.width / 3 + 1, ct.ordinal() * 23, 100, 23 );
 				}
+				for( GameZones gz : GameZones.values() ) {
+					m_ConditionsLocation[gz.ordinal()].setBounds( 2 * ca.width / 3 + 2, gz.ordinal() * 23, 100, 23 );
+				}
+				m_ConditionsMine.setBounds( ca.width / 3 + 1, ca.height - 23, 100, 23 );
+				m_ConditionsOpp.setBounds( 2 * ca.width / 3 + 1, ca.height - 23, 100, 23 );
 			}
 		});
 		m_CurrentCard.addListener( SWT.Resize, new Listener() {
@@ -342,6 +390,29 @@ public class CardEditor {
 		}
 	}
 
+	protected static void UpdateTarget() {
+		for( CardTypes ct : CardTypes.values() ) {
+			m_Conditions[ct.ordinal()].setSelection(m_CurrentTargetCondition.m_CardType[ ct.ordinal() ]);
+		}
+		for( GameZones ct : GameZones.values() ) {
+			m_ConditionsLocation[ct.ordinal()].setSelection(m_CurrentTargetCondition.m_Location[ ct.ordinal() ]);
+		}
+		m_ConditionsMine.setSelection( m_CurrentTargetCondition.m_CanTargetMine);
+		m_ConditionsOpp.setSelection( m_CurrentTargetCondition.m_CanTargetOpponent);
+	}
+
+	protected static void RemoveTarget() {
+		if( m_CurrentTargetCondition != null ) {
+			m_CurrentListOfConditions.remove( m_CurrentTargetCondition );
+			m_CurrentTargetCondition = null;
+			m_ListOfTargets.removeAll();
+			int i = 0;
+			for( TargetingCondition tc : m_CurrentListOfConditions ) {
+				m_ListOfTargets.add( String.format("%02d", i++) );
+			}
+		}
+	}
+
 	static int m_NewCardCounter = 0;
 	protected static void NewCard() {
 		ClientCardTemplate ct = ClientCardTemplateManager.get().NewTemplate( -1 * ++m_NewCardCounter );
@@ -352,7 +423,14 @@ public class CardEditor {
 		if( m_CurrentTargetCondition != null ) {
 			for( CardTypes ct : CardTypes.values() ) {
 				m_CurrentTargetCondition.m_CardType[ ct.ordinal() ] = m_Conditions[ct.ordinal()].getSelection();
+				System.out.println( ct.name() + " is " + m_Conditions[ct.ordinal()].getSelection() );
 			}
+			for( GameZones ct : GameZones.values() ) {
+				m_CurrentTargetCondition.m_Location[ ct.ordinal() ] = m_ConditionsLocation[ct.ordinal()].getSelection();
+				System.out.println( ct.name() + " is " + m_ConditionsLocation[ct.ordinal()].getSelection() );
+			}
+			m_CurrentTargetCondition.m_CanTargetMine = m_ConditionsMine.getSelection( );
+			m_CurrentTargetCondition.m_CanTargetOpponent = m_ConditionsOpp.getSelection( );
 		}
 	}
 
@@ -381,7 +459,6 @@ public class CardEditor {
 			ClientCardTemplate ct = ClientCardTemplateManager.get().GetClientCardTemplate( rs.getInt("id") );
 			m_ListOfCards.add( String.format("%05d - %s", ct.getCardID(), ct.getCardName() ) );
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -399,9 +476,10 @@ public class CardEditor {
 		m_Tech.setSelection( Integer.valueOf(m_CurrentCardToEdit.GetStatValue( StatType.TECH )));
 		m_CardType.setText( m_CurrentCardToEdit.getCardType().name() );
 
+		m_CurrentListOfConditions = m_CurrentCardToEdit.getTargets();
 		m_ListOfTargets.removeAll();
 		int i = 0;
-		for( TargetingCondition tc : m_CurrentCardToEdit.getTargets() ) {
+		for( TargetingCondition tc : m_CurrentListOfConditions ) {
 			m_ListOfTargets.add( String.format("%02d", i++) );
 		}
 	}
@@ -438,7 +516,7 @@ public class CardEditor {
 			}
 
 			m_CurrentCardToEdit.setStats( stats );
-
+			m_CurrentCardToEdit.setTargets( m_CurrentListOfConditions );
 
 			m_ListOfTargets.removeAll();
 			
@@ -458,7 +536,6 @@ public class CardEditor {
 			writer = JAXBContext.newInstance(
 					ClientCardTemplate.class).createMarshaller();
 		} catch (JAXBException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
@@ -504,10 +581,8 @@ public class CardEditor {
 				}
 				writer.marshal( ct, new File(DEFAULT_CARD_PATH + ct.getCardID() + ".xml" ) );
 			} catch (SQLException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} catch (JAXBException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}

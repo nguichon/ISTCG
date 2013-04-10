@@ -238,7 +238,7 @@ public class ClientAccount extends Thread {
 									+ db_password
 									+ "', '"
 									+ email
-									+ "', DEFAULT);");
+									+ "', 500);");
 		} else {
 			throw new Exception("User name already exists");
 		}
