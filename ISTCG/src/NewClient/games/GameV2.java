@@ -25,6 +25,7 @@ import org.eclipse.swt.widgets.Text;
 import NewClient.ClientCardTemplate;
 import NewClient.ClientCardTemplate.CardRenderSize;
 import NewClient.ClientMain;
+import NewClient.ClientSoundManager;
 import Shared.ClientMessages;
 import Shared.ClientResponses;
 import Shared.GameStates;
@@ -33,6 +34,7 @@ import Shared.GameResources;
 import Shared.PlayerStates;
 
 public class GameV2 extends Composite {
+	
 	private static final int PLAYER_BAR_HEIGHT = 24;
 	private static final int BOTTOM_BAR_AREA_HEIGHT = CardRenderSize.SMALL.getHeight() + 15;
 	private static final int STACK_WIDTH = CardRenderSize.SMALL.getWidth() + 8;
@@ -317,18 +319,24 @@ public class GameV2 extends Composite {
 		case READING:
 			m_HelperText.setText( "Pass priority to let card resolve." );
 			m_MainButton.setEnabled( true );
+			m_PlayerField.setBackground(Display.getDefault().getSystemColor( SWT.COLOR_WHITE ));
 			break;
 		case ACTIVE:
 			if( m_State == GameStates.ACTIVE ) {
 				m_HelperText.setText( "Play a card, attack with a ship, or end your turn." );
+				m_PlayerField.setBackground(Display.getDefault().getSystemColor( SWT.COLOR_GREEN ));
+				ClientSoundManager.get().play("YourTurn.mp3");
+				
 			} else {
 				m_HelperText.setText( "Play a card or pass priority." );
+				m_PlayerField.setBackground(Display.getDefault().getSystemColor( SWT.COLOR_WHITE ));
 			}
 			m_MainButton.setEnabled( true );
 			break;
 		default:
 			m_HelperText.setText( "Wait." );
 			m_MainButton.setEnabled( false );
+			m_PlayerField.setBackground(Display.getDefault().getSystemColor( SWT.COLOR_WHITE ));
 			break;
 		}
 	}
@@ -379,6 +387,7 @@ public class GameV2 extends Composite {
 			} else if ( controller != -1 ) {
 				newParent = m_OpponentField;
 			}
+			ClientSoundManager.get().play("asplode.mp3");
 			break;
 		case STACK:
 			newParent = m_Stack;

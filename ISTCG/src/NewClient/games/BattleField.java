@@ -25,7 +25,7 @@ public class BattleField extends GameCardStorage {
 	@Override
 	public void AddCard( ClientGameCardInstance cgci ) {
 		if( ClientCardTemplateManager.get().GetClientCardTemplate( cgci.GetTemplateID() ).getCardType() == CardTypes.COMMAND_UNIT ) {
-			cgci.ChangeSize( CardRenderSize.MEDIUM );
+			//cgci.ChangeSize( CardRenderSize.MEDIUM );
 		}
 		super.AddCard( cgci );
 	}
@@ -33,10 +33,21 @@ public class BattleField extends GameCardStorage {
 	@Override
 	protected void OptimizeLayout() {
 		Control[] items = getChildren();
-		for( int i = 0; i < items.length; i++ ) {
-			items[i].setLocation( i * 100 + 100, 100 );
+		if(items.length>0){
+			try{
+				Rectangle area = getClientArea();
+				int columns = area.width/CardRenderSize.MEDIUM.getWidth();
+				int rows = area.height/CardRenderSize.MEDIUM.getHeight();
+				int count=0;
+				for(int i=0;i<rows;i++){
+					for(int j=0;j<columns;j++,count++){
+						items[count].setBounds(area.x+10+(j*100), area.y+10+(i*100), CardRenderSize.MEDIUM.getWidth(), CardRenderSize.MEDIUM.getHeight());
+					}
+				}
+			} catch(Exception e){ //do nothing
+			
+			}
 		}
-		
 		redraw();
 	}
 }

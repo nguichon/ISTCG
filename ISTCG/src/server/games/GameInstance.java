@@ -391,11 +391,11 @@ public class GameInstance {
 								 "ATTACK", 
 								 String.valueOf(attack.getAttacker().GetCardUID()), 
 								 String.valueOf( attack.getDefender().GetCardUID()));
-		GameMessage( String.format( "%s's %s is attacking %s's %s.", 
+		/*GameMessage( String.format( "%s's %s is attacking %s's %s.", 
 				attack.getAttacker().getController().getClientAccount().getUserName(), 
 				ClientCardTemplateManager.get().GetClientCardTemplate( attack.getAttacker().GetCardTemplate().getCardTemplateID() ).getCardName() ,
 				attack.getDefender().getController().getClientAccount().getUserName(),
-				ClientCardTemplateManager.get().GetClientCardTemplate( attack.getDefender().GetCardTemplate().getCardTemplateID() ).getCardName() ));
+				ClientCardTemplateManager.get().GetClientCardTemplate( attack.getDefender().GetCardTemplate().getCardTemplateID() ).getCardName() ));*/
 	}
 	public void PutCardOntoField( ServerCardInstance card ) {
 		card.SetLocation( GameZones.FIELD );

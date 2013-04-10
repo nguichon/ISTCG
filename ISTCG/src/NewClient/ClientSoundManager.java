@@ -16,6 +16,8 @@ import javazoom.jl.player.Player;
 import org.apache.commons.io.IOUtils;
 public class ClientSoundManager {
 
+	private static String OS = System.getProperty("os.name").toLowerCase();
+    private static String DEFAULT_SOUND_PATH = System.getProperty("user.dir") + (OS.indexOf("mac")>=0?"/ISTCG/data/sound/":"/data/sound/");
 	public static final int MAX_PLAYERS = 5;
 	public static ClientSoundManager m_Instance;
 	public static ArrayList<WeakReference<Player>> players; //List of players
@@ -58,9 +60,10 @@ public class ClientSoundManager {
 	 * @param fileName
 	 * File to be loaded
 	 */
-	public void play(String fileName){
+	public void play(String prefileName){
 		//check if the file is in our cache
 		InputStream in = null;
+		String fileName = DEFAULT_SOUND_PATH+prefileName;
 		if(cache.containsKey(fileName)){
 			in = new ByteArrayInputStream(tobytes(cache.get(fileName)));
 		} else{
