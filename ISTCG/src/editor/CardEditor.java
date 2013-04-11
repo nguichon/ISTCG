@@ -78,6 +78,7 @@ public class CardEditor {
 	private static final Canvas m_TechIcon = new Canvas( m_MainInfo, SWT.NONE );
 	private static final Combo m_CardType = new Combo( m_MainInfo, SWT.NONE );
 	private static final Button m_SaveButton = new Button( m_MainInfo, SWT.NONE );
+	private static final Button m_IsFast = new Button( m_MainInfo, SWT.TOGGLE );
 
 	private static final List m_ListOfTargets = new List( m_SubInfo, SWT.V_SCROLL );
 	private static final Button[] m_Conditions = new Button[ CardTypes.values().length ];
@@ -117,6 +118,7 @@ public class CardEditor {
 		}
 		m_ConditionsMine.setText( "Player's" );
 		m_ConditionsOpp.setText( "Opponent's" );
+		m_IsFast.setText( "Fast" );
 		m_NewTargetButton.setText( "+" );
 		m_NewTargetButton.addSelectionListener( new SelectionListener() {
 
@@ -375,6 +377,7 @@ public class CardEditor {
 				m_Tech.setBounds( 168, 17 * 4 + 26, 48, 24);
 				m_TechIcon.setBounds( 144, 17 * 4 + 26, 24, 24);
 				m_CardType.setBounds( 0, ca.height - 23, ca.width - 100, 23 );
+				m_IsFast.setBounds( 0, ca.height - 46, ca.width - 100, 23 );
 			}
 		});
 
@@ -475,6 +478,7 @@ public class CardEditor {
 		m_Energy.setSelection( Integer.valueOf(m_CurrentCardToEdit.GetStatValue( StatType.ENERGY )));
 		m_Tech.setSelection( Integer.valueOf(m_CurrentCardToEdit.GetStatValue( StatType.TECH )));
 		m_CardType.setText( m_CurrentCardToEdit.getCardType().name() );
+		m_IsFast.setSelection( m_CurrentCardToEdit.getIsCardFast() );
 
 		m_CurrentListOfConditions = m_CurrentCardToEdit.getTargets();
 		m_ListOfTargets.removeAll();
@@ -517,6 +521,8 @@ public class CardEditor {
 
 			m_CurrentCardToEdit.setStats( stats );
 			m_CurrentCardToEdit.setTargets( m_CurrentListOfConditions );
+			m_CurrentCardToEdit.setIsCardFast(m_IsFast.getSelection() );
+			m_CurrentCardToEdit.setBGImage( m_CurrentCardToEdit.getCardName() + ".png" );
 
 			m_ListOfTargets.removeAll();
 			
@@ -544,7 +550,7 @@ public class CardEditor {
 			try {
 				if( rs.next() ) {
 					//edit
-					String query = String.format( "UPDATE cards SET name = '%s', description = '%s', flavor_text = '%s', attack = %d, power = %d, defense = %d, structure = %d, metal = %d, energy = %d, tech = %d, type = '%s' WHERE id = %d;", 
+					String query = String.format( "UPDATE cards SET name = '%s', description = '%s', flavor_text = '%s', attack = %d, power = %d, defense = %d, structure = %d, metal = %d, energy = %d, tech = %d, type = '%s', fast = '%b' WHERE id = %d;", 
 							ct.getCardName(),
 							ct.getCardText(),
 							ct.getCardFlavor(),
@@ -556,6 +562,7 @@ public class CardEditor {
 							ct.GetStatValue( StatType.ENERGY ),
 							ct.GetStatValue( StatType.TECH ),
 							ct.getCardType().name(),
+							ct.getIsCardFast(),
 							ct.getCardID());
 					System.out.println( query );
 					Database.get().quickInsert( query );

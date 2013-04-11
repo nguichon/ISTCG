@@ -61,6 +61,15 @@ public class GamePlayer {
 			putCardInZone( card, GameZones.HAND );
 		}
 	}
+	public void DiscardHand( ) {
+		m_Game.GameMessage( String.format("%s discards his/her hand.", 
+				m_ClientAccount.getUserName()) );
+		while( m_Hand.Count() > 0 ) {
+			ServerCardInstance card = m_Hand.GetTopCard();
+			removeCardFromZone( card, GameZones.HAND );
+			putCardInZone( card, GameZones.GRAVEYARD );
+		}
+	}
 	public void AddResource( GameResources res, int value ) {
 		m_Game.GameMessage( String.format("%s adds %d %s to his/her resource pool.", 
 				m_ClientAccount.getUserName(),

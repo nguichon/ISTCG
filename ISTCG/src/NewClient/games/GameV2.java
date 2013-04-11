@@ -24,6 +24,7 @@ import org.eclipse.swt.widgets.Text;
 
 import NewClient.ClientCardTemplate;
 import NewClient.ClientCardTemplate.CardRenderSize;
+import NewClient.ClientCardTemplateManager;
 import NewClient.ClientMain;
 import NewClient.ClientSoundManager;
 import Shared.ClientMessages;
@@ -218,6 +219,9 @@ public class GameV2 extends Composite {
 	private void ExecuteMessage( String[] message ) {
 		try {
 			switch( ClientMessages.valueOf( message[0].toUpperCase() ) ){
+			case UNIT_ACTIVE_STATE:
+				m_LoadedCards.get( Integer.valueOf( message[3] ) ).SetActive( Boolean.valueOf( message[4] ) );
+				break;
 			case MOVE:
 				ClientGameCardInstance toMove = m_LoadedCards.get( Integer.valueOf( message[3] ) );
 				if( toMove == null ) {
@@ -443,8 +447,11 @@ public class GameV2 extends Composite {
 	private ArrayList< ClientGameCardInstance > m_Targets = new ArrayList< ClientGameCardInstance >();
 	
 	private void PlayCard(ClientGameCardInstance toPlay) {
-		SendMessageFromGame( ClientResponses.PLAY, 
-				String.valueOf(toPlay.GetID()));
+		if( ClientCardTemplateManager.get().GetClientCardTemplate( toPlay.GetTemplateID() ).getTargets().size() > 0 ) {
+			m_TargetingType = ClientResponses.PLAY;
+			m_SourceOfTargeting = toPlay;
+			m_TargetCount =  ClientCardTemplateManager.get().GetClientCardTemplate( toPlay.GetTemplateID() ).getTargets().size();
+		} else { SendMessageFromGame( ClientResponses.PLAY, String.valueOf(toPlay.GetID())); }
 	}
 	private void AttackWith( ClientGameCardInstance toAttackWith ) {
 		m_HelperText.setText( "Select a target to attack." );
@@ -457,17 +464,28 @@ public class GameV2 extends Composite {
 	}
 	private void AddTarget( ClientGameCardInstance toTarget ) {
 		if( m_TargetingMode ) {
-			m_Targets.add( toTarget );
+			if( m_TargetingType == ClientResponses.ATTACK ) {
+				m_Targets.add( toTarget );
+			} else if ( m_TargetingType == ClientResponses.PLAY ) {
+				if( ValidateTarget ( toTarget ) ) {
+					m_Targets.add( toTarget );
+				}
+			}
 			if( m_Targets.size() >= m_TargetCount ) {
 				if( m_TargetingType == ClientResponses.ATTACK ) {
 					SendMessageFromGame( ClientResponses.ATTACK, 
 							String.valueOf(m_SourceOfTargeting.GetID()), 
 							String.valueOf(toTarget.GetID()));
+				} else if ( m_TargetingType == ClientResponses.PLAY ) {
+					//TODO Stringify and send targets to server with play command.
 				}
 				m_TargetingMode = false;
 				SetGameState( m_State );
 			}
 		}
+	}
+	private boolean ValidateTarget( ClientGameCardInstance toTarget  ) {
+		return true;
 	}
 	private void Cancel() {
 		m_HelperText.setText( "Canceled." );

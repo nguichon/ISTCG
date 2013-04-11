@@ -1,1 +1,2 @@
-<?xml version="1.0" encoding="UTF-8" standalone="yes"?><ns2:clientCardTemplate xmlns:ns2="card template"><cardArt>Energy Cell.png</cardArt><cardFlavor></cardFlavor><cardID>1</cardID><cardName>Energy Cell</cardName><cardText>Gain an Energy resource.</cardText><cardType>RESOURCE</cardType><statList/><targetList/></ns2:clientCardTemplate>
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?><ns2:clientCardTemplate xmlns:ns2="card template"><cardArt>Energy Cell.png</cardArt><cardFlavor></cardFlavor><cardID>1</cardID><cardName>Energy Cell</cardName><cardText>Fast.&#xD;
+Gain an Energy resource.</cardText><cardType>RESOURCE</cardType><fast>true</fast><statList/><targetList/></ns2:clientCardTemplate>

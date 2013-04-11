@@ -1,6 +1,7 @@
 package server.games;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Random;
 import java.util.Stack;
@@ -116,11 +117,6 @@ public class GameInstance {
 	 * 		The actual message sent by the ClientAccount, split on ';'
 	 */
 	public synchronized void HandleMessage( ClientAccount origin, String[] message ) throws IndexOutOfBoundsException {
-		System.out.print( "[" + origin.getUserID() + "]: " );
-		for( String s : message ) {
-			System.out.print( s + ";" );
-		}
-		System.out.println();
 		try {
 			switch(ClientResponses.valueOf( message[0].toUpperCase() )) {
 				case END:
@@ -156,13 +152,11 @@ public class GameInstance {
 				case PASS:
 					switch( m_GameInstanceState ){
 					case STACKING:
-						System.out.println("STACK");
 						if( origin.getUserID() == m_PlayerList.get( m_ActivePlayerIndex ) ) {
 							PassPriority();
 						}
 						break;
 					case RESOLVING:
-						System.out.println("RESOLVE");
 						m_Players.get( origin.getUserID() ).setWaiting();
 						try {
 							Thread.sleep( 100 );
@@ -206,7 +200,7 @@ public class GameInstance {
 				case PLAY:
 					ServerCardInstance CARD_TO_PLAY = m_Directory.get( Integer.valueOf(message[2]) );
 					String TARGETING_SOLUTION = null;
-					if( message.length == 4 ) { TARGETING_SOLUTION = message[4]; }
+					if( message.length == 4 ) { TARGETING_SOLUTION = message[3]; }
 					switch( m_GameInstanceState ) {
 					case ACTIVE:
 						if( m_Players.get( origin.getUserID() ).getState() == PlayerStates.ACTIVE ) {
@@ -214,7 +208,7 @@ public class GameInstance {
 						}
 						break;
 					case STACKING:
-						if( m_Players.get( origin.getUserID() ).getState() == PlayerStates.ACTIVE ) {
+						if( m_Players.get( origin.getUserID() ).getState() == PlayerStates.ACTIVE && CARD_TO_PLAY.GetCardTemplate().isFast() ) {
 							m_Players.get( origin.getUserID() ).PlayCard( CARD_TO_PLAY, TARGETING_SOLUTION );
 							/*for( Integer p : m_PlayerList ) {
 								if( p != origin.getUserID() ) { m_Players.get( p ).setWaiting(); }
@@ -309,7 +303,6 @@ public class GameInstance {
 	}
 	public void SetAllPlayersToReading() {
 		for( Integer i : m_PlayerList ) { 
-			System.out.println( m_Players.get(i).getClientAccount().getUserName() + " set to READING" );
 			m_Players.get(i).setReading();
 		}
 	}
@@ -355,11 +348,8 @@ public class GameInstance {
 			ResolveStackObject( GetObjectFromStack() );
 			SetAllPlayersToReading();
 			if( m_ObjectsOnStack.isEmpty() ) {
-				System.out.println( "DONE RESOLVING" );
 				ChangeState(GameStates.ACTIVE);
-				System.out.println( "fewf" );
 				SetActivePlayer();
-				System.out.println( "DONfafafNG" );
 			}
 		}
 	}
@@ -391,11 +381,11 @@ public class GameInstance {
 								 "ATTACK", 
 								 String.valueOf(attack.getAttacker().GetCardUID()), 
 								 String.valueOf( attack.getDefender().GetCardUID()));
-		/*GameMessage( String.format( "%s's %s is attacking %s's %s.", 
+		GameMessage( String.format( "%s's %s is attacking %s's %s.", 
 				attack.getAttacker().getController().getClientAccount().getUserName(), 
-				ClientCardTemplateManager.get().GetClientCardTemplate( attack.getAttacker().GetCardTemplate().getCardTemplateID() ).getCardName() ,
+				attack.getAttacker().GetCardTemplate().getName() ,
 				attack.getDefender().getController().getClientAccount().getUserName(),
-				ClientCardTemplateManager.get().GetClientCardTemplate( attack.getDefender().GetCardTemplate().getCardTemplateID() ).getCardName() ));*/
+				attack.getDefender().GetCardTemplate().getName()) );
 	}
 	public void PutCardOntoField( ServerCardInstance card ) {
 		card.SetLocation( GameZones.FIELD );
@@ -453,5 +443,9 @@ public class GameInstance {
 
 	public ServerCardInstance GetCardInstance(Integer valueOf) {
 		return m_Directory.get( valueOf );
+	}
+
+	public Collection<GamePlayer> getPlayers() {
+		return m_Players.values();
 	}
 }

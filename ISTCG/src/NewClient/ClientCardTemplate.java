@@ -69,6 +69,7 @@ public class ClientCardTemplate {
 	private String m_CardName = "";
 	private String m_CardFlavor = "";
 	private String m_CardText = "";
+	private boolean m_Fast = false;
 
 	// private static Display display = null;
 
@@ -516,6 +517,15 @@ public class ClientCardTemplate {
 
 	public void setCardFlavor(String flavorText) {
 		m_CardFlavor = flavorText;
+	}
+	
+	@XmlElement(name = "fast")
+	public boolean getIsCardFast() {
+		return m_Fast;
+	}
+
+	public void setIsCardFast( boolean b ) {
+		m_Fast = b;
 	}
 
 	@XmlElementWrapper(name = "statList")

@@ -16,6 +16,7 @@ import org.eclipse.swt.widgets.Listener;
 import NewClient.ClientCardTemplate;
 import NewClient.ClientCardTemplate.CardRenderSize;
 import NewClient.ClientCardTemplateManager;
+import OldClient.ImageManager;
 import Shared.ClientResponses;
 import Shared.GameZones;
 
@@ -27,6 +28,7 @@ public class ClientGameCardInstance extends Composite {
 	private GameZones m_Zone = GameZones.UNKNOWN;
 	private int m_Controller = -1;
 	GameV2 m_HostGame;
+	private boolean m_Active = true;
 	
 	public ClientGameCardInstance(Composite parent, int style,
 			int instanceID, GameV2 hostGame ) {
@@ -46,6 +48,8 @@ public class ClientGameCardInstance extends Composite {
 					ClientCardTemplateManager.get().
 						GetClientCardTemplate( m_TemplateID ).
 						Render( arg0.gc, m_Size, null, m_DamageTaken );
+					if( !m_Active )
+						arg0.gc.drawImage( ImageManager.get().GetImage("filter-disabled.png"), 0, 0, 5, 5, 0, 0, m_Size.getWidth(), m_Size.getHeight() );
 				}
 			}
 		});
@@ -103,6 +107,10 @@ public class ClientGameCardInstance extends Composite {
 		m_HostGame.AddCardTo( this, newZone, m_Controller );
 		
 		gcz.RemoveCard( this );
+	}
+	public void SetActive( boolean active ) {
+		m_Active = active;
+		this.redraw();
 	}
 	public int GetTemplateID(  ) {
 		return m_TemplateID;

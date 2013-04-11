@@ -117,7 +117,7 @@ public class Lobby extends Composite {
 		TabItem t = new TabItem(m_TabFolder,SWT.NULL);
 		t.setText("Game "+gID);
 		GameV2 g = new GameV2(t.getParent(), SWT.None, Integer.valueOf( gID ), main, t);
-		g.LoadDeck( 3, "0,15|1,15|2,10|5,10|19,10" );
+		g.LoadDeck( 3, "6,4|8,2|15,4|17,2|19,4|21,3|24,2|9,4|0,15|1,10|2,10" );
 		games.add(g);
 		t.setControl(g);
 		
