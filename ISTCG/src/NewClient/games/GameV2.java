@@ -258,11 +258,14 @@ public class GameV2 extends Composite {
 				m_LoadedCards.get( Integer.valueOf( message[3] ) ).SetDamage( Integer.valueOf( message[4] ) );
 				break;
 			case STACK_OBJECT:
+				System.out.println("STACK OBJECT");
 				if( message[4].equals("ATTACK") ) {
 					//Type of stack object is an attack.
+					System.out.println("ATTACK OBJECT from "+message[5]+"which is "+m_LoadedCards.get( Integer.valueOf(message[5])).GetID());
 					StackObject so = new StackObject( m_Stack, SWT.NONE, m_LoadedCards.get( Integer.valueOf(message[5])), "Attacking");
 					m_StackObjects.put( Integer.valueOf( message[3] ), so );
 					m_Stack.OptimizeLayout();
+					m_Stack.redraw();
 				} else {
 					System.out.println(" UNKNOWN STACK OBJECT TYPE " + message[4] );
 				}
@@ -320,10 +323,13 @@ public class GameV2 extends Composite {
 		m_PlayerState = ps;
 		System.out.println( "PLAYER SET TO " + ps.name() );
 		switch( ps ) {
+		case READY:
+			m_PlayerField.setBackground(Display.getDefault().getSystemColor( SWT.COLOR_GREEN ));
+			break;
 		case READING:
 			m_HelperText.setText( "Pass priority to let card resolve." );
 			m_MainButton.setEnabled( true );
-			m_PlayerField.setBackground(Display.getDefault().getSystemColor( SWT.COLOR_WHITE ));
+			m_PlayerField.setBackground(Display.getDefault().getSystemColor( SWT.COLOR_GREEN ));
 			break;
 		case ACTIVE:
 			if( m_State == GameStates.ACTIVE ) {
@@ -333,7 +339,7 @@ public class GameV2 extends Composite {
 				
 			} else {
 				m_HelperText.setText( "Play a card or pass priority." );
-				m_PlayerField.setBackground(Display.getDefault().getSystemColor( SWT.COLOR_WHITE ));
+				//m_PlayerField.setBackground(Display.getDefault().getSystemColor( SWT.COLOR_WHITE ));
 			}
 			m_MainButton.setEnabled( true );
 			break;

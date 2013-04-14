@@ -24,7 +24,8 @@ public class Lobby extends Composite {
 	private Text m_SendChatText;
 	private TabFolder m_TabFolder;
 	private Button m_SendChatButton;
-
+	private Button m_FindMatchButton;
+	
 	DeckEditor d;
 	ArrayList<GameV2> games;
 	ClientMain main;
@@ -79,6 +80,7 @@ public class Lobby extends Composite {
 				m_ReceivedMessagesStyledText.setBounds( new_size.width - width_2, 10, width_2 - 20, new_size.height - 74);
 				m_SendChatText.setBounds( new_size.width - width_2, new_size.height - 54, width_2 - 105, 44);
 				m_SendChatButton.setBounds( new_size.width - width_2 + (width_2 - 100), new_size.height - 54, 80, 44);
+				
 			}
 			
 		});
