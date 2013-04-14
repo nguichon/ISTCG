@@ -2,7 +2,9 @@ package server.games;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import Shared.ClientMessages;
@@ -10,6 +12,7 @@ import Shared.ClientMessages;
 import server.Database;
 import server.ServerMain;
 import server.network.ClientAccount;
+import server.network.ConnectionsHandler;
 
 
 public class GameManager {
@@ -55,7 +58,23 @@ public class GameManager {
 			origin.SendMessage( ClientMessages.SERVER, "Bad game id: " + game_id + "." );
 		}
 	}
-	
+	public void makeMatchForScrubs(ClientAccount scrub){
+		//Since nothing else in any of Nick's code is documented, I'll document this to acknowledge that I, Jesse wrote it
+		//This method will create a game with the scrub and the player with the least games online.
+		//sets a player to be looking and if another is, starts a game
+		scrub.setSearchingForGame(true);
+		//see if anyone else wants to play.
+		Collection<ClientAccount> noobs = ConnectionsHandler.get().getAuthenticatedUsers();
+		for(ClientAccount l2p:noobs){
+			if(l2p.getUserID()!=scrub.getUserID()&&l2p.wantsToPlay()){
+				//make the game
+				this.CreateGame(scrub,l2p);
+				scrub.setSearchingForGame(false);
+				l2p.setSearchingForGame(false);
+			}
+		}
+		
+	}
 	//=====
 	//Singleton methods
 	//=====

@@ -5,6 +5,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -37,7 +38,9 @@ public class ConnectionsHandler extends Thread {
 		if( m_Instance == null ) { m_Instance = new ConnectionsHandler(); }
 		return m_Instance;
 	}
-	
+	public Collection<ClientAccount> getAuthenticatedUsers(){
+		return m_AuthenticatedClient.values();
+	}
 	@Override
 	public void run() {
 		try {

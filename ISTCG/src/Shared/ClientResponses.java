@@ -24,5 +24,5 @@ public enum ClientResponses {
 		PRODUCTINFO, 
 		PURCHASE,
 		CREATE_ACCOUNT,
-		BALANCE;
+		BALANCE, MATCH;
 }

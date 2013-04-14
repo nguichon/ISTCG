@@ -59,13 +59,13 @@ public class DeckEditor extends Composite {
 
 				@Override
 				public void widgetDefaultSelected(SelectionEvent arg0) {
-					// TODO Auto-generated method stub
+					
 					
 				}
 
 				@Override
 				public void widgetSelected(SelectionEvent arg0) {
-					// TODO Auto-generated method stub
+					
 					m_CardPreviewType = Integer.valueOf(cards[m_MyCollectionList.getSelectionIndex()][0]);
 					m_CardPreview.redraw();
 				}

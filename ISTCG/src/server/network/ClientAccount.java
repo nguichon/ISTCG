@@ -27,6 +27,8 @@ import server.store.ServerStore;
  * @author Nicholas Guichon
  */
 public class ClientAccount extends Thread {
+	private boolean wantToPlay;
+
 	/**
 	 * Constructor for a this class. Adds the ClientAccount to MessageHandler's
 	 * queue.
@@ -39,6 +41,7 @@ public class ClientAccount extends Thread {
 		m_AdminAccount = false;
 		m_ToClient = client;
 
+		wantToPlay = false;
 		try {
 			m_Input = new Scanner(m_ToClient.getInputStream());
 			m_Output = new PrintWriter(m_ToClient.getOutputStream());
@@ -116,6 +119,12 @@ public class ClientAccount extends Thread {
 									.GetClientByName(command[1]);
 							GameManager.get().CreateGame(this, opponent);
 						}
+						break;
+					case MATCH:
+						if (m_UserID!= -1){
+							GameManager.get().makeMatchForScrubs(this);
+						}
+						
 						break;
 					case ADMIN:
 						if (m_AdminAccount) {
@@ -334,6 +343,7 @@ public class ClientAccount extends Thread {
 	private ClientAccount m_Next;
 	private ClientAccount m_Previous;
 	private boolean m_ToRemove;
+	//private boolean wantToPlay;
 
 	public void SetNext(ClientAccount cm) {
 		m_Next = cm;
@@ -408,5 +418,13 @@ public class ClientAccount extends Thread {
 		}
 		String hashOfInput = hash(password, Base64.decode(saltAndPass[0]));
 		return hashOfInput.equals(saltAndPass[1]);
+	}
+
+	public void setSearchingForGame(boolean b) {
+		wantToPlay=true;
+		
+	}
+	public boolean wantsToPlay(){
+		return wantToPlay;
 	}
 }
