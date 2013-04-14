@@ -329,7 +329,7 @@ public class GameV2 extends Composite {
 			if( m_State == GameStates.ACTIVE ) {
 				m_HelperText.setText( "Play a card, attack with a ship, or end your turn." );
 				m_PlayerField.setBackground(Display.getDefault().getSystemColor( SWT.COLOR_GREEN ));
-				ClientSoundManager.get().play("YourTurn.mp3");
+				//ClientSoundManager.get().play("YourTurn.mp3");
 				
 			} else {
 				m_HelperText.setText( "Play a card or pass priority." );
@@ -391,7 +391,7 @@ public class GameV2 extends Composite {
 			} else if ( controller != -1 ) {
 				newParent = m_OpponentField;
 			}
-			ClientSoundManager.get().play("asplode.mp3");
+			//ClientSoundManager.get().play("asplode.mp3");
 			break;
 		case STACK:
 			newParent = m_Stack;

@@ -49,7 +49,20 @@ public class PreviewBox extends Composite {
 		Point p = cgci.toDisplay( 0, 0 );
 		Point p2 = this.toDisplay( 0, 0 );
 		Point location = this.getLocation();
-		this.setLocation( location.x + (p.x - p2.x) - ( (this.getSize().x - cgci.getSize().x) / 2), location.y + (p.y - p2.y) - this.getSize().y );
+		int x = location.x + (p.x - p2.x) - ( (this.getSize().x - cgci.getSize().x) / 2);
+		int y = location.y + (p.y - p2.y) - this.getSize().y;
+		if(x>(getClientArea().x+getClientArea().width)){
+			x-=this.getSize().x;
+		} else if(x<(getClientArea().x+getClientArea().width)){
+			x+=this.getSize().x;
+		}
+		if(y>(getClientArea().y+getClientArea().height)){
+			y-=this.getSize().y;
+		} else if(y<getClientArea().y){
+			y+=this.getSize().y;
+		}
+		
+		this.setLocation( x, y );
 		
 		this.redraw();
 		this.setVisible( true );
@@ -63,8 +76,21 @@ public class PreviewBox extends Composite {
 		Point p = so.toDisplay( 0, 0 );
 		Point p2 = this.toDisplay( 0, 0 );
 		Point location = this.getLocation();
-		this.setLocation( location.x + (p.x - p2.x) - ( (this.getSize().x - so.getSize().x) / 2), location.y + (p.y - p2.y) - this.getSize().y );
+		//this.setLocation( location.x + (p.x - p2.x) - ( (this.getSize().x - so.getSize().x) / 2), location.y + (p.y - p2.y) - this.getSize().y );
+		int x = location.x + (p.x - p2.x) - ( (this.getSize().x - so.getSize().x) / 2);
+		int y = location.y + (p.y - p2.y) - this.getSize().y;
+		if(x>(getClientArea().x+getClientArea().width)){
+			x-=this.getSize().x;
+		}else if(x<(getClientArea().x+getClientArea().width)){
+			x+=this.getSize().x;
+		}
+		if(y>(getClientArea().y+getClientArea().height)){
+			y+=this.getSize().y;
+		} else if(y<(getClientArea().y+getClientArea().height)){
+			y-=this.getSize().y;
+		}
 		
+		this.setLocation( x, y );
 		this.redraw();
 		this.setVisible( true );
 	}
