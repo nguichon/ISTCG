@@ -230,7 +230,9 @@ public class ClientMain {
 					//WUT
 				} else {
 					((Lobby)composite).addGame(inputs[1]);
+					((Lobby)composite).getDeckEditor().endMatchFinding();
 				}
+			
 			break;
 		case COLLECTION:
 			if(composite instanceof Lobby){

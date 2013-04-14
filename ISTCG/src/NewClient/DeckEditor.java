@@ -62,6 +62,7 @@ public class DeckEditor extends Composite {
 			public void widgetSelected(SelectionEvent arg0) {
 				//onClick
 				main.sendData("MATCH");
+				m_FindMatchButton.setText("Finding a match...");
 			}
 		});
 		m_FindMatchButton.setText("Find Match!");
@@ -181,7 +182,7 @@ public class DeckEditor extends Composite {
 				m_AddCardButton.setBounds( new_size.width - width_2, new_size.height-ClientCardTemplate.CardRenderSize.LARGE.getHeight(), width_2- ClientCardTemplate.CardRenderSize.LARGE.getWidth() - 50, 22 );
 				m_RemoveCardButton.setBounds( new_size.width - width_2, new_size.height-ClientCardTemplate.CardRenderSize.LARGE.getHeight() + 27, width_2-  ClientCardTemplate.CardRenderSize.LARGE.getWidth() - 10, 22 );
 				m_SpinnerToMove.setBounds( new_size.width - (ClientCardTemplate.CardRenderSize.LARGE.getWidth() + 50), new_size.height-ClientCardTemplate.CardRenderSize.LARGE.getHeight(), 40, 22 );
-				m_FindMatchButton.setBounds( new_size.width - width_2, new_size.height-ClientCardTemplate.CardRenderSize.LARGE.getHeight()+m_RemoveCardButton.getBounds().height+50, width_2- ClientCardTemplate.CardRenderSize.LARGE.getWidth() - 50, 22 );
+				m_FindMatchButton.setBounds( new_size.width - width_2, new_size.height-ClientCardTemplate.CardRenderSize.LARGE.getHeight()+m_RemoveCardButton.getBounds().height+50, width_2- ClientCardTemplate.CardRenderSize.LARGE.getWidth() - 50, 50 );
 			}
 			
 		});
@@ -271,5 +272,8 @@ public class DeckEditor extends Composite {
 			e.printStackTrace();
 		}
 		
+	}
+	public void endMatchFinding(){
+		m_FindMatchButton.setText("Find Match!");
 	}
 }
