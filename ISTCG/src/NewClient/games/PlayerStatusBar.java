@@ -56,6 +56,7 @@ public class PlayerStatusBar extends Composite {
 	}
 
 	public void UpdateZoneCount(GameZones valueOf, Integer valueOf2) {
+		System.out.println("RESEOURCEEEE: "+valueOf);
 		switch( valueOf ) {
 			case HAND:
 				m_PlayerHandSize.setText( HAND_SIZE_LABEL + valueOf2 );
@@ -72,17 +73,19 @@ public class PlayerStatusBar extends Composite {
 	}
 
 	public void UpdateResourceCount(GameResources valueOf, Integer valueOf2) {
-
+		System.out.println("RESEOURCEEEE: "+valueOf);
 		System.out.println( valueOf.name() + ": " + valueOf2 );
 		switch( valueOf ) {
 			case METAL:
-				m_PlayerHandSize.setText( HAND_SIZE_LABEL + valueOf2 );
+				m_PlayerMetal.setText( METAL_LABEL + valueOf2 );
+				System.out.println("METALLLLL");
+				//m_PlayerMetalSize = new IconLabel( this, SWT.NONE, ImageManager.get().GetImage( "resource_hand_icon.png" ), HAND_SIZE_LABEL + valueOf2);
 				break;
 			case ENERGY:
-				m_PlayerDeckSize.setText( DECK_SIZE_LABEL + valueOf2 );
+				m_PlayerEnergy.setText( ENERGY_LABEL + valueOf2 );
 				break;
 			case TECH:
-				m_PlayerSYSize.setText( SCRAP_YARD_SIZE_LABEL + valueOf2 );
+				m_PlayerTech.setText( TECH_LABEL + valueOf2 );
 				break;
 			default:
 				break;
