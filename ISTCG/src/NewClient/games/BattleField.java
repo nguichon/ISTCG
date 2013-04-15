@@ -41,7 +41,8 @@ public class BattleField extends GameCardStorage {
 				int count=0;
 				for(int i=0;i<rows;i++){
 					for(int j=0;j<columns;j++,count++){
-						items[count].setBounds(area.x+10+(j*100), area.y+10+(i*100), CardRenderSize.MEDIUM.getWidth(), CardRenderSize.MEDIUM.getHeight());
+						items[count].setBounds(area.x+10+(j*100), area.y+10+(i*100), CardRenderSize.SMALL.getWidth(), CardRenderSize.SMALL.getHeight());
+						
 					}
 				}
 			} catch(Exception e){ //do nothing
