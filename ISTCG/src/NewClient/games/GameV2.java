@@ -275,10 +275,13 @@ public class GameV2 extends Composite {
 				m_StackObjects.remove( Integer.valueOf( message[3] ) ).dispose();
 				break;
 			case GAME_RESULT:
+				System.out.println( message[3] );
 				if( message[3].equals("WINNER") ) {
 					if( Integer.valueOf( message[4] ) == Integer.valueOf(m_MainClass.getPID()) ) {
+						System.out.println( "WIN" );
 						youWin();
 					} else {
+						System.out.println( "LOSE" );
 						youLose();
 					}
 				}
@@ -515,7 +518,7 @@ public class GameV2 extends Composite {
 		
 		//You win, fool.
 		
-		Label winrar = new Label(this, SWT.BORDER|SWT.CENTER);
+		Label winrar = new Label(this, SWT.BORDER|SWT.CENTER|SWT.ON_TOP);
 		winrar.setText(WIN_TEXT);
 		winrar.setForeground(Display.getDefault().getSystemColor( SWT.COLOR_YELLOW ));
 		FontData[] fD = winrar.getFont().getFontData();
@@ -542,14 +545,15 @@ public class GameV2 extends Composite {
 				// TODO Auto-generated method stub
 				m_MainClass.closeTab(m_GameID);
 			}});
-		
+		winrar.setVisible(true);
+		winrar.moveAbove( null );
 	}
 	
 public void youLose(){
 		
 		//You lose, scrub.
 		
-		Label winrar = new Label(this, SWT.BORDER|SWT.CENTER);
+		Label winrar = new Label(this, SWT.BORDER|SWT.CENTER|SWT.ON_TOP);
 		winrar.setText(LOSS_TEXT);
 		winrar.setForeground(Display.getDefault().getSystemColor( SWT.COLOR_RED ));
 		FontData[] fD = winrar.getFont().getFontData();
@@ -576,6 +580,8 @@ public void youLose(){
 				// TODO Auto-generated method stub
 				m_MainClass.closeTab(m_GameID);
 			}});
+		winrar.setVisible(true);
+		winrar.moveAbove( null );
 		
 	}
 	

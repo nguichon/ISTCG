@@ -272,6 +272,7 @@ public class ClientMain {
 		case PLAYER_STATE: //Fall through
 		case STACK_OBJECT: //Fall through
 		case REMOVE_STACK_OBJECT: //Fall through
+		case GAME_RESULT: //Fall through
 		case SET_CARD_DAMAGE: //Fall through
 		case UNIT_ACTIVE_STATE:
 			if( Lobby.class.isInstance( composite ) ) {
