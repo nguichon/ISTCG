@@ -32,7 +32,10 @@ public class GameManager {
 	public int CreateGame( ClientAccount... players ) {
 		int gameNumber = GetNewGameNumber();
 		synchronized( m_ActiveGames ) {
-			m_ActiveGames.put( gameNumber , new GameInstance(gameNumber, players) );
+			GameInstance gi =  new GameInstance(gameNumber, players);
+			m_ActiveGames.put( gameNumber , gi );
+			System.out.println("STUFF");
+			gi.AcceptMessages( gameNumber, players );
 		}
 		return gameNumber;
 	}

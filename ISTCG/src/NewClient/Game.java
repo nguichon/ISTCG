@@ -779,6 +779,10 @@ public class Game extends Composite {
 			default: 
 				break;
 		}
+		grpStack.layout();
+		grpHand.layout();
+		grpEnemy.layout();
+		group_1.layout();
 	}
 	
 	

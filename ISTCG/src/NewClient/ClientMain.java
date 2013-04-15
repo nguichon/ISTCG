@@ -335,7 +335,7 @@ public class ClientMain {
 			} break;
 		case UNIT_ACTIVE_STATE:
 			if(composite instanceof Lobby){
-				if(((Lobby)composite).findGameById(inputs[1])!=null){
+				if(((Lobby)composite).findGameById(inputs[1])!=null&&((Lobby)composite).findGameById(inputs[1]).findCardById(inputs[2])!=null&&!((Lobby)composite).findGameById(inputs[1]).findCardById(inputs[2]).isDisposed()){
 					
 					((Lobby)composite).findGameById(inputs[1]).findCardById(inputs[2]).setActive( Boolean.valueOf( inputs[3] ) );
 				}

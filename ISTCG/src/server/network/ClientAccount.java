@@ -69,7 +69,7 @@ public class ClientAccount extends Thread {
 			m_Output.println(messageType.name() + ";" + parameterString);
 			m_Output.flush();
 			try {
-				Thread.sleep( 5 );
+				Thread.sleep( 50 );
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

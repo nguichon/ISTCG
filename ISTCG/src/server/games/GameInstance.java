@@ -86,9 +86,23 @@ public class GameInstance {
 	 */
 	public GameInstance(int id, ClientAccount[] players) {
 		m_GameInstanceID = id;
+	}
+	
+	private boolean m_Accept = false;
+	public void AcceptMessages(int id, ClientAccount[] players) {
+		System.out.println("STUFFA");
 		m_Players = new HashMap< Integer, GamePlayer >();
+
+		System.out.println("STUFFB");
 		m_PlayerList = new ArrayList< Integer >();
+		
+
+		System.out.println("STUFFC");
 		for(ClientAccount ca : players) { AddToGame( ca ); }
+		
+
+		System.out.println("STUFFD");
+		m_Accept = true;
 	}
 	
 	/**
@@ -127,6 +141,7 @@ public class GameInstance {
 			System.out.print( s + ";" );
 		}
 		System.out.println();
+		while( !m_Accept ) { System.out.println(" WAITING");}
 		try {
 			switch(ClientResponses.valueOf( message[0].toUpperCase() )) {
 				case END:
