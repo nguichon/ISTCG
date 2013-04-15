@@ -322,4 +322,11 @@ public class ClientMain {
 		if(MakeConnection())
 			m_Server.sendData( "CREATE_ACCOUNT;" + login + ";" + password + ";none@void.com" );
 	}
+	public void closeTab(int m_GameID) {
+		if(composite instanceof Lobby){
+			if(((Lobby)composite).findGameById(m_GameID)!=null)
+				((Lobby)composite).findGameById(m_GameID).m_Host.dispose();
+		}
+		
+	}
 }

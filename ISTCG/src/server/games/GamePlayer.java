@@ -222,9 +222,9 @@ public class GamePlayer {
 			
 			//Pay costs
 			if( m != null && m.m_Value != -1 ) m_Resources[GameResources.METAL.ordinal()] -= m.m_Value;
-			if( e != null && e.m_Value != -1 ) m_Resources[GameResources.METAL.ordinal()] -= e.m_Value;
-			if( t != null && t.m_Value != -1 ) m_Resources[GameResources.METAL.ordinal()] -= t.m_Value;
-
+			if( e != null && e.m_Value != -1 ) m_Resources[GameResources.ENERGY.ordinal()] -= e.m_Value;
+			if( t != null && t.m_Value != -1 ) m_Resources[GameResources.TECH.ordinal()] -= t.m_Value;
+			
 			for( GameResources res : GameResources.values() ) {
 				m_Game.SendMessageToAllPlayers( ClientMessages.UPDATE_PLAYER, 
 											String.valueOf( m_ClientAccount.getUserID() ), 
