@@ -22,7 +22,7 @@ import NewClient.games.GameV2;
 public class Lobby extends Composite {
 	private StyledText m_ReceivedMessagesStyledText;
 	private Text m_SendChatText;
-	private TabFolder m_TabFolder;
+	public TabFolder m_TabFolder;
 	private Button m_SendChatButton;
 	private Button m_FindMatchButton;
 	

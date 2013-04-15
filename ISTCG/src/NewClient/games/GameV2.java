@@ -3,14 +3,16 @@ package NewClient.games;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.PriorityQueue;
 import java.util.Queue;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.MouseTrackListener;
+import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Button;
@@ -20,18 +22,15 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.TabItem;
-import org.eclipse.swt.widgets.Text;
 
-import NewClient.ClientCardTemplate;
 import NewClient.ClientCardTemplate.CardRenderSize;
 import NewClient.ClientCardTemplateManager;
 import NewClient.ClientMain;
-import NewClient.ClientSoundManager;
 import Shared.ClientMessages;
 import Shared.ClientResponses;
+import Shared.GameResources;
 import Shared.GameStates;
 import Shared.GameZones;
-import Shared.GameResources;
 import Shared.PlayerStates;
 
 public class GameV2 extends Composite {
@@ -40,11 +39,12 @@ public class GameV2 extends Composite {
 	private static final int BOTTOM_BAR_AREA_HEIGHT = CardRenderSize.SMALL.getHeight() + 15;
 	private static final int STACK_WIDTH = CardRenderSize.SMALL.getWidth() + 8;
 	private static final int HELPER_HEIGHT = 24;
-	
+	private static final String WIN_TEXT = "YOU WIN!";
+	private static final String LOSS_TEXT = "YOU LOSE!";
 	private static final Point SCRAPYARD_SIZE = new Point( CardRenderSize.SMALL.getWidth() + 10, CardRenderSize.SMALL.getHeight() + 10 );
 	private static final Point BUTTON_SIZE = new Point( BOTTOM_BAR_AREA_HEIGHT, BOTTOM_BAR_AREA_HEIGHT );
 	private int m_GameID;
-	private TabItem m_Host;
+	public TabItem m_Host;
 	private ClientMain m_MainClass;
 	
 	private GameStates m_State = GameStates.STARTING;
@@ -501,4 +501,73 @@ public class GameV2 extends Composite {
 		m_TargetingMode = false;
 		SetGameState( m_State );
 	}
+	
+	public void youWin(){
+		
+		//You win, fool.
+		
+		Label winrar = new Label(this, SWT.BORDER|SWT.CENTER);
+		winrar.setText(WIN_TEXT);
+		winrar.setForeground(Display.getDefault().getSystemColor( SWT.COLOR_YELLOW ));
+		FontData[] fD = winrar.getFont().getFontData();
+		fD[0].setHeight(32);
+		winrar.setFont( new Font(Display.getDefault(),fD[0]));
+		
+		winrar.setBounds(getClientArea());
+		winrar.addMouseListener(new MouseListener(){
+
+			@Override
+			public void mouseDoubleClick(MouseEvent arg0) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void mouseDown(MouseEvent arg0) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void mouseUp(MouseEvent arg0) {
+				// TODO Auto-generated method stub
+				m_MainClass.closeTab(m_GameID);
+			}});
+		
+	}
+	
+public void youLose(){
+		
+		//You lose, scrub.
+		
+		Label winrar = new Label(this, SWT.BORDER|SWT.CENTER);
+		winrar.setText(LOSS_TEXT);
+		winrar.setForeground(Display.getDefault().getSystemColor( SWT.COLOR_RED ));
+		FontData[] fD = winrar.getFont().getFontData();
+		fD[0].setHeight(32);
+		winrar.setFont( new Font(Display.getDefault(),fD[0]));
+		
+		winrar.setBounds(getClientArea());
+		winrar.addMouseListener(new MouseListener(){
+
+			@Override
+			public void mouseDoubleClick(MouseEvent arg0) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void mouseDown(MouseEvent arg0) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void mouseUp(MouseEvent arg0) {
+				// TODO Auto-generated method stub
+				m_MainClass.closeTab(m_GameID);
+			}});
+		
+	}
+	
 }
