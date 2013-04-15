@@ -222,8 +222,8 @@ public class GamePlayer {
 			
 			//Pay costs
 			if( m != null && m.m_Value != -1 ) m_Resources[GameResources.METAL.ordinal()] -= m.m_Value;
-			if( e != null && e.m_Value != -1 ) m_Resources[GameResources.METAL.ordinal()] -= e.m_Value;
-			if( t != null && t.m_Value != -1 ) m_Resources[GameResources.METAL.ordinal()] -= t.m_Value;
+			if( e != null && e.m_Value != -1 ) m_Resources[GameResources.ENERGY.ordinal()] -= e.m_Value;
+			if( t != null && t.m_Value != -1 ) m_Resources[GameResources.TECH.ordinal()] -= t.m_Value;
 			
 			//Put onto stack
 			//m_Game.GameMessage( String.format( "%s played %s.", m_ClientAccount.getUserName(), ClientCardTemplateManager.get().GetClientCardTemplate( card.GetCardTemplate().getCardTemplateID() ).getCardName() ) );
