@@ -18,6 +18,7 @@ public class Login extends Composite {
 	private Text text_user_name;
 	private Text text_password;
 	private Label label_login_status;
+	private Button btnCreate;
 	Button btnLogin;
 	boolean server = true;
 	final ClientMain m_Host;
@@ -59,6 +60,7 @@ public class Login extends Composite {
 		});
 		text_password.setBounds(174, 128, 152, 31);
 		
+		
 		final Label lblUsername = new Label(this, SWT.NONE);
 		lblUsername.setBounds(76, 85, 72, 31);
 		lblUsername.setText("Username:");
@@ -73,17 +75,17 @@ public class Login extends Composite {
 		btnLogin.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
-				String login = lblUsername.getText();
-				String password = lblPassword.getText();
+				String login = text_user_name.getText();
+				String password = text_password.getText();
 				
 				if( getUsername().getText().equals("") ) {
 					label_login_status.setText( "Enter a username." );
-					lblUsername.setFocus();
+					text_user_name.setFocus();
 					return;
 				}
 				if( getPassword().getText().equals("") ) {
 					label_login_status.setText( "Enter a password." );
-					lblPassword.setFocus();
+					text_password.setFocus();
 					return;
 				}
 				m_Host.login( login, password );
@@ -92,6 +94,30 @@ public class Login extends Composite {
 		});
 		btnLogin.setBounds(156, 174, 94, 28);
 		btnLogin.setText("Login");
+		
+
+		btnCreate = new Button( this, SWT.NONE );
+		btnCreate.setText("Create");
+		btnCreate.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent arg0) {
+				String login = text_user_name.getText();
+				String password = text_password.getText();
+				
+				if( getUsername().getText().equals("") ) {
+					label_login_status.setText( "Enter a username." );
+					text_user_name.setFocus();
+					return;
+				}
+				if( getPassword().getText().equals("") ) {
+					label_login_status.setText( "Enter a password." );
+					text_password.setFocus();
+					return;
+				}
+				m_Host.createAccount( login, password );
+			
+			}
+		});
 		
 		this.addListener( SWT.Resize, new Listener() {
 
@@ -102,7 +128,8 @@ public class Login extends Composite {
 				lblUsername.setBounds( (bounds.width / 2) - 125, (bounds.height / 2) - 53, 55, 22 );
 				text_password.setBounds( (bounds.width / 2) - 65, (bounds.height / 2) -25, 190, 22 );
 				lblPassword.setBounds( (bounds.width / 2) - 125, (bounds.height / 2) -23, 55, 22 );
-				btnLogin.setBounds( (bounds.width / 2) - 40, (bounds.height / 2) + 5, 80, 22 );
+				btnLogin.setBounds( (bounds.width / 2) - 0, (bounds.height / 2) + 5, 80, 22 );
+				btnCreate.setBounds( (bounds.width / 2) - 80, (bounds.height / 2) + 5, 80, 22 );
 				label_login_status.setBounds( 0, (bounds.height / 2) + 35, bounds.width, 22 );
 			}
 			
@@ -127,6 +154,12 @@ public class Login extends Composite {
 	}
 	public void disableLogin(){
 		btnLogin.setEnabled(false);
+		btnCreate.setEnabled(false);
 		server=false;
+	}
+
+
+	public void CreationFailed() {
+		label_login_status.setText( "Failed to create account." );
 	}
 }

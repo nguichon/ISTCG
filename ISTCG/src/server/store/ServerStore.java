@@ -13,7 +13,7 @@ public class ServerStore {
 	private static HashMap<Integer, StoreItem> items = new HashMap<Integer, StoreItem> ();
 	
 	public static void Initialize() {
-		ResultSet rs = Database.get().quickQuery( "SELECT * FROM store_items" );
+		/*ResultSet rs = Database.get().quickQuery( "SELECT * FROM store_items" );
 		try {
 			while( rs.next() ) {
 				items.put( rs.getInt( "id" ), new StoreItem( rs ) );
@@ -21,7 +21,7 @@ public class ServerStore {
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}
+		}*/
 	}
 	public static void SendBalance( ClientAccount ca ) {
 		ca.SendMessage( ClientMessages.BALANCE, String.valueOf( GetBalance( ca ) ) );

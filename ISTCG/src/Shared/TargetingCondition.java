@@ -23,4 +23,10 @@ public class TargetingCondition {
 
     @XmlElement(name = "stack_is_targetable")
 	public boolean m_CanTargetStackObjects;
+
+    @XmlElement(name = "targets_mine")
+	public boolean m_CanTargetMine;
+    
+    @XmlElement(name = "targets_opponents")
+	public boolean m_CanTargetOpponent;
 }

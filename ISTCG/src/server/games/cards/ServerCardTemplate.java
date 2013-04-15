@@ -7,8 +7,11 @@ import java.util.HashMap;
 
 import server.games.cards.abilities.Ability;
 import server.games.events.DamageEvent;
+import server.games.events.GameEvent;
 import server.games.events.ResolutionEvent;
 
+import NewClient.ClientCardTemplate;
+import NewClient.ClientCardTemplateManager;
 import Shared.CardTypes;
 import Shared.StatBlock;
 import Shared.TargetingCondition;
@@ -19,10 +22,13 @@ public abstract class ServerCardTemplate {
 	private HashMap<StatBlock.StatType, StatBlock> m_Stats;
 	private ArrayList<Ability> m_Abilities;
 	private ArrayList<TargetingCondition> m_Targets;
+	private ClientCardTemplate cct;
+	private boolean m_Fast;
 	
 	public ServerCardTemplate( ) { m_Stats = new HashMap<StatBlock.StatType, StatBlock>();  }
 	public void Initialize(ResultSet card) throws SQLException  {
 		setCardTemplateID( card.getInt( "id" ) );
+		cct = ClientCardTemplateManager.get().GetClientCardTemplate( m_CardID );
 		setStat( StatBlock.StatType.ATTACK, card.getInt( "attack" ) );
 		setStat( StatBlock.StatType.DEFENSE,  card.getInt( "defense" ) );
 		setStat( StatBlock.StatType.POWER,  card.getInt( "power" ) );
@@ -32,8 +38,13 @@ public abstract class ServerCardTemplate {
 		setStat( StatBlock.StatType.METAL,  card.getInt( "metal" ) );
 		setStat( StatBlock.StatType.ENERGY,  card.getInt( "energy" ) );
 		setStat( StatBlock.StatType.TECH,  card.getInt( "tech" ) );
+		m_Fast = card.getBoolean( "fast" );
 		m_CardType = CardTypes.valueOf( card.getString( "type" ) );
 	}
+	
+	public ArrayList<TargetingCondition> getTargets()  { return cct.getTargets(); }
+	public String getName() { return cct.getCardName(); }
+	public boolean isFast() { return m_Fast; }
 	
 	public final int getCardTemplateID() { return m_CardID; }
 	public final CardTypes getCardType() { return m_CardType; }
@@ -48,4 +59,5 @@ public abstract class ServerCardTemplate {
 	
 	public abstract void Resolve( ResolutionEvent e );
 	public abstract void HandleDamage( DamageEvent e );
+	public void HandleDeath( GameEvent e ) {};
 }

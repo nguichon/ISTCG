@@ -11,20 +11,11 @@ import Shared.ClientMessages;
 import Shared.ClientResponses;
 import Shared.GameResources;
 import Shared.GameZones;
+import Shared.PlayerStates;
 import Shared.StatBlock;
 import Shared.StatBlock.StatType;
 
 public class GamePlayer {
-	// GAME CONSTANTS
-		public enum PlayerStates { JOINED, 		// Player joined, needs to submit decklist.
-									READY, 			// Decks submited, waiting for other players.
-									ACTIVE, 		// Waiting for this player to do things.
-									WAITING, 		// This player is waiting for things to happen.
-									DONE,			// Player is ready to let stack resolve.
-									DISCONNECTED, 	// Disconnected, do not send messages pl0x.
-									READING,
-									DEAD; }			// This guy is dead, what a scrub like that Magnus.
-		
 	// Configuration variables
 		private GameInstance m_Game;
 		private ClientAccount m_ClientAccount;
@@ -68,6 +59,15 @@ public class GamePlayer {
 			ServerCardInstance card = m_Deck.GetTopCard();
 			removeCardFromZone( card, GameZones.DECK );
 			putCardInZone( card, GameZones.HAND );
+		}
+	}
+	public void DiscardHand( ) {
+		m_Game.GameMessage( String.format("%s discards his/her hand.", 
+				m_ClientAccount.getUserName()) );
+		while( m_Hand.Count() > 0 ) {
+			ServerCardInstance card = m_Hand.GetTopCard();
+			removeCardFromZone( card, GameZones.HAND );
+			putCardInZone( card, GameZones.GRAVEYARD );
 		}
 	}
 	public void AddResource( GameResources res, int value ) {
@@ -226,7 +226,7 @@ public class GamePlayer {
 			if( t != null && t.m_Value != -1 ) m_Resources[GameResources.METAL.ordinal()] -= t.m_Value;
 			
 			//Put onto stack
-			m_Game.GameMessage( String.format( "%s played %s.", m_ClientAccount.getUserName(), ClientCardTemplateManager.get().GetClientCardTemplate( card.GetCardTemplate().getCardTemplateID() ).getCardName() ) );
+			//m_Game.GameMessage( String.format( "%s played %s.", m_ClientAccount.getUserName(), ClientCardTemplateManager.get().GetClientCardTemplate( card.GetCardTemplate().getCardTemplateID() ).getCardName() ) );
 			removeCardFromZone( card, GameZones.HAND );
 			m_Game.PutCardOnStack( card );
 			m_Game.StartStacking();
@@ -270,8 +270,9 @@ public class GamePlayer {
 		ChangeState(PlayerStates.READING);
 	}
 	
+	private int m_MessagesSent = 0;
 	public void SendMessageFromGame( ClientMessages messageType, String...args ) {
-		String argString = String.valueOf(m_Game.GetGameID()) + ";";
+		String argString = String.valueOf(m_Game.GetGameID()) + ";" + m_MessagesSent++ + ";";
 		for( int i = 0; i < args.length; i++ ) {
 			argString += args[i] + ";";
 		}

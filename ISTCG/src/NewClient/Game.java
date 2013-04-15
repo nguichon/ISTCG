@@ -34,6 +34,7 @@ import NewClient.ClientCardTemplate.CardRenderSize;
 import OldClient.ImageManager;
 import Shared.GameResources;
 import Shared.GameZones;
+import Shared.PlayerStates;
 
 public class Game extends Composite {
 
@@ -910,7 +911,7 @@ public class Game extends Composite {
 	}
 	
 	public void setPlayerState(String pid, String state) {
-		switch(GamePlayer.PlayerStates.valueOf(state)){
+		switch(PlayerStates.valueOf(state)){
 		
 		case JOINED:
 			System.out.println("NOW IS " + state);

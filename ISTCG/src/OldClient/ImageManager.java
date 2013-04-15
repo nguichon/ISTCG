@@ -18,7 +18,12 @@ public class ImageManager {
 		Image toReturn = m_LoadedImages.get( image_name );
 		
 		if( toReturn == null ) {
-			toReturn = new Image( m_Display, DEFAULT_PATH + image_name );
+			try {
+				toReturn = new Image( m_Display, DEFAULT_PATH + image_name );
+			} catch (Exception e) {
+				toReturn = new Image( m_Display, DEFAULT_PATH + "error.png" );
+				System.err.println( "Error: Failed to load image \"" + image_name + "\"." );
+			}
 			m_LoadedImages.put( image_name, toReturn );
 		}
 		

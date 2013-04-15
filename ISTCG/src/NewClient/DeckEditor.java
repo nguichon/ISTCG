@@ -11,6 +11,7 @@ import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
+import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Rectangle;
@@ -42,6 +43,7 @@ public class DeckEditor extends Composite {
 	String[][] cards;
 	String[][] raw;
 	ArrayList<String[]> deck;
+	private Button m_FindMatchButton;
 	/**
 	 * Create the composite.
 	 * @param parent
@@ -49,23 +51,34 @@ public class DeckEditor extends Composite {
 	 */
 	public DeckEditor(Composite parent, int style,final ClientMain main, TabItem t) {
 		super(parent, style);
+		
 		tab = t;
 		m_Parent = parent;
 		
 		this.main=main;
+		m_FindMatchButton = new Button(this, SWT.NONE);
+		m_FindMatchButton.addSelectionListener(new SelectionAdapter(){
+			@Override
+			public void widgetSelected(SelectionEvent arg0) {
+				//onClick
+				main.sendData("MATCH");
+				m_FindMatchButton.setText("Finding a match...");
+			}
+		});
+		m_FindMatchButton.setText("Find Match!");
 		deck = new ArrayList<String[]>();
 		m_MyCollectionList = new List(this, SWT.BORDER);
 			m_MyCollectionList.addSelectionListener(new SelectionListener(){
 
 				@Override
 				public void widgetDefaultSelected(SelectionEvent arg0) {
-					// TODO Auto-generated method stub
+					
 					
 				}
 
 				@Override
 				public void widgetSelected(SelectionEvent arg0) {
-					// TODO Auto-generated method stub
+					
 					m_CardPreviewType = Integer.valueOf(cards[m_MyCollectionList.getSelectionIndex()][0]);
 					m_CardPreview.redraw();
 				}
@@ -169,6 +182,7 @@ public class DeckEditor extends Composite {
 				m_AddCardButton.setBounds( new_size.width - width_2, new_size.height-ClientCardTemplate.CardRenderSize.LARGE.getHeight(), width_2- ClientCardTemplate.CardRenderSize.LARGE.getWidth() - 50, 22 );
 				m_RemoveCardButton.setBounds( new_size.width - width_2, new_size.height-ClientCardTemplate.CardRenderSize.LARGE.getHeight() + 27, width_2-  ClientCardTemplate.CardRenderSize.LARGE.getWidth() - 10, 22 );
 				m_SpinnerToMove.setBounds( new_size.width - (ClientCardTemplate.CardRenderSize.LARGE.getWidth() + 50), new_size.height-ClientCardTemplate.CardRenderSize.LARGE.getHeight(), 40, 22 );
+				m_FindMatchButton.setBounds( new_size.width - width_2, new_size.height-ClientCardTemplate.CardRenderSize.LARGE.getHeight()+m_RemoveCardButton.getBounds().height+50, width_2- ClientCardTemplate.CardRenderSize.LARGE.getWidth() - 50, 50 );
 			}
 			
 		});
@@ -258,5 +272,8 @@ public class DeckEditor extends Composite {
 			e.printStackTrace();
 		}
 		
+	}
+	public void endMatchFinding(){
+		m_FindMatchButton.setText("Find Match!");
 	}
 }

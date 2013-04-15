@@ -1,6 +1,7 @@
 package NewClient;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import javax.xml.bind.JAXBContext;
@@ -66,4 +67,15 @@ public class ClientCardTemplateManager {
         }
         return m_Instance;
     }
+
+	public ArrayList<ClientCardTemplate> GetAllCards() {
+		return new ArrayList<ClientCardTemplate>(m_LoadedCards.values());
+	}
+
+	public ClientCardTemplate NewTemplate(int i) {
+		ClientCardTemplate ct = new ClientCardTemplate();
+		ct.setCardID( i );
+		m_LoadedCards.put( i, ct );
+		return ct;
+	}
 }

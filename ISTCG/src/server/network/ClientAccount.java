@@ -19,6 +19,7 @@ import Shared.ClientResponses;
 import server.Database;
 import server.LobbyManager;
 import server.ServerMain;
+import server.admin.AdminCommands;
 import server.games.GameManager;
 import server.store.ServerStore;
 
@@ -26,6 +27,8 @@ import server.store.ServerStore;
  * @author Nicholas Guichon
  */
 public class ClientAccount extends Thread {
+	private boolean wantToPlay;
+
 	/**
 	 * Constructor for a this class. Adds the ClientAccount to MessageHandler's
 	 * queue.
@@ -38,6 +41,7 @@ public class ClientAccount extends Thread {
 		m_AdminAccount = false;
 		m_ToClient = client;
 
+		wantToPlay = false;
 		try {
 			m_Input = new Scanner(m_ToClient.getInputStream());
 			m_Output = new PrintWriter(m_ToClient.getOutputStream());
@@ -68,12 +72,6 @@ public class ClientAccount extends Thread {
 		synchronized(m_Output){
 			m_Output.println(messageType.name() + ";" + parameterString);
 			m_Output.flush();
-			try {
-				Thread.sleep( 50 );
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
 		}
 	}
 
@@ -103,12 +101,30 @@ public class ClientAccount extends Thread {
 					case DISCONNECT:
 						DisconnectMe();
 						break;
+					case CREATE_ACCOUNT:
+						if( m_UserID == -1 ) {
+							String response = AdminCommands.CREATE_ACCOUNT.Activate(new String[]{"CREATE_ACCOUNT", command[1],command[2],command[3]});
+							if( response.split(" ")[0].equals("Failed") ) {
+								SendMessage(ClientMessages.ACCOUNT_CREATION_STATUS, "-1");
+							}
+							if( response.split(" ")[0].equals("User")) {
+								SendMessage(ClientMessages.ACCOUNT_CREATION_STATUS, "1");
+								LoginAttempt( command[1], command[2] );
+							}
+						}
+						break;
 					case CHALLENGE:
 						if (m_UserID != -1) {
 							ClientAccount opponent = ConnectionsHandler.get()
 									.GetClientByName(command[1]);
 							GameManager.get().CreateGame(this, opponent);
 						}
+						break;
+					case MATCH:
+						if (m_UserID!= -1){
+							GameManager.get().makeMatchForScrubs(this);
+						}
+						
 						break;
 					case ADMIN:
 						if (m_AdminAccount) {
@@ -231,7 +247,7 @@ public class ClientAccount extends Thread {
 									+ db_password
 									+ "', '"
 									+ email
-									+ "', DEFAULT);");
+									+ "', 500);");
 		} else {
 			throw new Exception("User name already exists");
 		}
@@ -327,6 +343,7 @@ public class ClientAccount extends Thread {
 	private ClientAccount m_Next;
 	private ClientAccount m_Previous;
 	private boolean m_ToRemove;
+	//private boolean wantToPlay;
 
 	public void SetNext(ClientAccount cm) {
 		m_Next = cm;
@@ -401,5 +418,13 @@ public class ClientAccount extends Thread {
 		}
 		String hashOfInput = hash(password, Base64.decode(saltAndPass[0]));
 		return hashOfInput.equals(saltAndPass[1]);
+	}
+
+	public void setSearchingForGame(boolean b) {
+		wantToPlay=true;
+		
+	}
+	public boolean wantsToPlay(){
+		return wantToPlay;
 	}
 }
