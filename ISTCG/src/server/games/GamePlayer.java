@@ -224,6 +224,13 @@ public class GamePlayer {
 			if( m != null && m.m_Value != -1 ) m_Resources[GameResources.METAL.ordinal()] -= m.m_Value;
 			if( e != null && e.m_Value != -1 ) m_Resources[GameResources.METAL.ordinal()] -= e.m_Value;
 			if( t != null && t.m_Value != -1 ) m_Resources[GameResources.METAL.ordinal()] -= t.m_Value;
+
+			for( GameResources res : GameResources.values() ) {
+				m_Game.SendMessageToAllPlayers( ClientMessages.UPDATE_PLAYER, 
+											String.valueOf( m_ClientAccount.getUserID() ), 
+											res.name(), 
+											String.valueOf( m_Resources[ res.ordinal() ] ) );
+			}
 			
 			//Put onto stack
 			//m_Game.GameMessage( String.format( "%s played %s.", m_ClientAccount.getUserName(), ClientCardTemplateManager.get().GetClientCardTemplate( card.GetCardTemplate().getCardTemplateID() ).getCardName() ) );
@@ -282,6 +289,10 @@ public class GamePlayer {
 	private void ChangeState( PlayerStates newState ) {
 		m_PlayerState = newState;
 		SendMessageFromGame( ClientMessages.PLAYER_STATE, String.valueOf(m_ClientAccount.getUserID()), m_PlayerState.name() );
+	}
+
+	public void setDead() {
+		ChangeState(PlayerStates.DEAD);
 	}
 
 	

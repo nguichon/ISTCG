@@ -85,19 +85,36 @@ public class GameInstance {
 	
 	private boolean m_Accept = false;
 	public void AcceptMessages(int id, ClientAccount[] players) {
-		System.out.println("STUFFA");
 		m_Players = new HashMap< Integer, GamePlayer >();
 
-		System.out.println("STUFFB");
 		m_PlayerList = new ArrayList< Integer >();
 		
-
-		System.out.println("STUFFC");
 		for(ClientAccount ca : players) { AddToGame( ca ); }
 		
-
-		System.out.println("STUFFD");
 		m_Accept = true;
+	}
+	
+	public void SetLoser( GamePlayer gp ) {
+		gp.setDead();
+		GamePlayer winner = null;
+		int playersAlive = 0;
+		for( Integer i : m_PlayerList ) { 
+			GamePlayer player = m_Players.get(i);
+			if( player.getState() != PlayerStates.DEAD ) {
+				playersAlive++;
+				winner = player;
+			}
+		}
+		if( playersAlive == 0 ) {
+			SendMessageToAllPlayers( ClientMessages.GAME_RESULT, "DRAW" );
+			ChangeState( GameStates.ENDED );
+			return;
+		}
+		if( playersAlive == 1 ) {
+			SendMessageToAllPlayers( ClientMessages.GAME_RESULT, "WINNER", String.valueOf( winner.getClientAccount().getUserID() ));
+			ChangeState( GameStates.ENDED );
+			return;
+		}
 	}
 	
 	/**

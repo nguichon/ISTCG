@@ -114,6 +114,9 @@ public class ServerCardInstance extends StackObject {
 		switch( locationAfterResolution ) {
 		case GRAVEYARD:
 			m_Owner.putCardInZone( this, GameZones.GRAVEYARD );
+			if( m_Template.getCardType() == CardTypes.COMMAND_UNIT ) {
+				m_Host.SetLoser( m_Owner );
+			}
 			break;
 		case FIELD:
 			m_Host.PutCardOntoField( this );
