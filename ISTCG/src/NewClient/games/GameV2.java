@@ -263,6 +263,7 @@ public class GameV2 extends Composite {
 					//Type of stack object is an attack.
 					System.out.println("ATTACK OBJECT from "+message[5]+"which is "+m_LoadedCards.get( Integer.valueOf(message[5])).GetID());
 					StackObject so = new StackObject( m_Stack, SWT.NONE, m_LoadedCards.get( Integer.valueOf(message[5])), "Attacking");
+					so.setSize( CardRenderSize.SMALL.getWidth(), CardRenderSize.SMALL.getHeight() );
 					m_StackObjects.put( Integer.valueOf( message[3] ), so );
 					m_Stack.OptimizeLayout();
 					m_Stack.redraw();
@@ -284,6 +285,8 @@ public class GameV2 extends Composite {
 				break;
 			case UPDATE_PLAYER:
 				psb = m_PlayerBar;
+				
+				System.out.println( message[3] + " and " + m_MainClass.getPID() + " and " + message[4] );
 				
 				if( Integer.valueOf( message[3] ) != Integer.valueOf( m_MainClass.getPID() ) ) {
 					psb = m_OpponentBar;

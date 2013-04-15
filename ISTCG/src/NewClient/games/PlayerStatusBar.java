@@ -73,6 +73,7 @@ public class PlayerStatusBar extends Composite {
 
 	public void UpdateResourceCount(GameResources valueOf, Integer valueOf2) {
 
+		System.out.println( valueOf.name() + ": " + valueOf2 );
 		switch( valueOf ) {
 			case METAL:
 				m_PlayerHandSize.setText( HAND_SIZE_LABEL + valueOf2 );
@@ -86,6 +87,7 @@ public class PlayerStatusBar extends Composite {
 			default:
 				break;
 		}
+		this.redraw();
 	}
 
 	public void UpdateName(String string) {

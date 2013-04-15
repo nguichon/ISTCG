@@ -28,14 +28,15 @@ public class StackObject extends Composite {
 			
 		});
 	}
-	private static Font m_SOFont = new Font( Display.getDefault(), "MONOTYPE", 30, SWT.TRANSPARENT );
+	private static Font m_SOFont = new Font( Display.getDefault(), "MONOTYPE", 14, SWT.TRANSPARENT );
 	public void RenderToSurface(GC gc, CardRenderSize size ) {
 		if(m_Source!=null)
 		m_Source.RenderToSurface( gc, size );
 		else
 			System.err.println("NO SOURCE FOR THIS");
 		gc.setFont( m_SOFont );
-		gc.drawText( m_Text, 0, (size.getHeight() - gc.getFontMetrics().getHeight()) / 2 );
+		gc.setForeground( Display.getDefault().getSystemColor( SWT.COLOR_RED ) );
+		gc.drawText( m_Text, 8, (size.getHeight() - gc.getFontMetrics().getHeight()) / 2, true );
 	}
 
 }
