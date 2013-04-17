@@ -38,7 +38,7 @@ public class GameV2 extends Composite {
 	private static final int PLAYER_BAR_HEIGHT = 24;
 	private static final int BOTTOM_BAR_AREA_HEIGHT = CardRenderSize.SMALL.getHeight() + 15;
 	private static final int STACK_WIDTH = CardRenderSize.SMALL.getWidth() + 8;
-	private static final int HELPER_HEIGHT = 24;
+	private static final int HELPER_HEIGHT = 36;
 	private static final String WIN_TEXT = "YOU WIN!";
 	private static final String LOSS_TEXT = "YOU LOSE!";
 	private static final Point SCRAPYARD_SIZE = new Point( CardRenderSize.SMALL.getWidth() + 10, CardRenderSize.SMALL.getHeight() + 10 );
@@ -85,6 +85,7 @@ public class GameV2 extends Composite {
 		m_MainButton.setText("END TURN");
 		m_PlayerScrapyard.setBackground( Display.getDefault().getSystemColor( SWT.COLOR_BLACK ) );
 		m_HelperText.setForeground( Display.getDefault().getSystemColor( SWT.COLOR_RED ) );
+		m_HelperText.setFont( new Font( Display.getDefault(), "Monotype", 24, SWT.NONE) );
 		m_HelperText.moveBelow( m_PlayerField );
 		
 		//m_OpponentField.setBackground( Display.getDefault().getSystemColor( SWT.COLOR_RED ) );
@@ -328,8 +329,10 @@ public class GameV2 extends Composite {
 			break;
 		case WAITING:
 		case STACKING:
-		case RESOLVING:
 			m_MainButton.setText( "Pass" );
+			break;
+		case RESOLVING:
+			m_MainButton.setText( "OK" );
 			break;
 		}
 	}
@@ -348,7 +351,7 @@ public class GameV2 extends Composite {
 			break;
 		case ACTIVE:
 			if( m_State == GameStates.ACTIVE ) {
-				m_HelperText.setText( "Play a card, attack with a ship, or end your turn." );
+				m_HelperText.setText( "Play a card, attack with a ship, or end your turn (Double Click on a Card)." );
 				m_PlayerField.setBackground(Display.getDefault().getSystemColor( SWT.COLOR_GREEN ));
 				//ClientSoundManager.get().play("YourTurn.mp3");
 				
