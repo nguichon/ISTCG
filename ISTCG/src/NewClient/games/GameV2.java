@@ -74,7 +74,6 @@ public class GameV2 extends Composite {
 		this.m_Host = tab;
 		this.m_MainClass = main;
 		
-		System.out.println("Game " + id + " created." );
 		m_PlayerHand = new VisibleHand( this, SWT.BORDER, this );
 		m_PlayerField= new BattleField( this, SWT.BORDER, this );
 		m_OpponentField= new BattleField( this, SWT.BORDER, this );
@@ -259,10 +258,8 @@ public class GameV2 extends Composite {
 				m_LoadedCards.get( Integer.valueOf( message[3] ) ).SetDamage( Integer.valueOf( message[4] ) );
 				break;
 			case STACK_OBJECT:
-				System.out.println("STACK OBJECT");
 				if( message[4].equals("ATTACK") ) {
 					//Type of stack object is an attack.
-					System.out.println("ATTACK OBJECT from "+message[5]+"which is "+m_LoadedCards.get( Integer.valueOf(message[5])).GetID());
 					StackObject so = new StackObject( m_Stack, SWT.NONE, m_LoadedCards.get( Integer.valueOf(message[5])), "Attacking");
 					so.setSize( CardRenderSize.SMALL.getWidth(), CardRenderSize.SMALL.getHeight() );
 					m_StackObjects.put( Integer.valueOf( message[3] ), so );
@@ -276,13 +273,10 @@ public class GameV2 extends Composite {
 				m_StackObjects.remove( Integer.valueOf( message[3] ) ).dispose();
 				break;
 			case GAME_RESULT:
-				System.out.println( message[3] );
 				if( message[3].equals("WINNER") ) {
 					if( Integer.valueOf( message[4] ) == Integer.valueOf(m_MainClass.getPID()) ) {
-						System.out.println( "WIN" );
 						youWin();
 					} else {
-						System.out.println( "LOSE" );
 						youLose();
 					}
 				}
@@ -298,9 +292,7 @@ public class GameV2 extends Composite {
 				break;
 			case UPDATE_PLAYER:
 				psb = m_PlayerBar;
-				
-				System.out.println( message[3] + " and " + m_MainClass.getPID() + " and " + message[4] );
-				
+					
 				if( Integer.valueOf( message[3] ) != Integer.valueOf( m_MainClass.getPID() ) ) {
 					psb = m_OpponentBar;
 				}
@@ -308,7 +300,7 @@ public class GameV2 extends Composite {
 				psb.UpdateResourceCount( GameResources.valueOf( message[4] ), Integer.valueOf( message[5] ) );
 				break;
 			default:
-				System.out.println( message[0] + " type message unhandled." );
+				System.err.println( message[0] + " type message unhandled." );
 				break;
 			}
 		} catch( IllegalArgumentException e ) {
@@ -318,7 +310,6 @@ public class GameV2 extends Composite {
 
 	private void SetGameState(GameStates valueOf) {
 		m_State = valueOf;
-		System.out.println( "GAME SET TO " + valueOf.name() );
 		switch( valueOf ) {
 		case ACTIVE:
 		case BETWEEN_TURNS:
@@ -339,7 +330,6 @@ public class GameV2 extends Composite {
 	
 	private void SetPlayerState( PlayerStates ps ) {
 		m_PlayerState = ps;
-		System.out.println( "PLAYER SET TO " + ps.name() );
 		switch( ps ) {
 		case READY:
 			m_PlayerField.setBackground(Display.getDefault().getSystemColor( SWT.COLOR_GREEN ));
@@ -356,7 +346,7 @@ public class GameV2 extends Composite {
 				//ClientSoundManager.get().play("YourTurn.mp3");
 				
 			} else {
-				m_HelperText.setText( "Play a card or pass priority." );
+				m_HelperText.setText( "Play a card or pass priority (Double Click on a Card)." );
 				//m_PlayerField.setBackground(Display.getDefault().getSystemColor( SWT.COLOR_WHITE ));
 			}
 			m_MainButton.setEnabled( true );
