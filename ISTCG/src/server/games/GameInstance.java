@@ -422,6 +422,7 @@ public class GameInstance {
 		card.SetLocation( GameZones.FIELD );
 		m_CardsOnField.put( card.GetCardUID(), card );
 		SendMessageToAllPlayers( ClientMessages.MOVE, String.valueOf( card.GetCardUID() ), GameZones.FIELD.name() );
+		card.ChangeState( false );
 	}
 	public void GameMessage( String message ) {
 		for( int gp : m_PlayerList ) 

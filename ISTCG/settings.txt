@@ -1,0 +1,4 @@
+# This is a document that holds settings
+# for the card game's client. It's pretty
+# cool.
+ip:127.0.0.1

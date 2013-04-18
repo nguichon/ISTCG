@@ -19,6 +19,7 @@ import org.eclipse.swt.widgets.Display;
 
 import OldClient.ImageManager;
 import Shared.CardTypes;
+import Shared.GameZones;
 import Shared.StatBlock;
 import Shared.TargetingCondition;
 import Shared.StatBlock.StatType;
@@ -123,7 +124,7 @@ public class ClientCardTemplate {
 					RenderPower( toUse, targetGC, size );
 					break;
 				case STRUCTURE:
-					RenderStructure( toUse, targetGC, size );
+					RenderStructure( toUse, targetGC, size, damageTaken );
 					break;
 				case METAL:
 					RenderMetal( toUse, targetGC, size );
@@ -138,9 +139,28 @@ public class ClientCardTemplate {
 					break;
 				}
 			}
-			if( damageTaken > 0 ) {
-				RenderDamage( targetGC, damageTaken, size );
+			break;
+		case SMALL:
+			targetGC.drawImage( toRender, 0, 0, toRender.getBounds().width, toRender.getBounds().height, 0, 0, size.getWidth(), size.getHeight() );
+			targetGC.drawRectangle( 0, 0, size.getWidth() - 1, size.getHeight() - 1 );
+			targetGC.drawRectangle( 1, 1, size.getWidth() - 3, size.getHeight() - 3 );
+			for( StatBlock sb : m_Stats ) {
+				StatBlock toUse = sb;
+				if( stats != null ) {
+					for( StatBlock sb2 : stats ) {
+						if( sb2.m_Type == toUse.m_Type ) { toUse = sb2; }
+					}
+				}
+
+				switch( toUse.m_Type ) {
+				case STRUCTURE:
+					RenderStructure( toUse, targetGC, size, damageTaken );
+					break;
+				default:
+					break;
+				}
 			}
+			RenderName( targetGC, size );
 			break;
 		default:
 			targetGC.drawImage( toRender, 0, 0, toRender.getBounds().width, toRender.getBounds().height, 0, 0, size.getWidth(), size.getHeight() );
@@ -151,7 +171,7 @@ public class ClientCardTemplate {
 		}
 	}
 
-	private void RenderDamage( GC targetGC, int damageTaken, CardRenderSize size ) {
+	private static void RenderDamage( GC targetGC, int damageTaken, CardRenderSize size ) {
 		if( size == CardRenderSize.LARGE && damageTaken != 0 ) {
 			Image icon =  ImageManager.get().GetImage("icon-structure-bad.png");
 			for( int i = 0; i < damageTaken; i++ ) {
@@ -180,6 +200,7 @@ public class ClientCardTemplate {
 	}
 
 	private static final Font NAME_FONT = new Font( Display.getDefault(), "Monospaced", 16, SWT.BOLD);
+	private static final Font MINI_NAME_FONT = new Font( Display.getDefault(), "Monospaced", 8, SWT.BOLD);
 	private static final Font TEXT_FONT = new Font( Display.getDefault(), "Monospaced", 12, SWT.NONE);
 	private static final Font FLAVOR_FONT = new Font( Display.getDefault(), "Monospaced", 9, SWT.ITALIC);
 	private void RenderName( GC targetGC, CardRenderSize size ) {
@@ -191,6 +212,9 @@ public class ClientCardTemplate {
 					0, 0, textBox.getBounds().width, textBox.getBounds().height,
 					size.getWidth() - length, 0, length, 36);
 			targetGC.drawText( m_CardName, size.getWidth() - length + 5, 12, true );
+		} else if( size == CardRenderSize.SMALL ) {
+			targetGC.setFont( MINI_NAME_FONT );
+			targetGC.drawText( m_CardName, 3, 3, true );
 		}
 	}
 	private static void RenderTextBox( GC targetGC, CardRenderSize size ) {
@@ -331,20 +355,36 @@ public class ClientCardTemplate {
 			targetGC.drawText( String.valueOf( toRender.m_Value), 75 + 60 + 60 + 26 + 5, y, true);
 		}
 	}
-	private static void RenderStructure( StatBlock toRender, GC targetGC, CardRenderSize size ) {
-		if( toRender.m_Type == StatBlock.StatType.STRUCTURE && size == CardRenderSize.LARGE && toRender.m_Value != -1 ) {
-			Image icon =  ImageManager.get().GetImage("icon-structure-good.png");
-			for( int i = 0; i < toRender.m_Value; i++ ) {
-				if( i % 2 == 0 ) {
-					targetGC.drawImage( icon,
-							0, 0, icon.getBounds().width, icon.getBounds().height,
-							0 + frameBounds.width - 8, size.getHeight() - ((frameBounds.height + 2) * ((i/2) + 2)) + 8, 24, 24 );
-				} else {
-					targetGC.drawImage( icon,
-							0, 0, icon.getBounds().width, icon.getBounds().height,
-							0 + frameBounds.width - 8 + 26, size.getHeight() - ((frameBounds.height + 2) * ((i/2) + 2)) + 8 - 12, 24, 24 );
+	private static Font STRUCTURE_FONT = new Font( Display.getDefault(), "Monotype", 14, SWT.TRANSPARENT );
+	private void RenderStructure( StatBlock toRender, GC targetGC, CardRenderSize size, int damageTaken ) {
+		if( toRender.m_Type == StatBlock.StatType.STRUCTURE && toRender.m_Value != -1 ) {
+			switch( size ) {
+			case LARGE:
+				Image icon =  ImageManager.get().GetImage("icon-structure-good.png");
+				for( int i = 0; i < toRender.m_Value; i++ ) {
+					if( i % 2 == 0 ) {
+						targetGC.drawImage( icon,
+								0, 0, icon.getBounds().width, icon.getBounds().height,
+								0 + frameBounds.width - 8, size.getHeight() - ((frameBounds.height + 2) * ((i/2) + 2)) + 8, 24, 24 );
+					} else {
+						targetGC.drawImage( icon,
+								0, 0, icon.getBounds().width, icon.getBounds().height,
+								0 + frameBounds.width - 8 + 26, size.getHeight() - ((frameBounds.height + 2) * ((i/2) + 2)) + 8 - 12, 24, 24 );
 
+					}
 				}
+				
+
+				if( damageTaken > 0 ) {
+					RenderDamage( targetGC, damageTaken, size );
+				}
+				break;
+			case SMALL:
+				targetGC.setFont( STRUCTURE_FONT );
+				targetGC.drawText( (toRender.m_Value - damageTaken) + "/" + toRender.m_Value, 3, size.getHeight() - 25, true );
+				break;
+			default:
+				break;
 			}
 		}
 	}

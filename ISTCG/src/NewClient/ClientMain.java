@@ -43,7 +43,7 @@ public class ClientMain {
 		shell.setSize(450, 300);
 		shell.setMinimumSize( 450, 300 );
 		shell.setText("Intersteller TCG");
-		shell.setBackgroundImage( ImageManager.get().GetImage( "Client_BG.png" ) );
+		//shell.setBackgroundImage( ImageManager.get().GetImage( "Client_BG.png" ) );
 		shell.setBackgroundMode( SWT.INHERIT_DEFAULT );
 		Login = new Login(shell, SWT.NONE, this );
 		//Lobby = new Lobby(shell, SWT.NONE,this);
@@ -147,7 +147,8 @@ public class ClientMain {
 	
 	private boolean MakeConnection() {
 		int port = 4567;
-  		String host = "127.0.0.1";//"169.254.4.84";
+  		String host = Settings.get().getString( "ip" );
+  		System.out.println( host );
 		try {
 			//m_Server = new ConnectionDevice( host, port );
 			m_Server = new ThreadedConnectionDevice( host, port);
