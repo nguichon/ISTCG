@@ -12,6 +12,7 @@ import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.graphics.TextLayout;
 import org.eclipse.swt.widgets.Display;
 
 //import org.eclipse.swt.graphics.Image;
@@ -201,69 +202,23 @@ public class ClientCardTemplate {
 
 
 	}
+	static TextLayout m_TextBoxLayout = new TextLayout( Display.getDefault() );
 	private void RenderCardText( GC targetGC, CardRenderSize size ) {
-		targetGC.setFont( TEXT_FONT );
-		int width = targetGC.getFontMetrics().getAverageCharWidth();
-		int height = targetGC.getFontMetrics().getHeight();
-		int space = targetGC.getCharWidth( ' ' );
-		int lineWidth = size.getWidth() - 75 - 8 - 12;
-		String[] words = m_CardText.split(" ");
-		int running_length = 0;
-		int lines = 0;
-		String s = "";
-		for( int i = 0; i < words.length; i++ ) {
-			if( running_length + (words[i].length() * width) >= lineWidth ) {
-				targetGC.drawText( 	s,  
-						75 + 8, 
-						(size.getHeight() - size.getHeight() / 3 - size.getHeight() / 9) + (lines * (height + 2)) + 5, true);
-				running_length = 0;
-				s = "";
-				lines++;
-			}
-
-			running_length += (words[i].length()) * width + space;
-			s += words[i] + " ";
-		}
-		targetGC.drawText( 	s,  
-				75 + 8, 
-				(size.getHeight() - size.getHeight() / 3 - size.getHeight() / 9) + (lines * (height + 2)) + 5, true);
+		m_TextBoxLayout.setWidth( size.getWidth() - 75 - 8 - 12 );
+		m_TextBoxLayout.setText( m_CardText );
+		m_TextBoxLayout.setFont( TEXT_FONT );
+		
+		m_TextBoxLayout.draw( targetGC, 83, (size.getHeight() - size.getHeight() / 3 - size.getHeight() / 9) + 5, -1, -1, null, null, SWT.TRANSPARENT );
 	}
 	private void RenderCardFlavor( GC targetGC, CardRenderSize size ) {
-		targetGC.setFont( FLAVOR_FONT );
-		int width = targetGC.getFontMetrics().getAverageCharWidth();
-		int height = targetGC.getFontMetrics().getHeight();
-		int space = targetGC.getCharWidth( ' ' );
-		int lineWidth = size.getWidth() - 75 - 25;
-		String[] words = m_CardFlavor.split(" ");
-		int running_length = 0;
-		int lines = 0;
-		String s = "";
-
-		for( int i = 0; i < words.length; i++ ) {
-			if( running_length + (words[i].length() * width) >= lineWidth ) {
-				running_length = 0;
-				lines++;
-			}
-
-			running_length += (words[i].length()) * width + space;
+		m_TextBoxLayout.setWidth( size.getWidth() - 75 - 8 - 12 );
+		m_TextBoxLayout.setText( m_CardFlavor );
+		m_TextBoxLayout.setFont( FLAVOR_FONT );
+		int offset = 5;
+		for( int i = 0; i < m_TextBoxLayout.getLineCount(); i++ ) {
+			offset += m_TextBoxLayout.getLineMetrics( i ).getHeight();
 		}
-		lines+=2;
-		for( int i = 0; i < words.length; i++ ) {
-			if( running_length + (words[i].length() * width) >= lineWidth ) {
-				targetGC.drawText( 	s,  
-						75 + 8, 
-						(size.getHeight() - size.getHeight() / 9 ) - (lines * (height + 2)) + 5, true);
-				running_length = 0;
-				s = "";
-				lines--;
-			}
-
-			running_length += (words[i].length()) * width + space;
-			s += words[i] + " ";
-		}
-		targetGC.drawText( 	s,  
-				75 + 8, 
-				(size.getHeight() - size.getHeight() / 9) - (lines * (height + 2)) + 5, true);
+		m_TextBoxLayout.draw( targetGC, 83, (size.getHeight() - size.getHeight() / 9) - offset, -1, -1, null, null, SWT.TRANSPARENT );
 	}
 	private static void RenderBorder( GC targetGC, CardRenderSize size ) {
 		Rectangle frameBounds =  ImageManager.get().GetImage(CardImageAssets.CARD_CORNER_TOP_RIGHT.path()).getBounds();

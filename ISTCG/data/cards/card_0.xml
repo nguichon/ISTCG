@@ -1,2 +1,2 @@
-<?xml version="1.0" encoding="UTF-8" standalone="yes"?><ns2:clientCardTemplate xmlns:ns2="card template"><cardArt>Scrap Metal.png</cardArt><cardFlavor></cardFlavor><cardID>0</cardID><cardName>Scrap Metal</cardName><cardText>Fast.&#xD;
-Gain a Metal resource.</cardText><cardType>RESOURCE</cardType><fast>true</fast><statList/><targetList/></ns2:clientCardTemplate>
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?><ns2:clientCardTemplate xmlns:ns2="card template"><cardArt>Scrap Metal.png</cardArt><cardFlavor>There are pieces of metal just floating around in space. Why bother to waste the effort mining and purifying?</cardFlavor><cardID>0</cardID><cardName>Scrap Metal</cardName><cardText>Fast.&#xD;
+Add 1 Metal resource to your available resources. Resources are used to play cards from your hand.</cardText><cardType>RESOURCE</cardType><fast>true</fast><statList/><targetList/></ns2:clientCardTemplate>
