@@ -4,6 +4,7 @@ import server.games.cards.CardList;
 import server.games.cards.ServerCardInstance;
 import server.games.cards.ServerCardTemplate;
 import server.games.cards.abilities.Target;
+import server.games.events.ResolutionEvent;
 import server.network.ClientAccount;
 import NewClient.ClientCardTemplateManager;
 import Shared.CardTypes;
@@ -235,6 +236,12 @@ public class GamePlayer {
 			//Put onto stack
 			//m_Game.GameMessage( String.format( "%s played %s.", m_ClientAccount.getUserName(), ClientCardTemplateManager.get().GetClientCardTemplate( card.GetCardTemplate().getCardTemplateID() ).getCardName() ) );
 			removeCardFromZone( card, GameZones.HAND );
+			
+			if( card.GetCardTemplate().getCardType() == CardTypes.RESOURCE ) {
+				ResolutionEvent re = new ResolutionEvent( m_Game );
+				card.Resolve( re );
+				return true;
+			}
 			m_Game.PutCardOnStack( card );
 			m_Game.StartStacking();
 			

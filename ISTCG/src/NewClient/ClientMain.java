@@ -112,7 +112,7 @@ public class ClientMain {
 				if(m_Server!=null && m_Server.hasData()){
 					this.ParseMessage(m_Server.getData());
 				}
-				display.sleep();
+				//display.sleep();
 			}
 		}
 		try {

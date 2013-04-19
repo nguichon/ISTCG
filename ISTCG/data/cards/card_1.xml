@@ -1,2 +1,2 @@
-<?xml version="1.0" encoding="UTF-8" standalone="yes"?><ns2:clientCardTemplate xmlns:ns2="card template"><cardArt>Energy Cell.png</cardArt><cardFlavor></cardFlavor><cardID>1</cardID><cardName>Energy Cell</cardName><cardText>Fast.&#xD;
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?><ns2:clientCardTemplate xmlns:ns2="card template"><cardArt>Energy Cell.png</cardArt><cardFlavor></cardFlavor><cardID>1</cardID><cardName>Energy Cell</cardName><cardText>Fast. Instant.&#xD;
 Add 1 Energy resource to your available resources. Resources are used to play cards from your hand.</cardText><cardType>RESOURCE</cardType><fast>true</fast><statList/><targetList/></ns2:clientCardTemplate>

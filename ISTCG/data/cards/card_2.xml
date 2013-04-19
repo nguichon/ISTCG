@@ -1,2 +1,2 @@
-<?xml version="1.0" encoding="UTF-8" standalone="yes"?><ns2:clientCardTemplate xmlns:ns2="card template"><cardArt>Module.png</cardArt><cardFlavor></cardFlavor><cardID>2</cardID><cardName>Module</cardName><cardText>Fast.&#xD;
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?><ns2:clientCardTemplate xmlns:ns2="card template"><cardArt>Module.png</cardArt><cardFlavor></cardFlavor><cardID>2</cardID><cardName>Module</cardName><cardText>Fast. Instant.&#xD;
 Add 1 Tech resource to your available resources. Resources are used to play cards from your hand.</cardText><cardType>RESOURCE</cardType><fast>true</fast><statList/><targetList/></ns2:clientCardTemplate>
